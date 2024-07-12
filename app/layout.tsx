@@ -28,6 +28,7 @@ export default function RootLayout({
           <LocationBadge />
           <SpeedInsights />
         </FilterProvider>
+        <Analytics />
       </body>
     </html>
   );
