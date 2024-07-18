@@ -170,7 +170,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-neutral-900 bg-opacity-40"></div>
           <div className="absolute inset-0 flex flex-col justify-center items-center z-10">
             <h1 className="text-white text-3xl lg:text-6xl font-black">
-              Find healthy foods nearby.
+              Discover Foods That Fit Your Diet
             </h1>
           </div>
           <div className="absolute z-10 -bottom-6 -mb-2 gap-4 left-1/2 transform -translate-x-1/2 max-w-2xl w-full flex flex-col items-center justify-center">

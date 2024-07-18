@@ -5,7 +5,6 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import LocationBadge from "./LocationBadge";
 import { FilterProvider } from "./context/FilterContext";
-import { Analytics } from '@vercel/analytics/react';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -28,7 +27,6 @@ export default function RootLayout({
           <LocationBadge />
           <SpeedInsights />
         </FilterProvider>
-        <Analytics />
       </body>
     </html>
   );
