@@ -34,18 +34,18 @@ export default function Navbar({}: Props) {
         <div className="flex items-center justify-center gap-6 text-neutral-600 font-normal">
           <div className="hidden md:flex items-center justify-center  gap-6">
             <Link
-              href={"https://get.macromapper.co/macromapping"}
+              href={"https://get.macromapper.co/get-started"}
               target="_blank"
               className="py-2 px-4 cursor-pointer select-none hover:bg-neutral-100 rounded-xl"
             >
               Get Listed
             </Link>
             <Link
-              href={"https://get.macromapper.co/about-us"}
+              href={"https://get.macromapper.co/platform"}
               target="_blank"
               className="py-2 px-4 cursor-pointer select-none hover:bg-neutral-100 rounded-xl"
             >
-              About Us
+              Platform
             </Link>
           </div>
         </div>
