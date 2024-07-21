@@ -121,7 +121,7 @@ export default function Home() {
       ),
       title: "Get Your Menu Mapped",
       subtitle: "Get Listed on MacroMapper",
-      link: "https://get.macromapper.co/macromapping",
+      link: "https://get.macromapper.co/get-started",
     },
     {
       icon: (
