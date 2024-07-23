@@ -133,9 +133,9 @@ export default function Home() {
           className="rounded-2xl"
         />
       ),
-      title: "Macromapper's Vision",
-      subtitle: "About MacroMapper",
-      link: "https://get.macromapper.co/about-us",
+      title: "Got Feedback?",
+      subtitle: "Submit Here",
+      link: "https://get.macromapper.co/feedback",
     },
     {
       icon: (
