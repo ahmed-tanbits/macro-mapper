@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import RadioBox from "./RadioBox";
-import { ArrowDownUp } from "lucide-react";
+import { ArrowDownUp, RotateCcw } from "lucide-react";
 
 const sort_options = [
   { id: 1, label: "Default", checked: true },
@@ -49,7 +49,11 @@ export default function Sort({ onSortChange }: SortProps) {
     }));
     const selectedOption = newOptions.find((option) => option.checked);
     setOptions(newOptions);
-    setSelectedLabel(selectedOption && selectedOption.id !== 1 ? `From: ${selectedOption.label}` : "Sort");
+    setSelectedLabel(
+      selectedOption && selectedOption.id !== 1
+        ? `From: ${selectedOption.label}`
+        : "Sort"
+    );
     setIsOpen(false);
 
     // Pass the selected sorting option back to the parent component
@@ -60,15 +64,21 @@ export default function Sort({ onSortChange }: SortProps) {
 
   const isDefaultSelected = options.find((option) => option.id === 1)?.checked;
 
+  const onResetFilters = () => {
+    setOptions(sort_options);
+    setSelectedLabel("Sort");
+    onSortChange("Default");
+  };
+
   return (
-    <div className="relative whitespace-nowrap" ref={dropdownRef}>
+    <div className="relative whitespace-nowrap flex gap-1" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
         className={`px-4 py-2 text-neutral-500 border transition-colors duration-300 ${
           isOpen || !isDefaultSelected
             ? "border-primary-500 border-opacity-60 bg-primary-500 bg-opacity-10"
-            : "border-neutral-100 bg-white"
-        } rounded-xl flex items-center justify-center space-x-2`}
+            : "border-[#CBCBCB] bg-white"
+        } rounded-md flex items-center justify-center space-x-2`}
       >
         <span
           className={`${
@@ -100,6 +110,13 @@ export default function Sort({ onSortChange }: SortProps) {
           </div>
         </div>
       )}
+      <button
+        onClick={onResetFilters}
+        className={`px-4 py-2 text-neutral-500 border transition-colors duration-300 rounded-md flex items-center justify-center space-x-2 border-[#CBCBCB] bg-white`}
+      >
+        <RotateCcw size={16} />
+        <span>Reset Filters</span>
+      </button>
     </div>
   );
 }
