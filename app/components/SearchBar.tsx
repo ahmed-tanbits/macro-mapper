@@ -160,7 +160,9 @@ const SearchBar: React.FC<Props> = () => {
     if (event.key === "Enter") {
       event.preventDefault();
       if (searchTerm.length > 2) {
-        router.push(`/search/map?tab=foods&suggested=${encodeURIComponent(searchTerm)}`);
+        router.push(
+          `/search/map?tab=foods&suggested=${encodeURIComponent(searchTerm)}`
+        );
       }
     }
   };
@@ -171,78 +173,104 @@ const SearchBar: React.FC<Props> = () => {
   };
 
   return (
-    <div className="relative max-w-xl mx-auto w-full">
-    <div
-      className="bg-white overflow-hidden h-12 p-1 relative w-full border border-neutral-100 lg:border-transparent flex items-center justify-between shadow-lg rounded-full ring-primary-500 focus-within:ring-2 transition-all lg:h-16 lg:p-2"
-      style={{ transition: "box-shadow 0.3s ease-in-out" }}
-    >
-      <div className="ml-2 flex justify-center items-center gap-2 lg:gap-3">
-        <Search className="w-4 h-4 lg:w-5 lg:h-5" />
+    // <div className="relative max-w-xl mx-auto w-full">
+    //   <div
+    //     className="bg-white overflow-hidden h-12 p-1 relative w-full border border-neutral-100 lg:border-transparent flex items-center justify-between shadow-lg rounded-full ring-primary-500 focus-within:ring-2 transition-all lg:h-16 lg:p-2"
+    //     style={{ transition: "box-shadow 0.3s ease-in-out" }}
+    //   >
+    //     <div className="ml-2 flex justify-center items-center gap-2 lg:gap-3">
+    //       <Search className="w-4 h-4 lg:w-5 lg:h-5" />
+    //       <input
+    //         type="text"
+    //         value={searchTerm}
+    //         onChange={handleChange}
+    //         onKeyPress={handleKeyPress}
+    //         className="w-full h-full absolute z-10 right-0 pl-10 bg-transparent outline-none text-sm lg:text-base lg:pl-12"
+    //         placeholder="Search by location or food..."
+    //         autoCorrect="off"
+    //         spellCheck="false"
+    //       />
+    //     </div>
+    //     {searchTerm ? (
+    //       <button
+    //         onClick={handleClear}
+    //         className="bg-yellow-500 z-20 bg-opacity-20 hover:bg-opacity-30 transition-all h-8 mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:h-10 lg:mr-1"
+    //       >
+    //         <X className="w-5 h-5 lg:w-6 lg:h-6" strokeWidth={3} />
+    //       </button>
+    //     ) : (
+    //       <LocationButton />
+    //     )}
+    //   </div>
+    //   {loading && (
+    //     <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-20">
+    //       <Skeleton />
+    //     </div>
+    //   )}
+    //   {!loading && suggestions.length > 0 && (
+    //     <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-20 lg:p-3">
+    //       {suggestions.map((suggestion) => (
+    //         <Link
+    //           href={`/search/map?tab=${
+    //             suggestion.type === "restaurant" ? "restaurant" : "foods"
+    //           }&suggested=${encodeURIComponent(suggestion.name)}`}
+    //           key={suggestion.id}
+    //           className="relative flex items-center justify-between gap-2 py-2 px-3 hover:bg-neutral-50 border border-transparent hover:border-neutral-100 rounded-full transition-all cursor-pointer select-none group hover:pr-6 text-sm lg:py-3 lg:px-4 lg:text-base lg:hover:pr-8"
+    //         >
+    //           <div className="flex items-center gap-2 lg:gap-3">
+    //             {suggestion.type === "restaurant" ? (
+    //               <Store className="w-4 h-4 lg:w-5 lg:h-5" />
+    //             ) : (
+    //               <Utensils className="w-4 h-4 lg:w-5 lg:h-5" />
+    //             )}
+    //             <span>{suggestion.name}</span>
+    //           </div>
+    //           {suggestion.proximity !== undefined && (
+    //             <span className="text-xs text-neutral-500 transition-all flex whitespace-nowrap gap-1 items-center lg:text-sm">
+    //               <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4" />{" "}
+    //               {suggestion.proximity.toFixed(1)} km
+    //             </span>
+    //           )}
+    //           <ArrowRight
+    //             strokeWidth={1.8}
+    //             className="w-4 h-4 lg:w-5 lg:h-5 absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 duration-300 text-neutral-600"
+    //           />
+    //         </Link>
+    //       ))}
+    //     </div>
+    //   )}
+    //   {!loading && searchTerm.length > 2 && suggestions.length === 0 && (
+    //     <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-20 lg:text-base">
+    //       <p>No results found.</p>
+    //     </div>
+    //   )}
+    // </div>
+
+    <div className="flex flex-col sm:flex-row items-center gap-2 md:gap-0 shadow-none sm:shadow-md bg-white rounded-md p-0 w-full max-w-[600px] mx-auto mt-2 md:mt-0">
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="Search foods or restaurants"
+        value={searchTerm}
+        onChange={handleChange}
+        onKeyPress={handleKeyPress}
+        autoCorrect="off"
+        spellCheck="false"
+        className="flex-1 min-w-0 bg-transparent outline-none px-4 py-3 w-full text-sm shadow-md sm:shadow-none rounded-md"
+      />
+
+      {/* Location Input with Button */}
+      <div className="relative flex w-full sm:w-1/2 border-gray-300 sm:before:content-[''] sm:before:h-1/2 sm:before:absolute sm:before:bg-gray-100 sm:before:w-[2px] sm:before:top-1/2 sm:before:-translate-y-1/2 sm:before:left-0 overflow-hidden shadow-md sm:shadow-none">
         <input
           type="text"
-          value={searchTerm}
-          onChange={handleChange}
-          onKeyPress={handleKeyPress}
-          className="w-full h-full absolute z-10 right-0 pl-10 bg-transparent outline-none text-sm lg:text-base lg:pl-12"
-          placeholder="Search by location or food..."
-          autoCorrect="off"
-          spellCheck="false"
+          placeholder="Enter your location"
+          className="flex-1 min-w-0 bg-transparent outline-none px-4 py-2 text-sm border-none"
         />
-      </div>
-      {searchTerm ? (
-        <button
-          onClick={handleClear}
-          className="bg-yellow-500 z-20 bg-opacity-20 hover:bg-opacity-30 transition-all h-8 mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:h-10 lg:mr-1"
-        >
-          <X className="w-5 h-5 lg:w-6 lg:h-6" strokeWidth={3} />
+        <button className="bg-primary-600 hover:bg-primary-700 px-3 py-3 rounded-r-md flex items-center justify-center">
+          <Search className="w-4 lg:w-5 lg:h-5 text-white" />
         </button>
-      ) : (
-        <LocationButton />
-      )}
+      </div>
     </div>
-    {loading && (
-      <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-20">
-        <Skeleton />
-      </div>
-    )}
-    {!loading && suggestions.length > 0 && (
-      <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-20 lg:p-3">
-        {suggestions.map((suggestion) => (
-          <Link
-            href={`/search/map?tab=${
-              suggestion.type === "restaurant" ? "restaurant" : "foods"
-            }&suggested=${encodeURIComponent(suggestion.name)}`}
-            key={suggestion.id}
-            className="relative flex items-center justify-between gap-2 py-2 px-3 hover:bg-neutral-50 border border-transparent hover:border-neutral-100 rounded-full transition-all cursor-pointer select-none group hover:pr-6 text-sm lg:py-3 lg:px-4 lg:text-base lg:hover:pr-8"
-          >
-            <div className="flex items-center gap-2 lg:gap-3">
-              {suggestion.type === "restaurant" ? (
-                <Store className="w-4 h-4 lg:w-5 lg:h-5" />
-              ) : (
-                <Utensils className="w-4 h-4 lg:w-5 lg:h-5" />
-              )}
-              <span>{suggestion.name}</span>
-            </div>
-            {suggestion.proximity !== undefined && (
-              <span className="text-xs text-neutral-500 transition-all flex whitespace-nowrap gap-1 items-center lg:text-sm">
-                <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4" /> {suggestion.proximity.toFixed(1)} km
-              </span>
-            )}
-            <ArrowRight
-              strokeWidth={1.8}
-              className="w-4 h-4 lg:w-5 lg:h-5 absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 duration-300 text-neutral-600"
-            />
-          </Link>
-        ))}
-      </div>
-    )}
-    {!loading && searchTerm.length > 2 && suggestions.length === 0 && (
-      <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-20 lg:text-base">
-        <p>No results found.</p>
-      </div>
-    )}
-  </div>
-  
   );
 };
 
