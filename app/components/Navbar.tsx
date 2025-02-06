@@ -100,17 +100,17 @@ export default function Navbar({}: Props) {
         </div>
       </nav> */}
 
-      <nav className="flex flex-col 1200:flex-row w-full justify-between items-center sm:items-start px-4 md:px-8 border-b pt-4 pb-3">
+      <nav className="relative z-50 bg-white flex flex-col 1200:flex-row w-full justify-between items-center sm:items-start px-4 md:px-8 border-b pt-4 pb-3">
         <div className="flex justify-between items-start w-full">
           <div className="flex gap-12 items-start">
             {/* logo */}
             <div className="flex items-center gap-4 mb-3">
-              <button
+              {/* <button
                 onClick={toggleSidebar}
                 className="absolute top-4 right-14 md:hidden p-1"
               >
                 <Menu size={24} />
-              </button>
+              </button> */}
               <Link href="/">
                 <Image
                   src="/logo.png"
@@ -140,11 +140,11 @@ export default function Navbar({}: Props) {
               </Link>
             </div>
             <div className="gap-2 items-center flex">
+              <span className="cursor-pointer border-0 md:border-l pl-4">
+                <Menu onClick={toggleSidebar} size={24} />
+              </span>
               {isAuthenticated ? (
-                <div className="border-0 md:border-l  pl-4 flex items-center gap-2">
-                  <span className="hidden md:block">
-                    <Menu size={24} />
-                  </span>
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => setIsAuthenticated(!isAuthenticated)}
                     className="rounded-full"
@@ -203,13 +203,15 @@ export default function Navbar({}: Props) {
               <X size={24} />
             </button>
             <h2>
-              <Image
-                src={"/logo.png"}
-                width={250}
-                height={100}
-                alt="macromapper logo"
-                className="w-48 md:w-[250px]"
-              />
+              <Link href="/">
+                <Image
+                  src="/logo.png"
+                  width={240}
+                  height={100}
+                  alt="macromapper logo"
+                  className="w-[160px] md:w-[180px]"
+                />
+              </Link>
             </h2>
           </div>
           <div className="mt-4 text-lg flex flex-col mx-4 gap-3">
