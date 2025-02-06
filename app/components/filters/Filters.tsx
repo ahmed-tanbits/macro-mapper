@@ -27,6 +27,11 @@ const allergyOptions = [
   },
 ];
 
+const allTypeOptions = [
+  { id: 1, label: "Food", key: "food", checked: false },
+  { id: 2, label: "Drink", key: "drink", checked: false },
+];
+
 export default function Filters({
   filters,
   onSelectionChange,
@@ -48,15 +53,24 @@ export default function Filters({
     }));
   };
 
+  const getTypeOptions = () => {
+    return allTypeOptions.map((option) => ({
+      ...option,
+      checked:
+        filters.allergies.find((allergy: any) => allergy.key === option.key)
+          ?.checked || false,
+    }));
+  };
+
   return (
-    <div className="flex gap-3 items-center justify-start lg:justify-center w-full overflow-x-scroll lg:overflow-x-visible">
+    <div className="flex gap-0 md:gap-3 items-center justify-center w-full overflow-x-visible">
       <DropdownCheckbox
-        options={getAllergyOptions()}
-        label="Allergies"
+        options={getTypeOptions()}
+        label="Type"
         onSelectionChange={(selectedOptions) =>
           onSelectionChange("allergies", selectedOptions)
         }
-        initialOptions={getAllergyOptions()}
+        initialOptions={getTypeOptions()}
       />
       <RangeSlider
         label="Calories"
@@ -93,6 +107,14 @@ export default function Filters({
         step={1}
         onRangeChange={(range) => handleDebouncedRangeChange("fat", range)}
         initialValues={filters.fat}
+      />
+      <DropdownCheckbox
+        options={getAllergyOptions()}
+        label="Allergies"
+        onSelectionChange={(selectedOptions) =>
+          onSelectionChange("allergies", selectedOptions)
+        }
+        initialOptions={getAllergyOptions()}
       />
     </div>
   );
