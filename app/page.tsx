@@ -144,7 +144,7 @@ function RestaurantBlogs({
       href={"https://get.macromapper.co/get-started"}
       className="flex flex-col items-start w-full px-2"
     >
-      <div className="min-w-[100px] sm:w-full h-[170px] rounded-t-2xl overflow-hidden">
+      <div className="min-w-[80px] sm:w-full h-[170px] rounded-t-2xl overflow-hidden">
         <Image
           src={imageSrc}
           alt="not found"
@@ -183,6 +183,12 @@ export default function Home() {
         breakpoint: 768,
         settings: {
           slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 550,
+        settings: {
+          slidesToShow: 2,
         },
       },
     ],
