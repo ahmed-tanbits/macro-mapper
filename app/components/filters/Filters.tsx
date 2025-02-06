@@ -63,7 +63,7 @@ export default function Filters({
   };
 
   return (
-    <div className="flex flex-wrap gap-0 md:gap-3 items-center justify-center w-full overflow-x-visible">
+    <div className="flex gap-0 md:gap-3 items-center justify-center w-full overflow-x-visible">
       <DropdownCheckbox
         options={getTypeOptions()}
         label="Type"
