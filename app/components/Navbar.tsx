@@ -167,9 +167,11 @@ export default function Navbar({}: Props) {
                   >
                     Log In
                   </button>
-                  <button className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md">
-                    Sign Up
-                  </button>
+                  <Link href="/auth/signup">
+                    <button className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md">
+                      Sign Up
+                    </button>
+                  </Link>
                 </div>
               )}
             </div>
@@ -268,7 +270,7 @@ export default function Navbar({}: Props) {
 
             <li>
               <Link
-                href=""
+                href="/auth/upgrade-to-premium"
                 className="flex items-center justify-center gap-1 w-full text-black border border-[#FFD200] bg-[#FFD200] font-medium rounded-lg py-3 text-center"
               >
                 <span>Unlock More With Premium</span>
