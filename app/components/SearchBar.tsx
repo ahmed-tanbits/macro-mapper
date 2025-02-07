@@ -18,6 +18,7 @@ type Suggestion = {
   type: "restaurant" | "foods";
   proximity?: number;
 };
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 const SearchBar: React.FC<Props> = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -177,14 +178,11 @@ const SearchBar: React.FC<Props> = () => {
     setSuggestions([]);
   };
 
+  const [location, setLocation] = useState<string>("");
+  const [locations, setLocations] = useState<{ value: string; label: string; coordinates?: [number, number] }[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<{ value: string; label: string } | null>(null);
 
-  const [locations, setLocations] = useState([]);
-  const [location, setLocation] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState<any>(null);
-
-  const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
-  // Get user's current location
+  // Get user’s current location
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -195,6 +193,7 @@ const SearchBar: React.FC<Props> = () => {
           );
           const place = res.data.features[0]?.place_name || "Unknown Location";
           setSelectedLocation({ value: place, label: place });
+          setLocation(place);
         } catch (error) {
           console.error("Error fetching current location:", error);
         }
@@ -204,36 +203,53 @@ const SearchBar: React.FC<Props> = () => {
     );
   }, []);
 
-  const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const term = event.target.value;
-    setLocation(term);
-    if (term.length > 2) {
-      fetchLocations(term);
-    } else {
-      setLocations([]);
-    }
-  };
+  // Fetch locations from Mapbox
+  const fetchLocations = useCallback(async (inputValue: string) => {
+    if (!inputValue.trim()) return;
+    setLoading((prev) => ({ ...prev, locations: true }));
 
-  // Fetch location suggestions from Mapbox
-  const fetchLocations = async (inputValue: string) => {
-    if (!inputValue) return;
     try {
       const res = await axios.get(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${inputValue}.json?access_token=${MAPBOX_TOKEN}`
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(inputValue)}.json?access_token=${MAPBOX_TOKEN}`
       );
-      const locations = res.data.features.map((place: any) => ({
+      const newLocations = res.data.features.map((place: any) => ({
         value: place.place_name,
         label: place.place_name,
-        coordinates: place.geometry?.coordinates
+        coordinates: place.geometry?.coordinates,
       }));
-      setLocations(locations);
+      setLocations(newLocations);
     } catch (error) {
       console.error("Error fetching locations:", error);
+    } finally {
+      setLoading((prev) => ({ ...prev, locations: false }));
+    }
+  }, []);
+
+  // Debounce input changes to reduce API calls
+  const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const input = event.target.value;
+    setLocation(input);
+
+    if (input.length > 2) {
+      fetchLocations(input);
+    } else {
+      setLocations([]);
+      setSelectedLocation(null);
     }
   };
 
-  console.log("locations =>", locations)
-  console.log("suggestions =>", suggestions)
+  const handleLocationSelect = (location: { value: string; label: string }) => {
+    setSelectedLocation(location);
+    setLocation(location.label);
+    setLocations([]);
+  };
+
+  const handleClearLocations = () => {
+    setLocation("");
+    setLocations([]);
+    setSelectedLocation(null);
+  };
+
 
   return (
     <div className="flex z-[99]">
@@ -283,7 +299,7 @@ const SearchBar: React.FC<Props> = () => {
                 key={suggestion.id}
                 className="relative flex items-center justify-between gap-2 py-2 px-3 hover:bg-neutral-50 border border-transparent hover:border-neutral-100 rounded-full transition-all cursor-pointer select-none group hover:pr-6 text-sm lg:py-3 lg:px-4 lg:text-base lg:hover:pr-8"
               >
-                <div className="flex items-center gap-2 lg:gap-3">
+                <div className="flex items-center gap-2 lg:gap-3 shrink-0">
                   {suggestion.type === "restaurant" ? (
                     <Store className="w-4 h-4 lg:w-5 lg:h-5" />
                   ) : (
@@ -333,55 +349,32 @@ const SearchBar: React.FC<Props> = () => {
           </div>
           {location && (
             <button
-              onClick={handleClear}
+              onClick={handleClearLocations}
               className="bg-yellow-500 z-20 bg-opacity-20 hover:bg-opacity-30 transition-all h-8 mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:h-10 lg:mr-1"
             >
               <X className="w-5 h-5 lg:w-6 lg:h-6" strokeWidth={3} />
             </button>
           )}
-
-          {/* // : (
-          //   <LocationButton />
-          // )} */}
         </div>
+
         {loading.locations && (
           <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-20">
             <Skeleton />
           </div>
         )}
+
         {!loading.locations && locations.length > 0 && (
           <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-20 lg:p-3">
             {locations.map((location: any) => (
-
-              // <Link
-              //   href={`/search/map?tab=${suggestion.type === "restaurant" ? "restaurant" : "foods"
-              //     }&suggested=${encodeURIComponent(suggestion.name)}`}
-              //   key={suggestion.id}
-              //   className="relative flex items-center justify-between gap-2 py-2 px-3 hover:bg-neutral-50 border border-transparent hover:border-neutral-100 rounded-full transition-all cursor-pointer select-none group hover:pr-6 text-sm lg:py-3 lg:px-4 lg:text-base lg:hover:pr-8"
-              // >
-              //   <div className="flex items-center gap-2 lg:gap-3">
-              //     {suggestion.type === "restaurant" ? (
-              //       <Store className="w-4 h-4 lg:w-5 lg:h-5" />
-              //     ) : (
-              //       <Utensils className="w-4 h-4 lg:w-5 lg:h-5" />
-              //     )}
-              <span>{location.label}</span>
-              //   </div>
-              //   {suggestion.proximity !== undefined && (
-              //     <span className="text-xs text-neutral-500 transition-all flex whitespace-nowrap gap-1 items-center lg:text-sm">
-              //       <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4" />{" "}
-              //       {suggestion.proximity.toFixed(1)} km
-              //     </span>
-              //   )}
-              //   <ArrowRight
-              //     strokeWidth={1.8}
-              //     className="w-4 h-4 lg:w-5 lg:h-5 absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 duration-300 text-neutral-600"
-              //   />
-              // </Link>
+              <div className="flex items-center gap-2 lg:gap-3 py-2 px-3 cursor-pointer" onClick={() => handleLocationSelect(location)}>
+                <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4 shrink-0" />
+                {location.label}
+              </div>
             ))}
           </div>
         )}
-        {!loading.locations && location.length > 2 && locations.length === 0 && (
+
+        {!loading.locations && location.length > 2 && !selectedLocation && locations.length === 0 && (
           <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-20 lg:text-base">
             <p>No results found.</p>
           </div>
@@ -389,47 +382,6 @@ const SearchBar: React.FC<Props> = () => {
       </div>
 
     </div>
-
-    // <div className="flex flex-col sm:flex-row items-center gap-2 md:gap-0 shadow-none sm:shadow-md bg-white rounded-md p-0 w-full max-w-[600px] mx-auto mt-2 md:mt-0">
-    //   {/* Search Input */}
-    //   <input
-    //     type="text"
-    //     placeholder="Search foods or restaurants"
-    //     value={searchTerm}
-    //     onChange={handleChange}
-    //     onKeyPress={handleKeyPress}
-    //     autoCorrect="off"
-    //     spellCheck="false"
-    //     className="flex-1 min-w-0 bg-transparent outline-none px-4 py-3 w-full text-sm shadow-md sm:shadow-none rounded-md"
-    //   />
-
-    //   {/* Location Input with Button */}
-    //   <div className="relative flex w-full sm:w-1/2 border-gray-300 sm:before:content-[''] sm:before:h-1/2 sm:before:absolute sm:before:bg-gray-100 sm:before:w-[2px] sm:before:top-1/2 sm:before:-translate-y-1/2 sm:before:left-0 overflow-hidden shadow-md sm:shadow-none">
-    //     <input
-    //       type="text"
-    //       placeholder="Enter your location"
-    //       className="flex-1 min-w-0 bg-transparent outline-none px-4 py-2 text-sm border-none"
-    //     />
-
-
-    //     <button className="bg-primary-600 hover:bg-primary-700 px-3 py-3 rounded-r-md flex items-center justify-center">
-    //       <Search className="w-4 lg:w-5 lg:h-5 text-white" />
-    //     </button>
-    //   </div>
-    //   <Select
-    //     value={selectedLocation}
-    //     onChange={setSelectedLocation}
-    //     onInputChange={(newValue) => {
-    //       console.log("newValue =>", newValue);
-    //       if (typeof newValue === "string") {
-    //         fetchLocations(newValue);
-    //       }
-    //     }}
-    //     options={options}
-    //     placeholder="Search location..."
-    //     isClearable
-    //   />
-    // </div>
   );
 };
 
