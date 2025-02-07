@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import BadgeList from "../restaurants/BadgeList";
+import RestaurantsSvg from "@/app/components/svgs/RestaurantsSvg";
+import FoodForkKnifeSvg from "@/app/components/svgs/FoodForkKnifeSvg";
+import FoodServingSvg from "@/app/components/svgs/FoodServingSvg";
 
 export interface MenuItem {
   prod_id: string;
@@ -149,6 +152,14 @@ const FoodItem: React.FC<Props> = ({
     return `${distance.toFixed(1)} km`;
   };
 
+  const cardCusinies = [
+    "🥗 Vegetarian",
+    "🍞 Gluten Free",
+    "🥜 Nut Traces",
+    "🥚 Egg Free",
+    "🥛 Dairy Free",
+  ];
+
   return (
     <div className="w-full rounded-xl shadow-md bg-white border-neutral-100 transition-all">
       <div className="relative group">
@@ -156,14 +167,20 @@ const FoodItem: React.FC<Props> = ({
           <div className="flex items-start justify-start flex-col gap-4 flex-1">
             <h2 className="text-lg font-semibold">{item.product_name}</h2>
             <div className="flex items-start justify-start flex-col text-neutral-500 font-normal gap-1.5">
-              <span className="text-sm flex justify-start items-center gap-1">
-                <Utensils size={16} />
+              <span className="text-sm text-[#0AC600] flex justify-start items-center gap-1">
+                <RestaurantsSvg color="#0AC600" width={14} height={14} />
+                {item.drink_or_food
+                  .toLowerCase()
+                  .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase())}
+              </span>
+              <span className="text-sm flex justify-start items-center gap-3">
+                <FoodForkKnifeSvg height={14} width={14} />
                 {item.category
                   .toLowerCase()
                   .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase())}
               </span>
-              <span className="text-sm flex justify-start items-center gap-1">
-                <HandPlatter size={16} />
+              <span className="text-sm flex justify-start items-center gap-3">
+                <FoodServingSvg height={14} width={14} />
                 {item.serving_size}
               </span>
 
@@ -175,13 +192,15 @@ const FoodItem: React.FC<Props> = ({
               )}
               {proximity !== undefined && (
                 <span
-                  className={`text-sm flex justify-start items-center gap-1 ${proximity < 1 ? 'text-primary-500' : ''}`}
+                  className={`text-sm flex justify-start items-center gap-1 ${
+                    proximity < 1 ? "text-primary-500" : ""
+                  }`}
                 >
                   <MapPin className="text-neutral-500" size={16} />
-                  <span className="text-neutral-500">
-                    Proximity:
+                  <span className="text-neutral-500">Proximity:</span>
+                  <span className="font-medium">
+                    {formatDistance(proximity)}
                   </span>
-                  <span className="font-medium">{formatDistance(proximity)}</span>
                 </span>
               )}
             </div>
@@ -201,10 +220,47 @@ const FoodItem: React.FC<Props> = ({
             <div className="absolute inset-0 border border-black/10 rounded-xl pointer-events-none"></div>
           </div>
         </div>
+        <div className="w-full overflow-hidden px-3 mt-1">
+          <ul className="flex gap-1 items-center w-full overflow-x-auto whitespace-nowrap">
+            {cardCusinies.map((value, index) => (
+              <li
+                className={`text-[12px] px-2 rounded-full py-1 font-semibold ${
+                  index === 2 ? "bg-[#f2e4bd]" : "bg-[#bdf2cc]"
+                }`}
+                key={index}
+              >
+                {value}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {/* <div className="w-full overflow-hidden px-3">
+          <ul className="flex gap-1 items-center w-full overflow-x-auto whitespace-nowrap">
+            {[
+              "is_dairy_free",
+              "is_egg_free",
+              "is_gluten_free",
+              "is_nut_free",
+              "is_sesame_free",
+              "is_shell_fish_free",
+              "is_soy_free",
+              "is_sulfite_free",
+              "is_vegan",
+              "is_vegetarian",
+            ].map((key) => (
+              <li
+                key={key}
+                className="text-[12px] px-2 rounded-full py-1 font-semibold"
+              >
+                {item[key]}
+              </li>
+            ))}
+          </ul>
+        </div> */}
+
         <div className="p-4 pt-2 pb-2 relative z-10">
           <BadgeList products={[item]} />
         </div>
-
         <button onClick={() => onHighlightLocations(item.rest_id)}>
           <div className="absolute inset-0 bg-neutral-50 rounded-t-xl bg-opacity-20 backdrop-blur-sm hidden lg:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
             <div className="relative flex items-center bg-white border border-neutral-100 text-neutral-900 px-4 py-2 rounded-full shadow-lg transition-all cursor-pointer select-none whitespace-nowrap group-hover:pr-8">

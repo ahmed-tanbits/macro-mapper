@@ -11,7 +11,7 @@ const config: Config = {
       screens: {
         "1200": "1200px",
         "992": "992px",
-        "425": "425px",
+        "439": "439px",
       },
       colors: {
         primary: {

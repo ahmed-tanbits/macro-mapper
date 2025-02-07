@@ -1,58 +1,58 @@
 "use client";
-import { ChefHat, UtensilsCrossed } from "lucide-react";
 import React from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import RestaurantsSvg from "@/app/components/svgs/RestaurantsSvg";
+import FoodsSvg from "@/app/components/svgs/FoodsSvg";
 
 const Tabs: React.FC = () => {
   const searchParams = useSearchParams();
-  const tab = searchParams.get("tab") || "foods";
-  const activeTab = tab.includes("foods") ? "Foods" : "Restaurants";
+  const tab = searchParams.get("tab") || "foods"; 
+  const activeTab = tab === "foods" ? "Foods" : "Restaurants";
 
   const currentParams = new URLSearchParams(searchParams.toString());
   currentParams.delete("tab");
 
-  const baseUrl = window.location.pathname;
+  const baseUrl = typeof window !== "undefined" ? window.location.pathname : "";
 
   return (
-    <div className="border-b border-neutral-200 border-opacity-50">
-      <ul className="flex justify-center -mb-px text-sm font-medium text-center text-neutral-500">
+    <div className="border-b border-[#E8E8E8] border-opacity-50">
+      <ul className="flex justify-center text-sm font-medium text-center text-neutral-500 pt-2">
+        {/* Restaurants Tab */}
         <li className="mr-2">
           <Link
             href={`${baseUrl}?tab=restaurants&${currentParams.toString()}`}
-            className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg group ${
+            className={`inline-flex items-center justify-center py-4 px-5 border-b-2 rounded-t-lg group ${
               activeTab === "Restaurants"
-                ? "text-neutral-900 border-black"
-                : "border-transparent hover:text-neutral-600 hover:border-neutral-300"
+                ? "text-[#0AC600] border-[#0AC600]"
+                : "text-[#2D2E2F] border-transparent hover:text-neutral-700 hover:border-neutral-300"
             }`}
           >
-            <ChefHat
-              className={`w-5 h-5 mr-2 ${
-                activeTab === "Restaurants"
-                  ? "text-black"
-                  : "text-neutral-400 group-hover:text-neutral-500"
-              }`}
+            <RestaurantsSvg
+              color={activeTab === "Restaurants" ? "#0AC600" : "#2D2E2F"}
+              height={22}
+              width={22}
             />
-            Restaurants
+            <span className="ml-2">Restaurants</span>
           </Link>
         </li>
+
+        {/* Foods Tab */}
         <li className="mr-2">
           <Link
             href={`${baseUrl}?tab=foods&${currentParams.toString()}`}
-            className={`inline-flex items-center justify-center p-4 border-b-2 rounded-t-lg group ${
+            className={`inline-flex items-center justify-center py-4 px-5 border-b-2 rounded-t-lg group ${
               activeTab === "Foods"
-                ? "text-neutral-900 border-black"
-                : "border-transparent hover:text-neutral-600 hover:border-neutral-300"
+                ? "text-[#0AC600] border-[#0AC600]"
+                : "text-[#2D2E2F] border-transparent hover:text-neutral-700 hover:border-neutral-300"
             }`}
           >
-            <UtensilsCrossed
-              className={`w-5 h-5 mr-2 ${
-                activeTab === "Foods"
-                  ? "text-black"
-                  : "text-neutral-400 group-hover:text-neutral-500"
-              }`}
+            <FoodsSvg
+              color={activeTab === "Foods" ? "#0AC600" : "#2D2E2F"}
+              height={22}
+              width={22}
             />
-            Foods
+            <span className="ml-2">Foods</span>
           </Link>
         </li>
       </ul>
