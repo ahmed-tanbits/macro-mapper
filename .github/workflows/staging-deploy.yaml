@@ -1,0 +1,47 @@
+name: Macro-Mapper Build/Deploy Staging
+
+on:
+  push:
+    branches:
+      - staging # Trigger only on changes pushed to the main branch
+
+env:
+  SSH_HOST: 13.212.29.157
+  SSH_USERNAME: root
+  SSH_PRIVATE_KEY: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACAzxMOL9RF6TswK+oUHs6VfnTuFM8nAhLWOzXmJehcf3QAAAJhY3N0lWNzd
+    JQAAAAtzc2gtZWQyNTUxOQAAACAzxMOL9RF6TswK+oUHs6VfnTuFM8nAhLWOzXmJehcf3Q
+    AAAEBFxmznSk527C+LZySavpm0r96ZvJFsJR7Qw9XaOWuLjDPEw4v1EXpOzAr6hQezpV+d
+    O4UzycCEtY7NeYl6Fx/dAAAAFHJvb3RAaXAtMTcyLTMxLTE0LTE2AQ==
+    -----END OPENSSH PRIVATE KEY-----
+permissions:
+  contents: read
+
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: SSH Configuration
+      run: |
+        mkdir -p ~/.ssh
+        echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${SSH_HOST} >> ~/.ssh/known_hosts
+
+    - name: Deploy Nodejs backend on Server
+      run: |
+        ssh ${SSH_USERNAME}@${SSH_HOST} << 'EOF'
+          cd /var/www/macro-mapper/macro-mapper
+          git pull
+          npm run build
+          pm2 delete Macro-Mapper || true
+          pm2 start npm --name "Macro-Mapper" -- start -- --port=3100
+          pm2 save
+        EOF
