@@ -14,7 +14,7 @@ type Props = {};
 
 export default function Navbar({}: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -150,26 +150,32 @@ export default function Navbar({}: Props) {
                     className="rounded-full"
                   >
                     <span>
+                      <Link href="/auth/user-profile"> 
                       <Image
                         src="/usericon.png"
                         width={32}
                         height={32}
                         alt="macromapper logo"
                       />
+                      </Link>
                     </span>
                   </button>
                 </div>
               ) : (
                 <div className="hidden md:flex gap-2">
+                  <Link href="/auth/login">
                   <button
                     onClick={() => setIsAuthenticated(!isAuthenticated)}
                     className="text-sm font-medium text-black bg-white-600 py-2 px-3 border border-[#CBCBCB] rounded-md"
                   >
                     Log In
                   </button>
-                  <button className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md">
-                    Sign Up
-                  </button>
+                  </Link>
+                  <Link href="/auth/signup">
+                    <button className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md">
+                      Sign Up
+                    </button>
+                  </Link>
                 </div>
               )}
             </div>
@@ -248,7 +254,7 @@ export default function Navbar({}: Props) {
               <>
                 <li>
                   <Link
-                    href=""
+                    href="/auth/login"
                     onClick={() => setIsAuthenticated(true)}
                     className="block w-full text-black border border-[#CBCBCB] bg-[#f8f8f8] font-medium rounded-lg py-3 text-center"
                   >
@@ -257,7 +263,7 @@ export default function Navbar({}: Props) {
                 </li>
                 <li>
                   <Link
-                    href=""
+                    href="/auth/signup"
                     className="block w-full text-white border border-[#0AC600] bg-[#0AC600] font-medium rounded-lg py-3 text-center"
                   >
                     Sign Up
