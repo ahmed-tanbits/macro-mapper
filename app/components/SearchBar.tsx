@@ -275,6 +275,7 @@ const SearchBar: React.FC<Props> = () => {
     setSearchTerm(suggestion?.name);
     setSuggestions([]);
   };
+  
 
   return (
     <div className="z-[99] w-full">
