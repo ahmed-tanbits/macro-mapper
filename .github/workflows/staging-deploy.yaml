@@ -40,6 +40,7 @@ jobs:
         ssh ${SSH_USERNAME}@${SSH_HOST} << 'EOF'
           cd /var/www/macro-mapper/macro-mapper
           git pull
+          npm install
           npm run build
           pm2 delete Macro-Mapper || true
           pm2 start npm --name "Macro-Mapper" -- start -- --port=3100
