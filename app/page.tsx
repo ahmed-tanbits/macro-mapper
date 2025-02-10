@@ -144,19 +144,20 @@ function RestaurantBlogs({
       href={"https://get.macromapper.co/get-started"}
       className="flex flex-col items-start w-full px-2"
     >
-      <div className="min-w-[80px] w-full h-[170px] rounded-t-2xl overflow-hidden">
+      <div className="min-w-[80px] w-full h-[120px] sm:h-[170px] rounded-t-2xl overflow-hidden">
         <Image
           src={imageSrc}
           alt="not found"
-          width={200}
-          height={200}
-          className="relative rounded-t-2xl object-cover w-full h-full"
+          objectFit="fill"
+          width={100}
+          height={170}
+          className="relative rounded-t-2xl object-cover w-full h-[120px] sm:h-[170px]"
         />
       </div>
-      <span className="absolute top-4 ms-6 bg-[#00CF3A] text-white text-[12px] px-3 py-[3px] rounded-xl">
+      <span className="absolute top-2 sm:top-4 ms-2 sm:ms-6 bg-[#00CF3A] text-white text-[12px] px-3 py-[3px] rounded-xl">
         {active}
       </span>
-      <span className="bg-[#F8F8F8] text-[10px] sm:text-sm text-neutral-500 px-4 py-2 h-[60px] w-full rounded-b-2xl">
+      <span className="bg-[#F8F8F8] text-[10px] sm:text-sm text-neutral-500 px-4 py-2 h-[75px] md:h-[70px] w-full rounded-b-2xl">
         {para}
       </span>
     </Link>
@@ -196,7 +197,7 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
+      <Navbar showFilters={true} />
       <main className="relative">
         {/* Popular Restaurants */}
         <section className="w-full mt-16 max-w-screen-xl px-4 lg:px-16 xl:px-5 mx-auto">

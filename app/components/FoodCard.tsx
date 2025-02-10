@@ -38,7 +38,7 @@ function FoodCard() {
               className="rounded-md w-full"
             />
             <div
-              className="flex flex-row xs:flex-col items-center justify-between p-3 w-full absolute bottom-0 left-0"
+              className="flex flex-col 425:flex-row items-start 425:items-center gap-3 425:gap-0 justify-between p-3 w-full absolute bottom-0 left-0"
               style={{ backgroundColor: `${value.bg}` }}
             >
               <div className="text-[#2B2B2B] md:h-[70px]">
@@ -49,7 +49,7 @@ function FoodCard() {
               </div>
               <Link
                 href={value.link}
-                className="inline-block bg-[#2D2B1E] text-white w-[150px] py-2 rounded-full transition text-center"
+                className="inline-block bg-[#2D2B1E] text-white w-full 425:w-[150px] py-2 rounded-full transition text-center"
               >
                 {value.btnText}
               </Link>

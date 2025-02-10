@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronRight, RotateCcw, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import { Range, getTrackBackground } from "react-range";
@@ -11,6 +12,7 @@ type RangeSliderProps = {
   step: number;
   onRangeChange: (range: [number, number]) => void;
   initialValues?: [number, number];
+  isAuthenticated?: boolean;
 };
 
 const RangeSlider: React.FC<RangeSliderProps> = ({
@@ -21,6 +23,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
   step,
   onRangeChange,
   initialValues,
+  isAuthenticated,
 }) => {
   const [values, setValues] = useState<[number, number]>(
     initialValues || [min, max]
@@ -58,7 +61,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
     setValues(initialValues);
     onRangeChange(initialValues);
   };
-`x`
+  `x`;
   const closeDropdown = () => setIsOpen(false);
 
   return (
@@ -80,18 +83,21 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
         >
           {label}
         </span>
-
-        <ChevronDown
-          className={`h-4 w-4 transition-transform duration-300 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          } ${
-            isOpen || values.some((value) => value !== min && value !== max)
-              ? "text-primary-500"
-              : ""
-          }`}
-        />
+        {isAuthenticated ? (
+          <ChevronDown
+            className={`h-4 w-4 transition-transform duration-300 ${
+              isOpen ? "rotate-180" : "rotate-0"
+            } ${
+              isOpen || values.some((value) => value !== min && value !== max)
+                ? "text-primary-500"
+                : ""
+            }`}
+          />
+        ) : (
+          <Image src="/lock-icon.png" alt="lock-icon" height={12} width={12} />
+        )}
       </button>
-      {isOpen && (
+      {isAuthenticated && isOpen && (
         <div className="absolute left-0 mt-3 z-50 bg-white border overflow-clip border-neutral-100 shadow-md shadow-gray-300 rounded-xl rounded-tl-none w-60 lg:w-80 before:absolute before:content-[''] before:top-0 before:left-0 before:h-[3px] before:w-[140px] before:bg-[#00CF3A]">
           <div className="px-6 pt-5 pb-1 flex justify-between font-medium text-sm">
             <span>
