@@ -276,7 +276,6 @@ const SearchBar: React.FC<Props> = () => {
     setSuggestions([]);
   };
   
-
   return (
     <div className="z-[99] w-full">
       <form onSubmit={navigateToRoute}>
