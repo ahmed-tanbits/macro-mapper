@@ -200,7 +200,7 @@ export default function Home() {
       <Navbar showFilters={true} />
       <main className="relative">
         {/* Popular Restaurants */}
-        <section className="w-full mt-16 max-w-screen-xl px-4 lg:px-16 xl:px-5 mx-auto">
+        <section className="w-full mt-8 md:mt-16 max-w-screen-xl px-4 lg:px-16 xl:px-5 mx-auto">
           <h2 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-semibold text-neutral-700">
             Popular Restaurants
           </h2>
@@ -213,7 +213,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="w-full mt-16 max-w-screen-xl px-4 lg:px-16 xl:px-5 mx-auto">
+        <section className="w-full mt-8 md:mt-16 max-w-screen-xl px-4 lg:px-16 xl:px-5 mx-auto">
           <h2 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-semibold text-neutral-700">
             Recently Listed
           </h2>
