@@ -188,13 +188,15 @@ export default function Navbar({ showFilters }: Props) {
               <X size={24} />
             </button>
             <h2>
-              <Image
-                src={"/logo.png"}
-                width={250}
-                height={100}
-                alt="macromapper logo"
-                className="w-48 md:w-[250px]"
-              />
+              <Link href="/">
+                <Image
+                  src="/logo.png"
+                  width={240}
+                  height={100}
+                  alt="macromapper logo"
+                  className="w-[160px] md:w-[180px]"
+                />
+              </Link>
             </h2>
           </div>
           <div className="mt-4 text-lg flex flex-col mx-4 gap-3">
