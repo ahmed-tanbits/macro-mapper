@@ -12,6 +12,7 @@ const config: Config = {
         "1200": "1200px",
         "992": "992px",
         "425": "425px",
+        "350": "350px",
       },
       colors: {
         primary: {

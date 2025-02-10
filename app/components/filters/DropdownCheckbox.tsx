@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import CustomCheckbox from "@/app/components/filters/CustomCheckbox";
 import { ChevronDown, ChevronRight, RotateCcw, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 type CheckboxOption = {
   id: number;
@@ -15,12 +16,14 @@ type DropdownCheckboxProps = {
   label: string;
   onSelectionChange: (selectedOptions: CheckboxOption[]) => void;
   initialOptions?: CheckboxOption[];
+  isAuthenticated?: boolean;
 };
 
 const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
   options: initialOptions = [], // Default to an empty array if not provided
   label,
   onSelectionChange,
+  isAuthenticated,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -46,7 +49,11 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
     setOptions(initialOptions);
   }, [initialOptions]);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => {
+    if (isAuthenticated) {
+      setIsOpen(!isOpen);
+    }
+  };
 
   const handleCheckboxChange = (id: number) => {
     const newOptions = options.map((option) =>
@@ -87,17 +94,21 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
           {label}
         </span>
 
-        <ChevronDown
-          className={`h-4 w-4 transition-transform duration-300 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          } ${
-            isOpen || options.some((opt) => opt.checked)
-              ? "text-primary-500"
-              : ""
-          }`}
-        />
+        {isAuthenticated ? (
+          <ChevronDown
+            className={`h-4 w-4 transition-transform duration-300 ${
+              isOpen ? "rotate-180" : "rotate-0"
+            } ${
+              isOpen || options.some((opt) => opt.checked)
+                ? "text-primary-500"
+                : ""
+            }`}
+          />
+        ) : (
+          <Image src="/lock-icon.png" alt="lock-icon" height={12} width={12} />
+        )}
       </button>
-      {isOpen && (
+      {isAuthenticated && isOpen && (
         <div className="absolute left-1/2 lg:left-0 -translate-x-1/3 lg:-translate-x-0 mt-3 z-50 bg-white border overflow-clip border-neutral-100 shadow-md shadow-gray-300 rounded-xl rounded-tl-none w-60 lg:w-80 before:absolute before:content-[''] before:top-0 before:left-0 before:h-[3px] before:w-[140px] before:bg-[#00CF3A]">
           <div className="overflow-auto max-h-40 px-2 py-4">
             {options.map((option) => (

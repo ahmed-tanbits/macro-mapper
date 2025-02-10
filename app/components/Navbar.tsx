@@ -10,9 +10,9 @@ import SearchBar from "./SearchBar";
 import usericon from "./usericon.png";
 import { Crown } from "lucide-react";
 
-type Props = {};
+type Props = { showFilters?: boolean };
 
-export default function Navbar({}: Props) {
+export default function Navbar({ showFilters }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -65,123 +65,106 @@ export default function Navbar({}: Props) {
 
   return (
     <>
-      {/* <nav className="flex w-full justify-between items-center h-16 px-4 md:px-8">
-        <div className="flex items-center gap-4">
-          <button onClick={toggleSidebar} className="md:hidden p-1">
-            <Menu size={24} />
-          </button>
-          <Link href={"/"}>
-            <Image
-              src={"/logo.png"}
-              width={350}
-              height={200}
-              alt="macromapper logo"
-              className="w-40 md:w-[250px]"
-            />
-          </Link>
-        </div>
-        <div className="flex items-center justify-center gap-6 text-neutral-600 font-normal">
-          <div className="hidden md:flex items-center justify-center  gap-6">
-            <Link
-              href={"https://get.macromapper.co/get-started"}
-              target="_blank"
-              className="py-2 px-4 cursor-pointer select-none hover:bg-neutral-100 rounded-xl"
-            >
-              Get Listed
-            </Link>
-            <Link
-              href={"https://get.macromapper.co/platform"}
-              target="_blank"
-              className="py-2 px-4 cursor-pointer select-none hover:bg-neutral-100 rounded-xl"
-            >
-              Platform
-            </Link>
-          </div>
-        </div>
-      </nav> */}
-
       <nav className="flex flex-col 1200:flex-row w-full justify-between items-center sm:items-start px-4 md:px-8 border-b pt-4 pb-3">
-        <div className="flex justify-between items-start w-full">
-          <div className="flex gap-12 items-start">
+        <div className="grid items-center 1200:items-start grid-cols-12 gap-0 1200:gap-10 w-full">
+          <div
+            className={`${
+              showFilters
+                ? "col-span-9 md:col-span-4 1200:col-span-2 mb-2 1200:mb-0"
+                : "col-span-4"
+            } `}
+          >
             {/* logo */}
-            <div className="flex items-center gap-4 mb-3">
-              <button
-                onClick={toggleSidebar}
-                className="absolute top-4 right-14 md:hidden p-1"
-              >
-                <Menu size={24} />
-              </button>
-              <Link href="/">
-                <Image
-                  src="/logo.png"
-                  width={240}
-                  height={100}
-                  alt="macromapper logo"
-                  className="w-[200px] md:w-[240px]"
-                />
-              </Link>
-            </div>
-
-            {/* search-bar and filters */}
-            <div className="hidden 1200:flex flex-col items-center gap-2 w-full max-w-[600px]">
-              <SearchBar />
-              <FiltersSection />
-            </div>
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                width={240}
+                height={100}
+                alt="macromapper logo"
+                className="w-[200px] md:w-[240px]"
+              />
+            </Link>
           </div>
+
+          {/* search-bar and filters desktop screen */}
+          {showFilters && (
+            <div className="hidden 1200:block 1200:col-span-6">
+              <div className="hidden 1200:flex flex-col items-center gap-2 w-full max-w-[600px]">
+                <SearchBar />
+                <FiltersSection isAuthenticated={isAuthenticated} />
+              </div>
+            </div>
+          )}
 
           {/* authentication menu */}
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex gap-4 text-neutral-600 font-normal">
-              <Link href="#" className="text-sm font-medium text-black">
-                List Your Menu
-              </Link>
-              <Link href="#" className="text-sm font-medium text-black ">
-                Help
-              </Link>
-            </div>
-            <div className="gap-2 items-center flex">
-              {isAuthenticated ? (
-                <div className="border-0 md:border-l  pl-4 flex items-center gap-2">
-                  <span className="hidden md:block">
-                    <Menu size={24} />
-                  </span>
-                  <button
-                    onClick={() => setIsAuthenticated(!isAuthenticated)}
-                    className="rounded-full"
-                  >
-                    <span>
-                      <Image
-                        src="/usericon.png"
-                        width={32}
-                        height={32}
-                        alt="macromapper logo"
-                      />
-                    </span>
-                  </button>
-                </div>
-              ) : (
-                <div className="hidden md:flex gap-2">
-                  <button
-                    onClick={() => setIsAuthenticated(!isAuthenticated)}
-                    className="text-sm font-medium text-black bg-white-600 py-2 px-3 border border-[#CBCBCB] rounded-md"
-                  >
-                    Log In
-                  </button>
-                  <Link href="/auth/signup">
-                    <button className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md">
-                      Sign Up
+          <div
+            className={`${
+              showFilters
+                ? "col-span-3 md:col-span-8 1200:col-span-4 ms-auto mb-2 1200:mb-0"
+                : "col-span-8 ms-auto"
+            } `}
+          >
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex gap-3 text-neutral-600 font-normal border-0 md:border-r pe-4">
+                <Link href="#" className="text-sm font-medium text-black">
+                  List Your Menu
+                </Link>
+                <Link href="#" className="text-sm font-medium text-black ">
+                  Help
+                </Link>
+              </div>
+              <div className="gap-2 items-center flex">
+                <button
+                  onClick={toggleSidebar}
+                  className="block md:hidden mt-1 425:mt-0"
+                >
+                  <Menu size={24} />
+                </button>
+                {isAuthenticated ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setIsAuthenticated(!isAuthenticated)}
+                      className="rounded-full"
+                    >
+                      <span>
+                        <Image
+                          src="/usericon.png"
+                          width={32}
+                          height={32}
+                          alt="macromapper logo"
+                        />
+                      </span>
                     </button>
-                  </Link>
-                </div>
-              )}
+                  </div>
+                ) : (
+                  <div className="hidden md:flex gap-2">
+                    <Link
+                      href=""
+                      onClick={() => setIsAuthenticated(!isAuthenticated)}
+                      className="text-sm font-medium text-black bg-white-600 py-2 px-3 border border-[#CBCBCB] rounded-md"
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      href="/auth/signup"
+                      className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex 1200:hidden flex-col justify-between gap-2 w-full mx-auto">
-          <SearchBar />
-          <FiltersSection />
-        </div>
+        {/* search-bar and filters for mobile screen */}
+        {showFilters && (
+          <div className="flex 1200:hidden flex-col justify-between gap-2 w-full mx-auto">
+            <SearchBar />
+            <FiltersSection isAuthenticated={isAuthenticated} />
+          </div>
+        )}
       </nav>
 
       {/* mobile sidebar */}
@@ -305,7 +288,7 @@ export default function Navbar({}: Props) {
   );
 }
 
-const FiltersSection = () => {
+const FiltersSection = ({ isAuthenticated }: { isAuthenticated?: boolean }) => {
   const { filters, syncFilters } = useFilterContext();
 
   const handleSelectionChange = (type: string, selectedOptions: any) => {
@@ -324,6 +307,7 @@ const FiltersSection = () => {
         filters={filters}
         onSelectionChange={handleSelectionChange}
         onRangeChange={handleRangeChange}
+        isAuthenticated={isAuthenticated}
       />
     </div>
   );
