@@ -252,20 +252,20 @@ const SearchBar: React.FC<Props> = () => {
 
 
   return (
-    <div className="flex z-[99]">
-      <div className="relative w-[300px] max-w-xl mx-auto w-full">
+    <div className="z-[99] w-full">
+      <div className="flex w-full bg-white rounded-lg shadow-none sm:shadow-md max-w-[600px]">
+      <div className="flex relative max-w-xl mx-auto w-full">
         <div
-          className="bg-white overflow-hidden h-12 p-1 relative w-full border border-neutral-100 lg:border-transparent flex items-center justify-between shadow-lg rounded-full ring-primary-500 focus-within:ring-2 transition-all lg:h-16 lg:p-2"
+          className=" bg-transparent overflow-hidden px-4 py-2 relative w-full flex items-center justify-between rounded-sm"
           style={{ transition: "box-shadow 0.3s ease-in-out" }}
         >
-          <div className="ml-2 flex justify-center items-center gap-2 lg:gap-3">
-            <Search className="w-4 h-4 lg:w-5 lg:h-5" />
+          <div className="ml-2 flex w-full justify-center items-center gap-2 lg:gap-3">
             <input
               type="text"
               value={searchTerm}
               onChange={handleChange}
               onKeyPress={handleKeyPress}
-              className="w-full h-full absolute z-10 right-0 pl-10 bg-transparent outline-none text-sm lg:text-base lg:pl-12"
+              className="w-full h-full bg-transparent outline-none text-sm"
               placeholder="Search by location or food..."
               autoCorrect="off"
               spellCheck="false"
@@ -274,9 +274,9 @@ const SearchBar: React.FC<Props> = () => {
           {searchTerm && (
             <button
               onClick={handleClear}
-              className="bg-yellow-500 z-20 bg-opacity-20 hover:bg-opacity-30 transition-all h-8 mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:h-10 lg:mr-1"
+              className="bg-yellow-500 p-1 z-20 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
             >
-              <X className="w-5 h-5 lg:w-6 lg:h-6" strokeWidth={3} />
+              <X className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={3} />
             </button>
           )
             // : (
@@ -285,13 +285,13 @@ const SearchBar: React.FC<Props> = () => {
           }
         </div>
         {loading.restaurants && (
-          <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-20">
+          <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14">
             <Skeleton />
           </div>
         )}
 
         {!loading.restaurants && suggestions.length > 0 && (
-          <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-20 lg:p-3">
+          <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3">
             {suggestions.map((suggestion) => (
               <Link
                 href={`/search/map?tab=${suggestion.type === "restaurant" ? "restaurant" : "foods"
@@ -301,9 +301,9 @@ const SearchBar: React.FC<Props> = () => {
               >
                 <div className="flex items-center gap-2 lg:gap-3 shrink-0">
                   {suggestion.type === "restaurant" ? (
-                    <Store className="w-4 h-4 lg:w-5 lg:h-5" />
+                    <Store className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                   ) : (
-                    <Utensils className="w-4 h-4 lg:w-5 lg:h-5" />
+                    <Utensils className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                   )}
                   <span>{suggestion.name}</span>
                 </div>
@@ -323,25 +323,24 @@ const SearchBar: React.FC<Props> = () => {
         )}
 
         {!loading.restaurants && searchTerm.length > 2 && suggestions.length === 0 && (
-          <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-20 lg:text-base">
+          <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base">
             <p>No results found.</p>
           </div>
         )}
       </div>
 
-      <div className="relative w-[300px] max-w-xl mx-auto w-full">
+      <div className="flex relative max-w-xl mx-auto w-full sm:before:content-[''] sm:before:h-1/2 sm:before:absolute sm:before:bg-gray-100 sm:before:w-[2px] sm:before:top-1/2 sm:before:-translate-y-1/2 sm:before:left-0">
         <div
-          className="bg-white overflow-hidden h-12 p-1 relative w-full border border-neutral-100 lg:border-transparent flex items-center justify-between shadow-lg rounded-full ring-primary-500 focus-within:ring-2 transition-all lg:h-16 lg:p-2"
+          className="bg-transparent overflow-hidden px-4 py-2 relative w-full flex items-center justify-between"
           style={{ transition: "box-shadow 0.3s ease-in-out" }}
         >
-          <div className="ml-2 flex justify-center items-center gap-2 lg:gap-3">
-            <Search className="w-4 h-4 lg:w-5 lg:h-5" />
+          <div className="ml-2 w-full flex justify-center items-center gap-2 lg:gap-3">
             <input
               type="text"
               value={location}
               onChange={handleLocationChange}
               // onKeyPress={handleKeyPress}
-              className="w-full h-full absolute z-10 right-0 pl-10 bg-transparent outline-none text-sm lg:text-base lg:pl-12"
+              className="w-full h-full bg-transparent outline-none text-sm"
               placeholder="Search by location or food..."
               autoCorrect="off"
               spellCheck="false"
@@ -350,21 +349,21 @@ const SearchBar: React.FC<Props> = () => {
           {location && (
             <button
               onClick={handleClearLocations}
-              className="bg-yellow-500 z-20 bg-opacity-20 hover:bg-opacity-30 transition-all h-8 mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:h-10 lg:mr-1"
+              className="bg-yellow-500 z-20 p-1 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
             >
-              <X className="w-5 h-5 lg:w-6 lg:h-6" strokeWidth={3} />
+              <X className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={3} />
             </button>
           )}
         </div>
 
         {loading.locations && (
-          <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-20">
+          <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14">
             <Skeleton />
           </div>
         )}
 
         {!loading.locations && locations.length > 0 && (
-          <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-20 lg:p-3">
+          <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3">
             {locations.map((location: any) => (
               <div className="flex items-center gap-2 lg:gap-3 py-2 px-3 cursor-pointer" onClick={() => handleLocationSelect(location)}>
                 <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4 shrink-0" />
@@ -375,12 +374,17 @@ const SearchBar: React.FC<Props> = () => {
         )}
 
         {!loading.locations && location.length > 2 && !selectedLocation && locations.length === 0 && (
-          <div className="absolute top-16 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-20 lg:text-base">
+          <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base">
             <p>No results found.</p>
           </div>
         )}
       </div>
 
+      <button className="bg-primary-600 hover:bg-primary-700 px-3 py-3 rounded-r-md flex items-center justify-center">
+         <Search className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
+      </button>
+
+      </div>
     </div>
   );
 };
