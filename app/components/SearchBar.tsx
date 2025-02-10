@@ -162,6 +162,7 @@ const SearchBar: React.FC<Props> = () => {
       fetchSuggestions(term);
     } else {
       setSuggestions([]);
+      setSelectedSuggestion(null);
     }
   };
 
@@ -176,8 +177,16 @@ const SearchBar: React.FC<Props> = () => {
     }
   };
 
+  const navigateToRoute = (event: any) => {
+    event.preventDefault();
+    router.push(
+      `/search/map?tab=foods&suggested=${encodeURIComponent(searchTerm)}`
+    );
+  };
+
   const handleClear = () => {
     setSearchTerm("");
+    setSelectedSuggestion(null);
     setSuggestions([]);
   };
 
@@ -189,6 +198,7 @@ const SearchBar: React.FC<Props> = () => {
     value: string;
     label: string;
   } | null>(null);
+  const [selectedSuggetion, setSelectedSuggestion] = useState<any>();
 
   // Get user’s current location
   useEffect(() => {
@@ -260,149 +270,166 @@ const SearchBar: React.FC<Props> = () => {
     setSelectedLocation(null);
   };
 
+  const handleSuggestionSelect = (suggestion: any) => {
+    setSelectedSuggestion(suggestion);
+    setSearchTerm(suggestion?.name);
+    setSuggestions([]);
+  };
+
   return (
     <div className="z-[99] w-full">
-      <div className="flex w-full bg-white rounded-lg shadow-none sm:shadow-md max-w-[600px]">
-        <div className="flex relative max-w-xl mx-auto w-full">
-          <div
-            className=" bg-transparent overflow-hidden px-4 py-2 relative w-full flex items-center justify-between rounded-sm"
-            style={{ transition: "box-shadow 0.3s ease-in-out" }}
-          >
-            <div className="ml-2 flex w-full justify-center items-center gap-2 lg:gap-3">
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={handleChange}
-                onKeyPress={handleKeyPress}
-                className="w-full h-full bg-transparent outline-none text-sm"
-                placeholder="Search by location or food..."
-                autoCorrect="off"
-                spellCheck="false"
-              />
+      <form onSubmit={navigateToRoute}>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 mx-auto w-full bg-white rounded-lg shadow-none sm:shadow-md max-w-[600px]">
+          <div className="flex relative max-w-xl mx-auto w-full shadow-md sm:shadow-none rounded-lg sm:rounded-none">
+            <div
+              className="bg-transparent overflow-hidden px-4 py-2 relative w-full flex items-center justify-between rounded-sm"
+              style={{ transition: "box-shadow 0.3s ease-in-out" }}
+            >
+              <div className="ml-2 flex w-full justify-center items-center gap-2 lg:gap-3">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleChange}
+                  onKeyPress={handleKeyPress}
+                  className="w-full h-full bg-transparent outline-none text-sm py-2 1200:py-0"
+                  placeholder="Search by location or food..."
+                  autoCorrect="off"
+                  spellCheck="false"
+                />
+              </div>
+              {
+                searchTerm && (
+                  <button
+                    onClick={handleClear}
+                    className="bg-yellow-500 p-1 z-10 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
+                  >
+                    <X className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={3} />
+                  </button>
+                )
+                // : (
+                //   <LocationButton />
+                // )
+              }
             </div>
-            {
-              searchTerm && (
-                <button
-                  onClick={handleClear}
-                  className="bg-yellow-500 p-1 z-20 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
-                >
-                  <X className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={3} />
-                </button>
-              )
-              // : (
-              //   <LocationButton />
-              // )
-            }
-          </div>
-          {loading.restaurants && (
-            <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14">
-              <Skeleton />
-            </div>
-          )}
+            {loading.restaurants && (
+              <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14 z-10">
+                <Skeleton />
+              </div>
+            )}
 
-          {!loading.restaurants && suggestions.length > 0 && (
-            <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3">
-              {suggestions.map((suggestion) => (
-                <Link
-                  href={`/search/map?tab=${
-                    suggestion.type === "restaurant" ? "restaurant" : "foods"
-                  }&suggested=${encodeURIComponent(suggestion.name)}`}
-                  key={suggestion.id}
-                  className="relative flex items-center justify-between gap-2 py-2 px-3 hover:bg-neutral-50 border border-transparent hover:border-neutral-100 rounded-full transition-all cursor-pointer select-none group hover:pr-6 text-sm lg:py-3 lg:px-4 lg:text-base lg:hover:pr-8"
-                >
-                  <div className="flex items-center gap-2 lg:gap-3 shrink-0">
-                    {suggestion.type === "restaurant" ? (
-                      <Store className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                    ) : (
-                      <Utensils className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+            {!loading.restaurants && suggestions.length > 0 && (
+              <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3 z-10">
+                {suggestions.map((suggestion) => (
+                  <div
+                    key={suggestion.id}
+                    className="relative overflow-x-auto flex items-center justify-between gap-2 py-2 px-3 hover:bg-neutral-50 border border-transparent hover:border-neutral-100 rounded-full transition-all cursor-pointer select-none group hover:pr-6 text-sm lg:py-3 lg:px-4 lg:text-base lg:hover:pr-8"
+                    onClick={() => handleSuggestionSelect(suggestion)}
+                  >
+                    <div className="flex items-center gap-2 lg:gap-3 shrink-0">
+                      {suggestion.type === "restaurant" ? (
+                        <Store className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                      ) : (
+                        <Utensils className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
+                      )}
+                      <span className="text-sm">{suggestion.name}</span>
+                    </div>
+                    {suggestion.proximity !== undefined && (
+                      <span className="text-xs text-neutral-500 transition-all flex whitespace-nowrap gap-1 items-center lg:text-sm">
+                        <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4" />{" "}
+                        {suggestion.proximity.toFixed(1)} km
+                      </span>
                     )}
-                    <span>{suggestion.name}</span>
+                    {/* <ArrowRight
+                      strokeWidth={1.8}
+                      className="w-4 h-4 lg:w-5 lg:h-5 absolute right-2 bg-white rounded-full transition-transform transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 duration-300 text-neutral-600"
+                    /> */}
                   </div>
-                  {suggestion.proximity !== undefined && (
-                    <span className="text-xs text-neutral-500 transition-all flex whitespace-nowrap gap-1 items-center lg:text-sm">
-                      <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4" />{" "}
-                      {suggestion.proximity.toFixed(1)} km
-                    </span>
-                  )}
-                  <ArrowRight
-                    strokeWidth={1.8}
-                    className="w-4 h-4 lg:w-5 lg:h-5 absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 duration-300 text-neutral-600"
-                  />
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {!loading.restaurants &&
-            searchTerm.length > 2 &&
-            suggestions.length === 0 && (
-              <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base">
-                <p>No results found.</p>
+                ))}
               </div>
             )}
-        </div>
 
-        <div className="flex relative max-w-xl mx-auto w-full sm:before:content-[''] sm:before:h-1/2 sm:before:absolute sm:before:bg-gray-100 sm:before:w-[2px] sm:before:top-1/2 sm:before:-translate-y-1/2 sm:before:left-0">
-          <div
-            className="bg-transparent overflow-hidden px-4 py-2 relative w-full flex items-center justify-between"
-            style={{ transition: "box-shadow 0.3s ease-in-out" }}
-          >
-            <div className="ml-2 w-full flex justify-center items-center gap-2 lg:gap-3">
-              <input
-                type="text"
-                value={location}
-                onChange={handleLocationChange}
-                // onKeyPress={handleKeyPress}
-                className="w-full h-full bg-transparent outline-none text-sm"
-                placeholder="Search by location or food..."
-                autoCorrect="off"
-                spellCheck="false"
-              />
-            </div>
-            {location && (
-              <button
-                onClick={handleClearLocations}
-                className="bg-yellow-500 z-20 p-1 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
-              >
-                <X className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={3} />
-              </button>
-            )}
+            {!loading.restaurants &&
+              searchTerm.length > 2 &&
+              !selectedSuggetion &&
+              suggestions.length === 0 && (
+                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base z-10">
+                  <p>No results found.</p>
+                </div>
+              )}
           </div>
 
-          {loading.locations && (
-            <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14">
-              <Skeleton />
-            </div>
-          )}
-
-          {!loading.locations && locations.length > 0 && (
-            <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3">
-              {locations.map((location: any) => (
-                <div
-                  className="flex items-center gap-2 lg:gap-3 py-2 px-3 cursor-pointer"
-                  onClick={() => handleLocationSelect(location)}
-                >
-                  <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4 shrink-0" />
-                  {location.label}
+          <div className="flex relative max-w-xl mx-auto w-full shadow-md sm:shadow-none rounded-lg sm:rounded-none">
+            <div className="flex relative max-w-xl mx-auto w-full sm:before:content-[''] sm:before:h-1/2 sm:before:absolute sm:before:bg-gray-100 sm:before:w-[2px] sm:before:top-1/2 sm:before:-translate-y-1/2 sm:before:left-0">
+              <div
+                className="bg-transparent overflow-hidden px-4 py-2 relative w-full flex items-center justify-between"
+                style={{ transition: "box-shadow 0.3s ease-in-out" }}
+              >
+                <div className="ml-2 w-full flex justify-center items-center gap-2 lg:gap-3">
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={handleLocationChange}
+                    // onKeyPress={handleKeyPress}
+                    className="w-full h-full bg-transparent outline-none text-sm py-2 1200:py-0"
+                    placeholder="Search by location or food..."
+                    autoCorrect="off"
+                    spellCheck="false"
+                  />
                 </div>
-              ))}
-            </div>
-          )}
-
-          {!loading.locations &&
-            location.length > 2 &&
-            !selectedLocation &&
-            locations.length === 0 && (
-              <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base">
-                <p>No results found.</p>
+                {location && (
+                  <button
+                    onClick={handleClearLocations}
+                    className="bg-yellow-500 z-[9] p-1 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
+                  >
+                    <X className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={3} />
+                  </button>
+                )}
               </div>
-            )}
-        </div>
 
-        <button className="bg-primary-600 hover:bg-primary-700 px-3 py-3 rounded-r-md flex items-center justify-center">
-          <Search className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
-        </button>
-      </div>
+              {loading.locations && (
+                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14 z-10">
+                  <Skeleton />
+                </div>
+              )}
+
+              {!loading.locations && locations.length > 0 && (
+                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3 z-10">
+                  {locations.map((location: any) => (
+                    <div
+                      className="flex hover:bg-neutral-50 rounded-full items-center gap-2 lg:gap-3 py-3 px-3 cursor-pointer text-sm"
+                      onClick={() => handleLocationSelect(location)}
+                    >
+                      <MapPin className="w-3.5 h-3.5 lg:w-4 lg:h-4 shrink-0" />
+                      {location.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {!loading.locations &&
+                location.length > 2 &&
+                !selectedLocation &&
+                locations.length === 0 && (
+                  <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base z-10">
+                    <p>No results found.</p>
+                  </div>
+                )}
+            </div>
+
+            <button
+              disabled={!selectedLocation}
+              type="submit"
+              className={`px-3 py-3 rounded-r-md flex items-center justify-center ${
+                !selectedLocation
+                  ? " cursor-not-allowed bg-gray-300"
+                  : "bg-primary-600 hover:bg-primary-700"
+              }`}
+            >
+              <Search className="w-4 h-4 lg:w-5 lg:h-5 text-white" />
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   );
 };

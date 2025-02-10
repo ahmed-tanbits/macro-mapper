@@ -23,7 +23,7 @@ function FoodCard() {
   ];
 
   return (
-    <section className="bg-transparent mt-16 w-full mx-auto max-w-screen-xl px-4 pt-6 lg:px-6">
+    <section className="bg-transparent mt-8 md:mt-16 w-full mx-auto max-w-screen-xl px-4 pt-6 lg:px-6">
       <div className="grid gap-6 sm:grid-cols-2">
         {mainCard.map((value, index) => (
           <div
@@ -35,10 +35,10 @@ function FoodCard() {
               alt={value.label}
               width={300}
               height={200}
-              className="rounded-md w-full"
+              className="rounded-md rounded-b-none w-full bg-no-repeat object-cover"
             />
             <div
-              className="flex flex-col 425:flex-row items-start 425:items-center gap-3 425:gap-0 justify-between p-3 w-full absolute bottom-0 left-0"
+              className="flex flex-col 425:flex-row items-start 425:items-center gap-3 425:gap-0 justify-between p-3 w-full "
               style={{ backgroundColor: `${value.bg}` }}
             >
               <div className="text-[#2B2B2B] md:h-[70px]">

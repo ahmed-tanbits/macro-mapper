@@ -65,7 +65,7 @@ export default function Navbar({ showFilters }: Props) {
 
   return (
     <>
-      <nav className="flex flex-col 1200:flex-row w-full justify-between items-center sm:items-start px-4 md:px-8 border-b pt-4 pb-3">
+      <nav className="relative z-50 bg-white flex flex-col 1200:flex-row w-full justify-between items-center sm:items-start px-4 md:px-8 border-b pt-4 pb-3">
         <div className="grid items-center 1200:items-start grid-cols-12 gap-0 1200:gap-10 w-full">
           <div
             className={`${

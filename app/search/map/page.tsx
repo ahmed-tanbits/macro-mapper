@@ -58,7 +58,7 @@ export default function Map({}: Props) {
 
   return (
     <>
-      <Navbar />
+      <Navbar showFilters={true} />
       <main className="w-full">
         {/* {isRestaurantTab ? (
           <RestaurantFilterBar onFilterChange={handleFilterChange} />
