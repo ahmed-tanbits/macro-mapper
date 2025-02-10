@@ -1,5 +1,5 @@
 import React from "react";
-import UpgradeToPremium from "./UpgradeToPremium";
+import WelcomeToPremium from "./WelcomeToPremium";
 import Navbar from "@/app/components/Navbar";
 
 const signup = () => {
@@ -7,7 +7,7 @@ const signup = () => {
     <>
       <Navbar showFilters={false} />
       <main>
-        <UpgradeToPremium />
+        <WelcomeToPremium />
       </main>
     </>
   );

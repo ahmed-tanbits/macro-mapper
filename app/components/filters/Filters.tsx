@@ -7,6 +7,7 @@ type Props = {
   filters: any;
   onSelectionChange: (type: string, selectedOptions: any) => void;
   onRangeChange: (type: string, range: [number, number]) => void;
+  isAuthenticated?: boolean;
 };
 
 const allergyOptions = [
@@ -36,6 +37,7 @@ export default function Filters({
   filters,
   onSelectionChange,
   onRangeChange,
+  isAuthenticated,
 }: Props) {
   const handleDebouncedRangeChange = debounce(
     (type: string, range: [number, number]) => {
@@ -63,7 +65,7 @@ export default function Filters({
   };
 
   return (
-    <div className="flex gap-0 md:gap-3 items-center justify-center w-full overflow-x-visible">
+    <div className="flex flex-wrap gap-0 md:gap-3 items-center justify-center w-full overflow-x-visible">
       <DropdownCheckbox
         options={getTypeOptions()}
         label="Type"
@@ -71,6 +73,7 @@ export default function Filters({
           onSelectionChange("allergies", selectedOptions)
         }
         initialOptions={getTypeOptions()}
+        isAuthenticated={true}
       />
       <RangeSlider
         label="Calories"
@@ -80,6 +83,7 @@ export default function Filters({
         step={10}
         onRangeChange={(range) => handleDebouncedRangeChange("calories", range)}
         initialValues={filters.calories}
+        isAuthenticated={true}
       />
       <RangeSlider
         label="Protein"
@@ -89,6 +93,7 @@ export default function Filters({
         step={1}
         onRangeChange={(range) => handleDebouncedRangeChange("protein", range)}
         initialValues={filters.protein}
+        isAuthenticated={isAuthenticated}
       />
       <RangeSlider
         label="Carbs"
@@ -98,6 +103,7 @@ export default function Filters({
         step={1}
         onRangeChange={(range) => handleDebouncedRangeChange("carbs", range)}
         initialValues={filters.carbs}
+        isAuthenticated={isAuthenticated}
       />
       <RangeSlider
         label="Fat"
@@ -107,6 +113,7 @@ export default function Filters({
         step={1}
         onRangeChange={(range) => handleDebouncedRangeChange("fat", range)}
         initialValues={filters.fat}
+        isAuthenticated={isAuthenticated}
       />
       <DropdownCheckbox
         options={getAllergyOptions()}
@@ -115,6 +122,7 @@ export default function Filters({
           onSelectionChange("allergies", selectedOptions)
         }
         initialOptions={getAllergyOptions()}
+        isAuthenticated={isAuthenticated}
       />
     </div>
   );
