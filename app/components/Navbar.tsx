@@ -139,14 +139,14 @@ export default function Navbar({ showFilters }: Props) {
                 ) : (
                   <div className="hidden md:flex gap-2">
                     <Link
-                      href=""
+                      href="/"
                       onClick={() => setIsAuthenticated(!isAuthenticated)}
                       className="text-sm font-medium text-black bg-white-600 py-2 px-3 border border-[#CBCBCB] rounded-md"
                     >
                       Log In
                     </Link>
                     <Link
-                      href="/auth/signup"
+                      href="/"
                       className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md"
                     >
                       Sign Up

@@ -276,8 +276,6 @@ const SearchBar: React.FC<Props> = () => {
     setSuggestions([]);
   };
 
-  console.log("suggestion =>", selectedSuggetion);
-
   return (
     <div className="z-[99] w-full">
       <form onSubmit={navigateToRoute}>
@@ -303,7 +301,7 @@ const SearchBar: React.FC<Props> = () => {
                 searchTerm && (
                   <button
                     onClick={handleClear}
-                    className="bg-yellow-500 p-1 z-20 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
+                    className="bg-yellow-500 p-1 z-10 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
                   >
                     <X className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={3} />
                   </button>
@@ -314,13 +312,13 @@ const SearchBar: React.FC<Props> = () => {
               }
             </div>
             {loading.restaurants && (
-              <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14">
+              <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14 z-10">
                 <Skeleton />
               </div>
             )}
 
             {!loading.restaurants && suggestions.length > 0 && (
-              <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3">
+              <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3 z-10">
                 {suggestions.map((suggestion) => (
                   <div
                     key={suggestion.id}
@@ -354,7 +352,7 @@ const SearchBar: React.FC<Props> = () => {
               searchTerm.length > 2 &&
               !selectedSuggetion &&
               suggestions.length === 0 && (
-                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base">
+                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base z-10">
                   <p>No results found.</p>
                 </div>
               )}
@@ -381,7 +379,7 @@ const SearchBar: React.FC<Props> = () => {
                 {location && (
                   <button
                     onClick={handleClearLocations}
-                    className="bg-yellow-500 z-20 p-1 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
+                    className="bg-yellow-500 z-[9] p-1 bg-opacity-20 hover:bg-opacity-30 transition-all mr-1 aspect-square select-none cursor-pointer rounded-full flex items-center justify-center text-yellow-600 lg:mr-1"
                   >
                     <X className="w-3 h-3 lg:w-4 lg:h-4" strokeWidth={3} />
                   </button>
@@ -389,13 +387,13 @@ const SearchBar: React.FC<Props> = () => {
               </div>
 
               {loading.locations && (
-                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14">
+                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 lg:top-14 z-10">
                   <Skeleton />
                 </div>
               )}
 
               {!loading.locations && locations.length > 0 && (
-                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3">
+                <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 lg:top-14 lg:p-3 z-10">
                   {locations.map((location: any) => (
                     <div
                       className="flex hover:bg-neutral-50 rounded-full items-center gap-2 lg:gap-3 py-3 px-3 cursor-pointer text-sm"
@@ -412,7 +410,7 @@ const SearchBar: React.FC<Props> = () => {
                 location.length > 2 &&
                 !selectedLocation &&
                 locations.length === 0 && (
-                  <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base">
+                  <div className="absolute top-10 w-full bg-white shadow-lg rounded-xl border border-neutral-100 p-2 text-center text-sm lg:top-14 lg:text-base z-10">
                     <p>No results found.</p>
                   </div>
                 )}

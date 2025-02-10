@@ -9,7 +9,7 @@ function FoodCard() {
       label: "MENU CALCULATION",
       para: "Get your menu calculated, mapped and listed on macromapper.",
       btnText: "Get started",
-      link: "/",
+      link: "https://get.macromapper.co/get-started",
       bg: "#C4DBAD",
     },
     {
@@ -17,7 +17,7 @@ function FoodCard() {
       label: "LEARN MORE",
       para: "Curious how macromapper works?",
       btnText: "Learn more",
-      link: "/learn-more",
+      link: "https://get.macromapper.co/get-started",
       bg: "#DFD0AA",
     },
   ];
