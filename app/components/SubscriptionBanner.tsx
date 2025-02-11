@@ -60,7 +60,7 @@ function SubscriptionBanner() {
             ))}
           </ul>
           <Link
-            href={"/"}
+            href="/"
             className="w-full md:w-[270px] bg-[#FFD200] rounded-full py-3 mt-4 font-bold flex items-center justify-center gap-2"
           >
             <span>GO PREMIUM</span>

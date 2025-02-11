@@ -9,7 +9,7 @@ function FoodCard() {
       label: "MENU CALCULATION",
       para: "Get your menu calculated, mapped and listed on macromapper.",
       btnText: "Get started",
-      link: "/",
+      link: "https://get.macromapper.co/get-started",
       bg: "#C4DBAD",
     },
     {
@@ -17,13 +17,13 @@ function FoodCard() {
       label: "LEARN MORE",
       para: "Curious how macromapper works?",
       btnText: "Learn more",
-      link: "/learn-more",
+      link: "https://get.macromapper.co/get-started",
       bg: "#DFD0AA",
     },
   ];
 
   return (
-    <section className="bg-transparent mt-16 w-full mx-auto max-w-screen-xl px-4 pt-6 lg:px-6">
+    <section className="bg-transparent mt-8 md:mt-16 w-full mx-auto max-w-screen-xl px-4 pt-6 lg:px-6">
       <div className="grid gap-6 sm:grid-cols-2">
         {mainCard.map((value, index) => (
           <div
@@ -35,10 +35,10 @@ function FoodCard() {
               alt={value.label}
               width={300}
               height={200}
-              className="rounded-md w-full"
+              className="rounded-md rounded-b-none w-full bg-no-repeat object-cover"
             />
             <div
-              className="flex flex-row xs:flex-col items-center justify-between p-3 w-full absolute bottom-0 left-0"
+              className="flex flex-col 425:flex-row items-start 425:items-center gap-3 425:gap-0 justify-between p-3 w-full "
               style={{ backgroundColor: `${value.bg}` }}
             >
               <div className="text-[#2B2B2B] md:h-[70px]">
@@ -49,7 +49,7 @@ function FoodCard() {
               </div>
               <Link
                 href={value.link}
-                className="inline-block bg-[#2D2B1E] text-white w-[150px] py-2 rounded-full transition text-center"
+                className="inline-block bg-[#2D2B1E] text-white w-full 425:w-[150px] py-2 rounded-full transition text-center"
               >
                 {value.btnText}
               </Link>

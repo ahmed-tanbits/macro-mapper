@@ -902,9 +902,9 @@ export default function FoodList({
 
   return (
     <div className="flex flex-col pb-20 justify-start items-start hide-scrollbar h-full w-full gap-4 p-3 md:p-4 overflow-y-scroll">
-      <div className="w-full">
+      {/* <div className="w-full">
         <SearchBarResponsive onSearch={setSearchTerm} />
-      </div>
+      </div> */}
       <div className="w-full flex justify-end items-end space-x-2">
         <Sort onSortChange={setSortOption} />
         <ResetFiltersButton />
