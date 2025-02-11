@@ -14,7 +14,7 @@ type Props = { showFilters?: boolean };
 
 export default function Navbar({ showFilters }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -235,7 +235,7 @@ export default function Navbar({ showFilters }: Props) {
               <>
                 <li>
                   <Link
-                    href=""
+                    href="/auth/login"
                     onClick={() => setIsAuthenticated(true)}
                     className="block w-full text-black border border-[#CBCBCB] bg-[#f8f8f8] font-medium rounded-lg py-3 text-center"
                   >
@@ -244,7 +244,7 @@ export default function Navbar({ showFilters }: Props) {
                 </li>
                 <li>
                   <Link
-                    href=""
+                    href="/auth/signup"
                     className="block w-full text-white border border-[#0AC600] bg-[#0AC600] font-medium rounded-lg py-3 text-center"
                   >
                     Sign Up
