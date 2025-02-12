@@ -6,15 +6,20 @@ import Link from "next/link";
 import React, { useState } from "react";
 import Filters from "./filters/Filters";
 import { useFilterContext } from "../context/FilterContext";
+import { useAuth } from "../context/AuthContext";
 import SearchBar from "./SearchBar";
 import usericon from "./usericon.png";
 import { Crown } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Props = { showFilters?: boolean };
 
 export default function Navbar({ showFilters }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+   
+  const router = useRouter(); // ✅ Use Next.js router for navigation
+  const { token, removeToken } = useAuth(); // ✅ Get token from context
+  const isAuthenticated = !!token; // ✅ User is authenticated if token exists
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -123,7 +128,8 @@ export default function Navbar({ showFilters }: Props) {
                 {isAuthenticated ? (
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => setIsAuthenticated(!isAuthenticated)}
+                      
+                      onClick={() => router.push("/auth/user-profile")}
                       className="rounded-full"
                     >
                       <span>
@@ -138,19 +144,20 @@ export default function Navbar({ showFilters }: Props) {
                   </div>
                 ) : (
                   <div className="hidden md:flex gap-2">
-                    <Link
-                      href="/"
-                      onClick={() => setIsAuthenticated(!isAuthenticated)}
+                    <button
+                       
+                      onClick={() => router.push("/auth/login")}
                       className="text-sm font-medium text-black bg-white-600 py-2 px-3 border border-[#CBCBCB] rounded-md"
                     >
                       Log In
-                    </Link>
-                    <Link
-                      href="/"
+                    </button>
+                    <button
+                       
+                      onClick={() => router.push("/auth/signup")}
                       className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md"
                     >
                       Sign Up
-                    </Link>
+                    </button>
                   </div>
                 )}
               </div>
@@ -234,21 +241,22 @@ export default function Navbar({ showFilters }: Props) {
             {!isAuthenticated && (
               <>
                 <li>
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setIsAuthenticated(true)}
+                  <button
+                     
+                    onClick={() => router.push("auth/login")}
                     className="block w-full text-black border border-[#CBCBCB] bg-[#f8f8f8] font-medium rounded-lg py-3 text-center"
                   >
                     Log In
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link
-                    href="/auth/signup"
+                  <button
+                     
+                    onClick={() => router.push("auth/signup")}
                     className="block w-full text-white border border-[#0AC600] bg-[#0AC600] font-medium rounded-lg py-3 text-center"
                   >
                     Sign Up
-                  </Link>
+                  </button>
                 </li>
               </>
             )}

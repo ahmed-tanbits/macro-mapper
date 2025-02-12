@@ -1,9 +1,14 @@
 import React from 'react'
 import LogIn from './LogIn'
+import Navbar from '@/app/components/Navbar'
 
 const page = () => {
   return (
-    <main><LogIn/></main>
+    <>
+      <Navbar showFilters={false} />
+      <main><LogIn /></main>
+    </>
+
   )
 }
 

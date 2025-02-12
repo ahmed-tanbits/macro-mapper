@@ -5,6 +5,7 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import LocationBadge from "./LocationBadge";
 import { FilterProvider } from "./context/FilterContext";
+import { AuthProvider } from "./context/AuthContext"; // Import AuthProvider
 import EmailVerification from "./components/EmailVerification";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,12 +24,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
+      <AuthProvider>
         <FilterProvider>
           {children}
           <LocationBadge />
           <SpeedInsights />
           <EmailVerification />
         </FilterProvider>
+        </AuthProvider>
       </body>
     </html>
   );
