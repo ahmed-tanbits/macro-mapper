@@ -1,48 +1,86 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/supabaseClient";
 
-// Create Auth Context
-const AuthContext = createContext({
-  token: null as string | null,
-  setToken: (token: string | null) => {},
+type AuthContextType = {
+  session: any;
+  token: string | null;
+  setToken: (token: string | null) => void;
+  removeToken: () => void;
+};
+
+// ✅ Create Auth Context
+const AuthContext = createContext<AuthContextType>({
+  session: null,
+  token: null,
+  setToken: () => {},
   removeToken: () => {},
 });
 
-// Auth Provider Component
+// ✅ Auth Provider Component
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [token, setTokenState] = useState<string | null>(null);
+  const [session, setSession] = useState<any>(null);
+  const [token, setTokenState] = useState<string | null>(
+    () => localStorage.getItem("token") // ✅ Load token from storage
+  );
 
-  // Load token from localStorage when app initializes
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setTokenState(storedToken);
-    }
+    const fetchSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Session Error:", error);
+        removeToken();
+      } else if (data.session) {
+        setSession(data.session);
+        setTokenState(data.session.access_token);
+        localStorage.setItem("token", data.session.access_token);
+      }
+    };
+
+    fetchSession();
+
+    // ✅ Listen for auth state changes (auto-refresh token)
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session) {
+          setSession(session);
+          setTokenState(session.access_token);
+          localStorage.setItem("token", session.access_token);
+        } else {
+          removeToken();
+        }
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
-  // Function to update the token and trigger immediate re-render
+  // ✅ Update Token
   const setToken = (newToken: string | null) => {
     if (newToken) {
       localStorage.setItem("token", newToken);
     } else {
       localStorage.removeItem("token");
     }
-    setTokenState(newToken); // ✅ Trigger re-render immediately
+    setTokenState(newToken);
   };
 
-  // Function to remove the token
+  // ✅ Remove Token
   const removeToken = () => {
     localStorage.removeItem("token");
+    setSession(null);
     setTokenState(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, setToken, removeToken }}>
+    <AuthContext.Provider value={{ session, token, setToken, removeToken }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom Hook to Use Auth Context
+// ✅ Custom Hook
 export const useAuth = () => useContext(AuthContext);

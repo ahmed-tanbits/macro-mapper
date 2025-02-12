@@ -19,7 +19,10 @@ export async function POST(req: Request) {
     const { data: user, error } = await supabase.auth.signInWithPassword({
       email,
       password,
+
     });
+
+    console.log(user , "usr data while login")
 
     if (error || !user) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
@@ -30,7 +33,7 @@ export async function POST(req: Request) {
       expiresIn: "1h",
     });
 
-    return NextResponse.json({ message: "Login successful", token }, { status: 200 });
+    return NextResponse.json({ message: "Login successful", token, user :user.user }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
