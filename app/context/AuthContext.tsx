@@ -22,7 +22,7 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
   const [token, setTokenState] = useState<string | null>(
-    () => localStorage.getItem("token") // ✅ Load token from storage
+    () => localStorage?.getItem("token") // ✅ Load token from storage
   );
 
   useEffect(() => {

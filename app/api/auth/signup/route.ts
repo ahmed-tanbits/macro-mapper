@@ -25,8 +25,12 @@ export async function POST(req: Request) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password: hashedPassword,
-      options: { data: { fullName } },
-    });
+      options: {
+        data: { fullName },
+        emailRedirectTo: `${process.env.NEXT_FRONTEND_URL}/auth`
+      },
+    },
+    );
 
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 

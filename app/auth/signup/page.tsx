@@ -6,7 +6,7 @@ const Authendication = () => {
   return (
     <>
     <Signup />
-    
+
     </>
   )
 }

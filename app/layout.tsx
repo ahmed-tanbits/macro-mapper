@@ -29,7 +29,6 @@ export default function RootLayout({
           {children}
           <LocationBadge />
           <SpeedInsights />
-          <EmailVerification />
         </FilterProvider>
         </AuthProvider>
       </body>
