@@ -14,6 +14,7 @@ import dynamic from "next/dynamic";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import SubscriptionModal from "./components/subscription/subscriptionModal";
 
 const SlickSlider = dynamic(() => import("react-slick"), { ssr: false });
 
@@ -238,6 +239,7 @@ export default function Home() {
             </SlickSlider>
           </div>
         </section>
+        <SubscriptionModal />
       </main>
       <Footer />
     </>
