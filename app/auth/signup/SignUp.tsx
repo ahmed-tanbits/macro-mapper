@@ -9,7 +9,6 @@ import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Spinner from "@/app/components/Spinner";
 // import Toast from "@/app/components/Toast";
-import withAuthRedirect from "@/app/hoc/withAuthRedirect";
 import { useToast } from "@/app/hooks/useToast";
 
 
@@ -314,4 +313,4 @@ const Signup: React.FC = () => {
   );
 };
 
-export default withAuthRedirect(Signup);
+export default Signup;

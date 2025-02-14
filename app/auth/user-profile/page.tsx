@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import Profile from "./Profile";
 import Navbar from "@/app/components/Navbar";
+import withAuth from "@/app/hoc/withAuth";
 
 const page = () => {
   return (
@@ -14,4 +16,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default withAuth(page);
