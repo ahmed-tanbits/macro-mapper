@@ -292,7 +292,6 @@ const Signup: React.FC = () => {
           </div>
         </div>
       </div>
-      <Toast />
       <Banner
         label="The Ultimate Diet Tool"
         para="Search thousands of products by calories, macronutrients, allergies and location. Finding foods that meet your diet has never been easier."
