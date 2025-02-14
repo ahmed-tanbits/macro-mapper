@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Spinner from "@/app/components/Spinner";
+import withAuthRedirect from "@/app/hoc/withAuthRedirect";
 
 const ForgotPassword: React.FC = () => {
   const [message, setMessage] = useState("");
@@ -117,5 +118,5 @@ const ForgotPassword: React.FC = () => {
   );
 };
 
-export default ForgotPassword;
+export default withAuthRedirect(ForgotPassword);
 

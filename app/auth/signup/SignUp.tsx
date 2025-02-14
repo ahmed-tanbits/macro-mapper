@@ -10,6 +10,7 @@ import Image from "next/image";
 import Spinner from "@/app/components/Spinner";
 import { useToast } from "@/app/hooks/useToast";
 import Toast from "@/app/components/Toast";
+import withAuthRedirect from "@/app/hoc/withAuthRedirect";
 
 
 // Define TypeScript interface for form values
@@ -300,4 +301,4 @@ const Signup: React.FC = () => {
   );
 };
 
-export default Signup;
+export default withAuthRedirect(Signup);

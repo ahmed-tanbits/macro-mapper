@@ -6,6 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Banner from "../Banner";
+import withAuthRedirect from "@/app/hoc/withAuthRedirect";
 
 const NewPassword: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -154,4 +155,4 @@ const NewPassword: React.FC = () => {
   );
 };
 
-export default NewPassword;
+export default withAuthRedirect(NewPassword);
