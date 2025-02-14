@@ -10,8 +10,8 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/supabaseClient";
 import Spinner from "@/app/components/Spinner";
 import { useAuth } from "@/app/context/AuthContext";
-import { useToast } from "@/hooks/use-toast";
 import withAuthRedirect from "@/app/hoc/withAuthRedirect";
+import { useToast } from "@/app/hooks/useToast";
 
 // Define TypeScript interface for form values
 interface LoginFormValues {
@@ -159,12 +159,12 @@ const LogIn: React.FC = () => {
                   ) : null}
                 </fieldset>
                 <div className="flex items-center gap-2 justify-between">
-                  <div className=" flex items-center gap-2">
+                  <div className=" flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       id="terms"
                       name="terms"
-                      className="w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-500 bg-primary-600"
+                      className="w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-500 bg-primary-600 cursor-pointer"
                       onChange={handleChange}
                       onBlur={handleBlur}
                     // checked={values?.terms}
@@ -173,7 +173,7 @@ const LogIn: React.FC = () => {
                       htmlFor=""
                       className="text-sm text-[#2E3139] font-normal"
                     >
-                      Remeber me
+                      Remember me
                     </label>
                   </div>
 

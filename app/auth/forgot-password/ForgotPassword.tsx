@@ -6,9 +6,8 @@ import * as Yup from "yup";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Spinner from "@/app/components/Spinner";
-import { useToast } from "@/hooks/use-toast";
-
 import withAuthRedirect from "@/app/hoc/withAuthRedirect";
+import { useToast } from "@/app/hooks/useToast";
 
 const ForgotPassword: React.FC = () => {
   const [message, setMessage] = useState("");

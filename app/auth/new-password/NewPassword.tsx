@@ -7,8 +7,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Banner from "../Banner";
 import Link from "next/link";
-import { useToast } from "@/hooks/use-toast";
 import withAuthRedirect from "@/app/hoc/withAuthRedirect";
+import { useToast } from "@/app/hooks/useToast";
 
 const NewPassword: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
