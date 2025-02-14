@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import { supabase } from "@/supabaseClient";
 import Spinner from "@/app/components/Spinner";
+import { useToast } from "@/app/hooks/useToast";
 
 interface PasswordValues {
   currentPassword: string;
@@ -30,6 +31,7 @@ const Profile: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const router = useRouter();
   const { session, user } = useAuth(); // ✅ Get latest token
+  const { toast } = useToast()
 
   const handleProfileSubmit = async (
     values: ProfileValues,
@@ -55,13 +57,26 @@ const Profile: React.FC = () => {
       });
 
       if (error) {
-        alert(error.message);
+        toast({
+          title: "Error!",
+          description: error.message,
+          variant: "destructive", // Red error toast
+        });
       } else {
-        alert("Profile updated successfully");
+        toast({
+          title: "Success!",
+          description: "Profile updated successfully",
+          variant: "default", // Normal success toast
+        });
         router.push("/");
       }
-    } catch (error) {
-      alert("Something went wrong");
+    }
+    catch (error) {
+      toast({
+        title: "Error!",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     }
     setSubmitting(false);
   };

@@ -45,19 +45,6 @@ const Toast = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
   VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
-  const [isOpen, setIsOpen] = React.useState(true);
-
-  // Automatically close the toast after 5 seconds
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsOpen(false);
-    }, 3000); // Close toast after 5 seconds (or any time you choose)
-
-    return () => clearTimeout(timer); // Clean up the timer if the component unmounts
-  }, []);
-
-  if (!isOpen) return null; // Don't render the toast if it's closed
-
   return (
     <ToastPrimitives.Root
       ref={ref}
