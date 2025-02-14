@@ -7,21 +7,22 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/supabaseClient";
+import Spinner from "@/app/components/Spinner";
 import { useAuth } from "@/app/context/AuthContext";
-
 
 // Define TypeScript interface for form values
 interface LoginFormValues {
   email: string;
   password: string;
-   
 }
 
 const LogIn: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter(); // ✅ Initialize Next.js router
-  const { setToken } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { setSession } = useAuth();
 
   // Validation Schema
   const validationSchema = Yup.object().shape({
@@ -32,33 +33,26 @@ const LogIn: React.FC = () => {
   const initialValues: LoginFormValues = {
     email: "",
     password: "",
-    
   };
 
   const handleLogin = async (values: LoginFormValues) => {
-    
-
     setMessage(null);
-
+    setLoading(true)
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
       });
-
-      const data = await res.json();
-      setMessage(data.message || data.error);
-
-      if (data.token) {
-        setToken(data.token); // ✅ Now updates context immediately
-        router.push("/"); // ✅ Redirect to home
+      if (error) {
+        setMessage(error.message);
+        return;
       }
+      setSession(data.session); // ✅ Store session in context
+      router.push("/"); // ✅ Navigate to home after login
     } catch (error) {
       setMessage("Something went wrong. Please try again.");
-    }
-    finally{
-      router.push("/"); // ✅ Navigate to home
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,7 +103,7 @@ const LogIn: React.FC = () => {
                     />
                   </div>
                   {touched.email && errors.email ? (
-                    <div className="text-red-500 text-sm">
+                    <div className="text-red-500 text-sm ml-2 mt-1">
                       {errors.email}
                     </div>
                   ) : null}
@@ -150,12 +144,11 @@ const LogIn: React.FC = () => {
                     </button>
                   </div>
                   {touched.password && errors.password ? (
-                    <div className="text-red-500 text-sm">
+                    <div className="text-red-500 text-sm ml-2 mt-1">
                       {errors.password}
                     </div>
                   ) : null}
                 </fieldset>
-
                 <div className="flex items-center gap-2 justify-between">
                   <div className=" flex items-center gap-2">
                     <input
@@ -165,7 +158,7 @@ const LogIn: React.FC = () => {
                       className="w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-500 bg-primary-600"
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      // checked={values?.terms}
+                    // checked={values?.terms}
                     />
                     <label
                       htmlFor=""
@@ -185,12 +178,14 @@ const LogIn: React.FC = () => {
                 {/* {touched?.terms && errors?.terms ? (
                   <div className="text-red-500 text-sm">{errors?.terms}</div>
                 ) : null} */}
-
                 <button
                   type="submit"
-                  className="w-full bg-[#08C600] text-[#FFFFFF] py-3 rounded-full font-medium text-sm hover:bg-green-600 transition"
+                  className="w-full bg-[#08C600] text-[#FFFFFF] py-3 rounded-full font-medium text-sm hover:bg-green-600 disabled:bg-green-600 transition"
                 >
-                  Sign in
+                  {loading ?
+                    <Spinner />
+                    : "Sign in"
+                  }
                 </button>
               </Form>
             )}

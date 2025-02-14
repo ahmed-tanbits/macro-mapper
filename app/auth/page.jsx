@@ -18,22 +18,26 @@ export default function Authentication() {
       const urlParams = new URLSearchParams(hash);
       const paramsObj = Object.fromEntries(urlParams.entries());
 
-      console.log("Hash Params =>", paramsObj);
+      const { type, access_token, refresh_token, error, error_description } = paramsObj;
 
-      // Case: Signup
-      if (paramsObj?.type === "signup") {
+      // Handle Errors
+      if (error) {
+        setMessage(`⚠️ ${error_description || "Authentication failed. Please try again."}`);
+        setShowLoginButton(false);
+        return;
+      }
+
+      // Case: Signup (Only if token exists)
+      if (type === "signup") {
         setMessage("🎉 Congratulations! Your email has been successfully verified! You can now log in.");
         setShowLoginButton(true);
       } 
       // Case: Password Recovery
-      else if (paramsObj?.type === "recovery") {
+      else if (type === "recovery") {
         router.push("/auth/new-password");
       } 
       // Case: Magic Link authentication
-      else if (paramsObj?.type === "magiclink") {
-        const access_token = paramsObj?.access_token;
-        const refresh_token = paramsObj?.refresh_token;
-
+      else if (type === "magiclink") {
         if (access_token && refresh_token) {
           const { data, error } = await supabase.auth.setSession({
             access_token,
