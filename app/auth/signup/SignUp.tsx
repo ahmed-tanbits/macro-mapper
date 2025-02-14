@@ -26,8 +26,8 @@ const Signup: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  // const { toast, toastContent } = useToast()
   const { toast } = useToast()
+  
   // Validation Schema
   const validationSchema = Yup.object({
     fullName: Yup.string().required("Full Name is required"),

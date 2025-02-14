@@ -6,6 +6,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Banner from "../Banner";
+import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 const NewPassword: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,7 +15,7 @@ const NewPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+  const { toast } = useToast();
   const router = useRouter();
 
   const formik = useFormik({
@@ -42,6 +44,20 @@ const NewPassword: React.FC = () => {
         });
 
         const data = await response.json();
+        console.log("data--", data.message)
+        if (data.message) {
+          toast({
+            title: "Success!",
+            description: data.message,
+            variant: "default", // Normal success toast
+          });
+        } else if (data.error) {
+          toast({
+            title: "Error!",
+            description: data.error,
+            variant: "destructive", // Red error toast
+          });
+        }
 
         if (!response.ok) {
           throw new Error(data.message || "Failed to reset password");
@@ -50,6 +66,11 @@ const NewPassword: React.FC = () => {
         setSuccessMessage("Password reset successful! Redirecting...");
         setTimeout(() => router.push("/auth/login"), 2000);
       } catch (error: any) {
+        toast({
+          title: "Error!",
+          description: "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
         setErrorMessage(error.message || "Something went wrong.");
       } finally {
         setLoading(false);
@@ -67,9 +88,6 @@ const NewPassword: React.FC = () => {
           <p className="text-[#425583] text-sm font-normal">
             Enter your new password to complete the reset process
           </p>
-
-          {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
-          {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
 
           <form onSubmit={formik.handleSubmit} className="mt-4 flex flex-col gap-3 sm:gap-5">
             <fieldset className="border border-transparent rounded-lg transition-colors peer-focus-within:border-[#09BE06]">
@@ -142,6 +160,18 @@ const NewPassword: React.FC = () => {
               {loading ? "Saving..." : "Save New Password"}
             </button>
           </form>
+
+          <div className="flex items-center justify-center gap-2 pt-6">
+            <p className=" text-center text-sm text-[#425583] font-normal">
+              Remember old password?{" "}
+            </p>
+            <Link
+              href="/auth/login"
+              className="text-[#08C600] font-medium underline text-sm"
+            >
+              Sign in
+            </Link>
+          </div>
         </div>
       </div>
 

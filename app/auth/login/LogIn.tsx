@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/supabaseClient";
 import Spinner from "@/app/components/Spinner";
 import { useAuth } from "@/app/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 // Define TypeScript interface for form values
 interface LoginFormValues {
@@ -23,6 +24,8 @@ const LogIn: React.FC = () => {
   const router = useRouter(); // ✅ Initialize Next.js router
   const [loading, setLoading] = useState(false);
   const { setSession } = useAuth();
+  const { toast } = useToast();
+
 
   // Validation Schema
   const validationSchema = Yup.object().shape({
@@ -43,8 +46,13 @@ const LogIn: React.FC = () => {
         email: values.email,
         password: values.password,
       });
+
       if (error) {
-        setMessage(error.message);
+        toast({
+          title: "Error!",
+          description: error.message,
+          variant: "destructive", // Red error toast
+        });
         return;
       }
       setSession(data.session); // ✅ Store session in context
