@@ -12,7 +12,7 @@ export default function SuccessPage() {
 
     if (sessionId) {
       setMessage('Subscription successful! Redirecting...');
-      setTimeout(() => router.push('/dashboard'), 3000);
+      setTimeout(() => router.push('/'), 3000);
     } else {
       setMessage('No session found. Redirecting to home...');
       setTimeout(() => router.push('/'), 3000);

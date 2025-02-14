@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { supabase } from "@/supabaseClient";
 
 // Initialize Stripe with secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -20,8 +21,51 @@ export async function POST(req: NextRequest) {
   }
 
   if (event.type === 'checkout.session.completed') {
-    console.log('✅ Subscription Created:', event.data.object);
+    const session = event.data.object as Stripe.Checkout.Session;
+    console.log('✅ Subscription Created:', JSON.stringify(session));
     // Store subscription in your database here
+
+    const stripe_user_id = session.customer as string;
+    const subscriptionId = session.subscription as string;
+    const amountTotal = session.amount_total || 0;
+    const currency = session.currency || 'usd';
+    const payment_status = session.payment_status;
+    const status = session.status;
+
+    // Store subscription in Supabase
+    const { data: subscription, error: subError } = await supabase.from('subscriptions').insert([
+      {
+        stripe_subscription_id: subscriptionId,
+        status,
+        stripe_user_id,
+        created_at: new Date().toISOString(),
+      }
+    ]).select('id').single();
+
+    if (subError) {
+      console.error('Error inserting subscription:', subError.message);
+      return NextResponse.json({ error: 'Failed to store subscription' }, { status: 500 });
+    }
+
+
+    // Store transaction in Supabase
+    const { error: transError } = await supabase.from('transactions').insert([
+      {
+        subscription_id: subscription.id,
+        amount: amountTotal,
+        currency,
+        status: payment_status,
+      }
+    ]);
+
+    if (transError) {
+      console.error('Error inserting transaction:', transError.message);
+      return NextResponse.json({ error: 'Failed to store transaction' }, { status: 500 });
+    }
+
+    console.log('✅ Subscription and Transaction stored successfully');
+
+
   }
 
   return NextResponse.json({ received: true });
