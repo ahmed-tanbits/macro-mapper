@@ -1,12 +1,15 @@
 import React from 'react'
 import Signup from './SignUp'
+import Navbar from '@/app/components/Navbar'
+import Toast from '@/app/components/Toast'
 
 
 const Authendication = () => {
   return (
     <>
-    <Signup />
-
+      <Navbar showFilters={false} />
+      <Signup />
+      <Toast />
     </>
   )
 }
