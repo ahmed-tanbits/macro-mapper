@@ -8,8 +8,8 @@ import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Spinner from "@/app/components/Spinner";
-import { useToast } from "@/app/hooks/useToast";
 import Toast from "@/app/components/Toast";
+import { useToast } from "@/hooks/use-toast";
 
 
 // Define TypeScript interface for form values
@@ -26,8 +26,8 @@ const Signup: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const { toast, toastContent } = useToast()
-
+  // const { toast, toastContent } = useToast()
+  const { toast } = useToast()
   // Validation Schema
   const validationSchema = Yup.object({
     fullName: Yup.string().required("Full Name is required"),
@@ -64,13 +64,26 @@ const Signup: React.FC = () => {
       const data = await res.json();
 
       if (data.message) {
-        toast.success(data.message);
-      }
-      else if (data.error) {
-        toast.error(data.error);
+        toast({
+          title: "Success!",
+          description: data.message,
+          variant: "default", // Normal success toast
+        });
+      } else if (data.error) {
+        toast({
+          title: "Error!",
+          description: data.error,
+          variant: "destructive", // Red error toast
+        });
       }
       setMessage(data.message || data.error);
     } catch (error) {
+      toast({
+        title: "Error!",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+
       setMessage("Something went wrong. Please try again.");
     } finally {
       setLoading(false)
