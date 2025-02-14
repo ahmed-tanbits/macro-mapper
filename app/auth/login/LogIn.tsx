@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabaseClient";
 import Spinner from "@/app/components/Spinner";
+import { useAuth } from "@/app/context/AuthContext";
 
 // Define TypeScript interface for form values
 interface LoginFormValues {
@@ -21,6 +22,7 @@ const LogIn: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter(); // ✅ Initialize Next.js router
   const [loading, setLoading] = useState(false);
+  const { setSession } = useAuth();
 
   // Validation Schema
   const validationSchema = Yup.object().shape({
@@ -45,6 +47,7 @@ const LogIn: React.FC = () => {
         setMessage(error.message);
         return;
       }
+      setSession(data.session); // ✅ Store session in context
       router.push("/"); // ✅ Navigate to home after login
     } catch (error) {
       setMessage("Something went wrong. Please try again.");
@@ -100,7 +103,7 @@ const LogIn: React.FC = () => {
                     />
                   </div>
                   {touched.email && errors.email ? (
-                    <div className="text-red-500 text-sm">
+                    <div className="text-red-500 text-sm ml-2 mt-1">
                       {errors.email}
                     </div>
                   ) : null}
@@ -141,7 +144,7 @@ const LogIn: React.FC = () => {
                     </button>
                   </div>
                   {touched.password && errors.password ? (
-                    <div className="text-red-500 text-sm">
+                    <div className="text-red-500 text-sm ml-2 mt-1">
                       {errors.password}
                     </div>
                   ) : null}
@@ -177,7 +180,7 @@ const LogIn: React.FC = () => {
                 ) : null} */}
                 <button
                   type="submit"
-                  className="w-full bg-[#08C600] text-[#FFFFFF] py-3 rounded-full font-medium text-sm hover:bg-green-600 transition"
+                  className="w-full bg-[#08C600] text-[#FFFFFF] py-3 rounded-full font-medium text-sm hover:bg-green-600 disabled:bg-green-600 transition"
                 >
                   {loading ?
                     <Spinner />

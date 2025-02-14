@@ -19,7 +19,7 @@ export default function Navbar({ showFilters }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const router = useRouter(); // ✅ Use Next.js router for navigation
-  const { session } = useAuth(); // ✅ Get token from context
+  const { session, logout, user } = useAuth(); // ✅ Get token from context
   const isAuthenticated = !!session?.access_token; // ✅ User is authenticated if token exists
 
   const toggleSidebar = () => {
@@ -69,8 +69,8 @@ export default function Navbar({ showFilters }: Props) {
     "Unlock Allergy Results",
   ];
 
-  const handleLogOut = async () => {
-    await supabase.auth.signOut();
+  const handleLogOut = () => {
+    logout();
     router.push("/auth/login"); // Redirect to login page
   }
 
