@@ -11,6 +11,7 @@ import { supabase } from "@/supabaseClient";
 import Spinner from "@/app/components/Spinner";
 import { useAuth } from "@/app/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import withAuthRedirect from "@/app/hoc/withAuthRedirect";
 
 // Define TypeScript interface for form values
 interface LoginFormValues {
@@ -225,4 +226,4 @@ const LogIn: React.FC = () => {
   );
 };
 
-export default LogIn;
+export default withAuthRedirect(LogIn);

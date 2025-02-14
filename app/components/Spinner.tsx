@@ -11,9 +11,9 @@ const Spinner: React.FC<SpinnerProps> = ({ height = 25, width = 25, color = "#ff
         <div className="flex justify-center">
             <TailSpin
                 visible={true}
-                height={height}  // Dynamic height
-                width={width}    // Dynamic width
-                color={color}
+                height={height} 
+                width={width}   
+                color={color === "primary" ? "#08C600" : color}
                 ariaLabel="tail-spin-loading"
                 radius="1"
                 wrapperStyle={{}}

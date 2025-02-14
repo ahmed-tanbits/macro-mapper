@@ -8,6 +8,7 @@ import Image from "next/image";
 import Banner from "../Banner";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import withAuthRedirect from "@/app/hoc/withAuthRedirect";
 
 const NewPassword: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -184,4 +185,4 @@ const NewPassword: React.FC = () => {
   );
 };
 
-export default NewPassword;
+export default withAuthRedirect(NewPassword);
