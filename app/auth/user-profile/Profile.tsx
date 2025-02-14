@@ -7,11 +7,17 @@ import * as Yup from "yup";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/AuthContext";
+
 
 const Profile: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const router = useRouter();
+  const { session, token } = useAuth(); // ✅ Get latest token
+  console.log("Received Token:", token); // ✅ Debugging Token
 
   const formik = useFormik({
     initialValues: {
@@ -34,10 +40,36 @@ const Profile: React.FC = () => {
         .oneOf([Yup.ref("password")], "Passwords must match")
         .required("Confirm Password is required"),
     }),
-    onSubmit: (values) => {
-      console.log("Form Submitted", values);
+    onSubmit: async (values) => {
+      if (!token) {
+        alert("You are not authenticated!");
+        return;
+      }
+  
+      try {
+        const res = await fetch("/api/profile/update", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // ✅ Use latest token
+          },
+          body: JSON.stringify(values),
+        });
+  
+        const data = await res.json();
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert("Profile updated successfully");
+          router.push("/");
+        }
+      } catch (error) {
+        alert("Something went wrong");
+      }
     },
+    
   });
+
 
   const handleSubscriptionToggle = () => {
     setIsSubscribed((prev) => !prev);
@@ -169,7 +201,7 @@ const Profile: React.FC = () => {
                 </button>
               </div>
               {formik.touched.currentPassword &&
-              formik.errors.currentPassword ? (
+                formik.errors.currentPassword ? (
                 <div className="text-red-500 text-sm">
                   {formik.errors.currentPassword}
                 </div>
@@ -255,7 +287,7 @@ const Profile: React.FC = () => {
                 </button>
               </div>
               {formik.touched.confirmPassword &&
-              formik.errors.confirmPassword ? (
+                formik.errors.confirmPassword ? (
                 <div className="text-red-500 text-sm">
                   {formik.errors.confirmPassword}
                 </div>
@@ -280,11 +312,10 @@ const Profile: React.FC = () => {
           <button
             type="submit"
             onClick={handleSubscriptionToggle}
-            className={`w-full py-3 rounded-full font-medium text-sm transition ${
-              isSubscribed
+            className={`w-full py-3 rounded-full font-medium text-sm transition ${isSubscribed
                 ? "bg-[#940000] text-white"
                 : "bg-[#FFD200] text-[#FFFFFF]"
-            }`}
+              }`}
           >
             {isSubscribed ? "Cancel Subscription" : "Upgrade to Premium"}
           </button>
