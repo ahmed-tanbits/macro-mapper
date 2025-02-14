@@ -16,8 +16,6 @@ const Profile: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const router = useRouter();
-  const { session, token } = useAuth(); // ✅ Get latest token
-  console.log("Received Token:", token); // ✅ Debugging Token
 
   const formik = useFormik({
     initialValues: {
