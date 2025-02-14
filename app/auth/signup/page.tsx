@@ -1,8 +1,9 @@
+"use client";
 import React from 'react'
 import Signup from './SignUp'
 import Navbar from '@/app/components/Navbar'
 import Toast from '@/app/components/Toast'
-
+import withAuthRedirect from '@/app/hoc/withAuthRedirect'
 
 const Authendication = () => {
   return (
@@ -14,4 +15,5 @@ const Authendication = () => {
   )
 }
 
-export default Authendication
+export default withAuthRedirect(Authendication);
+
