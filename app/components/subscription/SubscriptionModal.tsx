@@ -7,12 +7,12 @@ export default function SubscriptionModal() {
 
       <div className="border p-4 mb-4">
         <h2 className="text-xl">Monthly Plan - $3.49</h2>
-        <CheckoutButton priceId="price_1Qs0NAGT7SStcoR0t8M1TaSg" />
+        <CheckoutButton priceId="price_1QsHHdEPRR9CWPew0qlelHSq" />
       </div>
 
       <div className="border p-4">
         <h2 className="text-xl">Yearly Plan - $20.99</h2>
-        <CheckoutButton priceId="price_1Qs0O6GT7SStcoR0T3ZwHCtD" />
+        <CheckoutButton priceId="price_1QsHIMEPRR9CWPewe0tnihZb" />
       </div>
     </div>
   );
