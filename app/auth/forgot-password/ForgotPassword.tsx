@@ -35,7 +35,7 @@ const ForgotPassword: React.FC = () => {
           toast({
             title: "Success!",
             description: data.message,
-            variant: "default", // Normal success toast
+            variant: "success", // Normal success toast
           });
           setMessage(data.message);
           // setError("");
