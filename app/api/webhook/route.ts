@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
     console.log('✅ Subscription Created:', JSON.stringify(session));
     // Store subscription in your database here
 
+    const email = session.customer_details?.email as string;
     const stripe_user_id = session.customer as string;
     const subscriptionId = session.subscription as string;
     const amountTotal = session.amount_total || 0;
@@ -35,6 +36,7 @@ export async function POST(req: NextRequest) {
     // Store subscription in Supabase
     const { data: subscription, error: subError } = await supabase.from('subscriptions').insert([
       {
+        email,
         stripe_subscription_id: subscriptionId,
         status,
         stripe_user_id,
