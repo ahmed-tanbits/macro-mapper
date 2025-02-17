@@ -2,7 +2,7 @@
 
 // Inspired by react-hot-toast library
 import * as React from "react"
-import { ToastActionElement, ToastProps } from "../components/toast"
+import { ToastActionElement, ToastProps } from "../components/Toast"
 
 
 const TOAST_LIMIT = 1
