@@ -50,7 +50,7 @@ const NewPassword: React.FC = () => {
           toast({
             title: "Success!",
             description: data.message,
-            variant: "default", // Normal success toast
+            variant: "success", // Normal success toast
           });
         } else if (data.error) {
           toast({

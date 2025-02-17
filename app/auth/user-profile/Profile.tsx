@@ -66,7 +66,7 @@ const Profile: React.FC = () => {
         toast({
           title: "Success!",
           description: "Profile updated successfully",
-          variant: "default", // Normal success toast
+          variant: "success", // Normal success toast
         });
         router.push("/");
       }
