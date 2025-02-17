@@ -12,6 +12,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { supabase } from "@/supabaseClient";
 import Spinner from "@/app/components/Spinner";
 import { useToast } from "@/app/hooks/useToast";
+import { title } from "process";
 
 interface PasswordValues {
   currentPassword: string;
@@ -39,7 +40,11 @@ const Profile: React.FC = () => {
   ): Promise<void> => {
 
     if (!session) {
-      alert("You are not authenticated!");
+      toast({
+        title: "Error!",
+        description: "You are not authenticated!",
+        variant: "destructive", // Red error toast
+      });
       return;
     }
 
@@ -47,7 +52,11 @@ const Profile: React.FC = () => {
       // 🔄 Refresh session before updating user
       const { data, error: refreshError } = await supabase.auth.refreshSession();
       if (refreshError) {
-        alert(`Session refresh failed: ${refreshError.message}`);
+        toast({
+          title: "Error!",
+          description: `Session refresh failed: ${refreshError.message}`,
+          variant: "destructive", // Red error toast
+        });
         return;
       }
 
@@ -65,8 +74,8 @@ const Profile: React.FC = () => {
       } else {
         toast({
           title: "Success!",
-          description: "Profile updated successfully",
-          variant: "default", // Normal success toast
+          description: "Profile updated Successfully!",
+          variant: "success", // Normal success toast
         });
         router.push("/");
       }
@@ -86,7 +95,11 @@ const Profile: React.FC = () => {
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ): Promise<void> => {
     if (!session) {
-      alert("You are not authenticated!");
+      toast({
+        title: "Error!",
+        description: "You are not authenticated!",
+        variant: "destructive", // Red error toast
+      });
       return;
     }
 
@@ -95,7 +108,12 @@ const Profile: React.FC = () => {
       // 🔄 Refresh session before updating user
       const { data, error: refreshError } = await supabase.auth.refreshSession();
       if (refreshError) {
-        alert(`Session refresh failed: ${refreshError.message}`);
+        toast({
+          title: "Error!",
+          description: `Session refresh failed: ${refreshError.message}`,
+          variant: "destructive", // Red error toast
+        });
+        // alert(`Session refresh failed: ${refreshError.message}`);
         return;
       }
       const { error } = await supabase.auth.updateUser({
@@ -103,13 +121,25 @@ const Profile: React.FC = () => {
       });
 
       if (error) {
-        alert(error.message);
+        toast({
+          title: "Error!",
+          description: error.message,
+          variant: "destructive", // Red error toast
+        });
       } else {
-        alert("Password updated successfully");
+        toast({
+          title: "Success!",
+          description: "Password updated Successfully!",
+          variant: "success", // Normal success toast
+        })
         router.push("/");
       }
     } catch (error) {
-      alert("Something went wrong");
+      toast({
+        title: "Error!",
+        description: "Something went wrong",
+        variant: "destructive", // Red error toast
+      });
     }
     setSubmitting(false);
   };
@@ -175,7 +205,7 @@ const Profile: React.FC = () => {
                     </div>
                     {touched.fullName && errors.fullName ? (
                       <div className="text-red-500 text-sm ml-2 mt-1">
-                        {errors.fullName}
+                        {String(errors.fullName)}
                       </div>
                     ) : null}
                   </fieldset>
@@ -209,7 +239,7 @@ const Profile: React.FC = () => {
                     </div>
                     {touched.email && errors.email ? (
                       <div className="text-red-500 text-sm ml-2 mt-1">
-                        {errors.email}
+                        {String(errors.email)}
                       </div>
                     ) : null}
                   </fieldset>
@@ -280,7 +310,7 @@ const Profile: React.FC = () => {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 text-gray-500"
                       >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                       </button>
                     </div>
                     {touched.currentPassword &&
@@ -321,7 +351,7 @@ const Profile: React.FC = () => {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-4 text-gray-500"
                       >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                       </button>
                     </div>
                     {touched.password && errors.password ? (
@@ -363,9 +393,9 @@ const Profile: React.FC = () => {
                         className="absolute right-4 text-gray-500 ml-2 mt-1"
                       >
                         {showConfirmPassword ? (
-                          <EyeOff size={20} />
-                        ) : (
                           <Eye size={20} />
+                        ) : (
+                          <EyeOff size={20} />
                         )}
                       </button>
                     </div>
