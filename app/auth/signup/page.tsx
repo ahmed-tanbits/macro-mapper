@@ -1,14 +1,17 @@
+"use client";
 import React from 'react'
 import Signup from './SignUp'
-
+import Navbar from '@/app/components/Navbar'
+import withAuthRedirect from '@/app/hoc/withAuthRedirect'
 
 const Authendication = () => {
   return (
     <>
-    <Signup />
-    
+      <Navbar showFilters={false} />
+      <Signup />
     </>
   )
 }
 
-export default Authendication
+export default withAuthRedirect(Authendication);
+

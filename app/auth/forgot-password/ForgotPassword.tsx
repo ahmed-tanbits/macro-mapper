@@ -4,21 +4,56 @@ import Banner from "../Banner";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import Spinner from "@/app/components/Spinner";
+import withAuthRedirect from "@/app/hoc/withAuthRedirect";
+import { useToast } from "@/app/hooks/useToast";
 
 const ForgotPassword: React.FC = () => {
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const { toast } = useToast();
+
   const formik = useFormik({
     initialValues: {
       email: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
+          email: Yup.string().email("Invalid email address").required("Email is required"),
     }),
-    onSubmit: (values) => {
-      console.log("Form Submitted", values);
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: values.email }),
+        });
+        const data = await res.json();
+        if (data.message) {
+          toast({
+            title: "Success!",
+            description: data.message,
+            variant: "default", // Normal success toast
+          });
+          setMessage(data.message);
+          // setError("");
+        } else if (data.error) {
+          toast({
+            title: "Error!",
+            description: data.error,
+            variant: "destructive", // Red error toast
+          });
+          setError(data.error);
+          // setMessage("");
+        }
+      } catch (err) {
+        setError("Something went wrong");
+        setMessage("");
+      } finally {
+        setLoading(false)
+      }
     },
   });
 
@@ -32,7 +67,6 @@ const ForgotPassword: React.FC = () => {
           <p className="text-[#425583] text-sm font-normal">
             Enter your email to reset your password
           </p>
-
           <form
             onSubmit={formik.handleSubmit}
             className="mt-4 flex flex-col gap-3 sm:gap-5"
@@ -62,19 +96,26 @@ const ForgotPassword: React.FC = () => {
                 />
               </div>
               {formik.touched.email && formik.errors.email ? (
-                <div className="text-red-500 text-sm">
+                <div className="text-red-500 text-sm ml-2 mt-1">
                   {formik.errors.email}
                 </div>
               ) : null}
+              <div className="ml-2 mt-1">
+                {message && <div className="text-green-500 text-sm">{message}</div>}
+                {error && <div className="text-red-500 text-sm">{error}</div>}
+              </div>
             </fieldset>
-            <Link href="/auth/new-password">
-              <button
-                type="submit"
-               className="w-full bg-[#08C600] text-[#FFFFFF] py-3 rounded-full font-medium text-sm hover:bg-green-600 transition"
-              >
-                Submit
-              </button>
-            </Link>
+
+            <button
+              type="submit"
+              className="w-full bg-[#08C600] text-[#FFFFFF] py-3 rounded-full font-medium text-sm hover:bg-green-600 disabled:bg-green-600 transition"
+              disabled={loading}
+            >
+              {loading ?
+                <Spinner />
+                : "Submit"
+              }
+            </button>
           </form>
         </div>
       </div>
@@ -87,4 +128,5 @@ const ForgotPassword: React.FC = () => {
   );
 };
 
-export default ForgotPassword;
+export default withAuthRedirect(ForgotPassword);
+
