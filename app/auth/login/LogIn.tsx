@@ -59,7 +59,11 @@ const LogIn: React.FC = () => {
       setSession(data.session); // ✅ Store session in context
       router.push("/"); // ✅ Navigate to home after login
     } catch (error) {
-      setMessage("Something went wrong. Please try again.");
+      toast({
+        title: "Error!",
+        description: "Something went wrong",
+        variant: "destructive", // Red error toast
+      });
     } finally {
       setLoading(false);
     }
@@ -149,7 +153,7 @@ const LogIn: React.FC = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 text-gray-500"
                     >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                     </button>
                   </div>
                   {touched.password && errors.password ? (

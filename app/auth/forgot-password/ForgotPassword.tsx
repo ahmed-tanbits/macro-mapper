@@ -20,7 +20,7 @@ const ForgotPassword: React.FC = () => {
       email: "",
     },
     validationSchema: Yup.object({
-          email: Yup.string().email("Invalid email address").required("Email is required"),
+      email: Yup.string().email("Invalid email address").required("Email is required"),
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -35,7 +35,7 @@ const ForgotPassword: React.FC = () => {
           toast({
             title: "Success!",
             description: data.message,
-            variant: "default", // Normal success toast
+            variant: "success", // Normal success toast
           });
           setMessage(data.message);
           // setError("");
@@ -49,7 +49,11 @@ const ForgotPassword: React.FC = () => {
           // setMessage("");
         }
       } catch (err) {
-        setError("Something went wrong");
+        toast({
+          title: "Error!",
+          description: "Something went wrong",
+          variant: "destructive", // Red error toast
+        });
         setMessage("");
       } finally {
         setLoading(false)
@@ -100,10 +104,10 @@ const ForgotPassword: React.FC = () => {
                   {formik.errors.email}
                 </div>
               ) : null}
-              <div className="ml-2 mt-1">
+              {/* <div className="ml-2 mt-1">
                 {message && <div className="text-green-500 text-sm">{message}</div>}
                 {error && <div className="text-red-500 text-sm">{error}</div>}
-              </div>
+              </div> */}
             </fieldset>
 
             <button
