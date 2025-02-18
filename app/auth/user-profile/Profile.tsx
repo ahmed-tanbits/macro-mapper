@@ -26,8 +26,11 @@ interface ProfileValues {
 
 
 const Profile: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmNewPassword: false,
+  });
   const [isSubscribed, setIsSubscribed] = useState(false);
   const router = useRouter();
   const { session, user } = useAuth(); // ✅ Get latest token
@@ -39,7 +42,11 @@ const Profile: React.FC = () => {
   ): Promise<void> => {
 
     if (!session) {
-      alert("You are not authenticated!");
+      toast({
+        title: "Error!",
+        description: `You are not authenticated!`,
+        variant: "destructive", // Red error toast
+      });
       return;
     }
 
@@ -47,7 +54,11 @@ const Profile: React.FC = () => {
       // 🔄 Refresh session before updating user
       const { data, error: refreshError } = await supabase.auth.refreshSession();
       if (refreshError) {
-        alert(`Session refresh failed: ${refreshError.message}`);
+        toast({
+          title: "Error!",
+          description: `Session refresh failed: ${refreshError.message}`,
+          variant: "destructive", // Red error toast
+        });
         return;
       }
 
@@ -86,7 +97,11 @@ const Profile: React.FC = () => {
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ): Promise<void> => {
     if (!session) {
-      alert("You are not authenticated!");
+      toast({
+        title: "Error!",
+        description: `You are not authenticated!`,
+        variant: "destructive", // Red error toast
+      });
       return;
     }
 
@@ -95,7 +110,11 @@ const Profile: React.FC = () => {
       // 🔄 Refresh session before updating user
       const { data, error: refreshError } = await supabase.auth.refreshSession();
       if (refreshError) {
-        alert(`Session refresh failed: ${refreshError.message}`);
+        toast({
+          title: "Error!",
+          description: `Session refresh failed: ${refreshError.message}`,
+          variant: "destructive", // Red error toast
+        });
         return;
       }
       const { error } = await supabase.auth.updateUser({
@@ -103,13 +122,25 @@ const Profile: React.FC = () => {
       });
 
       if (error) {
-        alert(error.message);
+        toast({
+          title: "Error!",
+          description: error.message,
+          variant: "destructive", // Red error toast
+        });
       } else {
-        alert("Password updated successfully");
+        toast({
+          title: "Success!",
+          description: "Password updated successfully",
+          variant: "success", // Red error toast
+        });
         router.push("/");
       }
     } catch (error) {
-      alert("Something went wrong");
+      toast({
+        title: "Error!",
+        description: "Something went wrong",
+        variant: "destructive", // Red error toast
+      });
     }
     setSubmitting(false);
   };
@@ -268,7 +299,7 @@ const Profile: React.FC = () => {
                       <input
                         id="currentPassword"
                         name="currentPassword"
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword.currentPassword ? "text" : "password"}
                         placeholder="Current Password"
                         className="border-0 shadow-none outline-none w-full text-sm font-normal text-[#899CC9]"
                         onChange={handleChange}
@@ -277,10 +308,10 @@ const Profile: React.FC = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={() => setShowPassword({...showPassword, currentPassword: !showPassword.currentPassword})}
                         className="absolute right-4 text-gray-500"
                       >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        {showPassword.currentPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                       </button>
                     </div>
                     {touched.currentPassword &&
@@ -309,7 +340,7 @@ const Profile: React.FC = () => {
                       <input
                         id="password"
                         name="password"
-                        type={showPassword ? "text" : "password"}
+                        type={showPassword.newPassword ? "text" : "password"}
                         placeholder="Your new password"
                         className="border-0 shadow-none outline-none w-full text-sm font-normal text-[#899CC9]"
                         onChange={handleChange}
@@ -318,10 +349,10 @@ const Profile: React.FC = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword(!showPassword)}
+                        onClick={() => setShowPassword({...showPassword, newPassword: !showPassword.newPassword})}
                         className="absolute right-4 text-gray-500"
                       >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        {showPassword.newPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                       </button>
                     </div>
                     {touched.password && errors.password ? (
@@ -350,7 +381,7 @@ const Profile: React.FC = () => {
                       <input
                         id="confirmPassword"
                         name="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
+                        type={showPassword.confirmNewPassword ? "text" : "password"}
                         placeholder="Confirm your new password"
                         className="border-0 shadow-none outline-none w-full text-sm font-normal text-[#899CC9]"
                         onChange={handleChange}
@@ -359,13 +390,13 @@ const Profile: React.FC = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() => setShowPassword({...showPassword, confirmNewPassword: !showPassword.confirmNewPassword})}
                         className="absolute right-4 text-gray-500 ml-2 mt-1"
                       >
-                        {showConfirmPassword ? (
-                          <EyeOff size={20} />
-                        ) : (
+                        {showPassword.confirmNewPassword ? (
                           <Eye size={20} />
+                        ) : (
+                          <EyeOff size={20} />
                         )}
                       </button>
                     </div>
