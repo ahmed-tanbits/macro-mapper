@@ -27,7 +27,7 @@ const Signup: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast()
-  
+
   // Validation Schema
   const validationSchema = Yup.object({
     fullName: Yup.string().required("Full Name is required"),
@@ -132,7 +132,7 @@ const Signup: React.FC = () => {
                     />
                   </div>
                   {touched.fullName && errors.fullName ? (
-                    <div className="text-red-500 text-sm">
+                    <div className="text-red-500 text-sm ml-2 mt-1">
                       {errors.fullName}
                     </div>
                   ) : null}
@@ -163,7 +163,7 @@ const Signup: React.FC = () => {
                     />
                   </div>
                   {touched.email && errors.email ? (
-                    <div className="text-red-500 text-sm">
+                    <div className="text-red-500 text-sm ml-2 mt-1">
                       {errors.email}
                     </div>
                   ) : null}
@@ -197,11 +197,11 @@ const Signup: React.FC = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 text-gray-500"
                     >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                     </button>
                   </div>
                   {touched.password && errors.password ? (
-                    <div className="text-red-500 text-sm">
+                    <div className="text-red-500 text-sm ml-2 mt-1">
                       {errors.password}
                     </div>
                   ) : null}
@@ -239,40 +239,43 @@ const Signup: React.FC = () => {
                       className="absolute right-4 text-gray-500"
                     >
                       {showConfirmPassword ? (
-                        <EyeOff size={20} />
-                      ) : (
                         <Eye size={20} />
+                      ) : (
+                        <EyeOff size={20} />
                       )}
                     </button>
                   </div>
                   {touched.confirmPassword &&
                     errors.confirmPassword ? (
-                    <div className="text-red-500 text-sm">
+                    <div className="text-red-500 text-sm ml-2 mt-1">
                       {errors.confirmPassword}
                     </div>
                   ) : null}
                 </fieldset>
 
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="terms"
-                    name="terms"
-                    className="w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-500"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    checked={values.terms}
-                  />
-                  <label htmlFor="terms" className="text-sm text-[#2E3139] font-normal">
-                    I agree to{" "}
-                    <Link href="#" className="text-[#08C600] underline text-sm font-medium">
-                      Terms & Conditions
-                    </Link>
-                  </label>
-                </div>
-                {touched.terms && errors.terms ? (
-                  <div className="text-red-500 text-sm">{errors.terms}</div>
-                ) : null}
+                <fieldset>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      name="terms"
+                      className="w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-500"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      checked={values.terms}
+                    />
+                    <label htmlFor="terms" className="text-sm text-[#2E3139] font-normal">
+                      I agree to{" "}
+                      <Link href="#" className="text-[#08C600] underline text-sm font-medium">
+                        Terms & Conditions
+                      </Link>
+                    </label>
+                  </div>
+
+                  {touched.terms && errors.terms ? (
+                    <div className="text-red-500 text-sm ml-2 mt-2">{errors.terms}</div>
+                  ) : null}
+                </fieldset>
 
                 <button
                   type="submit"

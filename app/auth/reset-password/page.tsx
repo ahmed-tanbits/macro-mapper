@@ -1,9 +1,9 @@
 import React from 'react'
-import NewPassword from './NewPassword'
+import ResetPassword from './ResetPassword'
 
 const page = () => {
   return (
-    <main><NewPassword/></main>
+    <main><ResetPassword/></main>
   )
 }
 
