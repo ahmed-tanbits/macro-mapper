@@ -6,20 +6,21 @@ import * as Yup from "yup";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import Spinner from "@/app/components/Spinner";
+import withAuthRedirect from "@/app/hoc/withAuthRedirect";
+import { useToast } from "@/app/hooks/useToast";
 
 const ForgotPassword: React.FC = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { toast } = useToast();
 
   const formik = useFormik({
     initialValues: {
       email: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
+      email: Yup.string().email("Invalid email address").required("Email is required"),
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -30,15 +31,29 @@ const ForgotPassword: React.FC = () => {
           body: JSON.stringify({ email: values.email }),
         });
         const data = await res.json();
-        if (res.ok) {
+        if (data.message) {
+          toast({
+            title: "Success!",
+            description: data.message,
+            variant: "success", // Normal success toast
+          });
           setMessage(data.message);
-          setError("");
-        } else {
+          // setError("");
+        } else if (data.error) {
+          toast({
+            title: "Error!",
+            description: data.error,
+            variant: "destructive", // Red error toast
+          });
           setError(data.error);
-          setMessage("");
+          // setMessage("");
         }
       } catch (err) {
-        setError("Something went wrong");
+        toast({
+          title: "Error!",
+          description: "Something went wrong",
+          variant: "destructive", // Red error toast
+        });
         setMessage("");
       } finally {
         setLoading(false)
@@ -89,10 +104,10 @@ const ForgotPassword: React.FC = () => {
                   {formik.errors.email}
                 </div>
               ) : null}
-              <div className="ml-2 mt-1">
+              {/* <div className="ml-2 mt-1">
                 {message && <div className="text-green-500 text-sm">{message}</div>}
                 {error && <div className="text-red-500 text-sm">{error}</div>}
-              </div>
+              </div> */}
             </fieldset>
 
             <button
@@ -117,5 +132,5 @@ const ForgotPassword: React.FC = () => {
   );
 };
 
-export default ForgotPassword;
+export default withAuthRedirect(ForgotPassword);
 

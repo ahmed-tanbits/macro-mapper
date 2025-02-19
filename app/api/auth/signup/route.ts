@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     // Create user in Supabase
     const { data, error } = await supabase.auth.signUp({
       email,
-      password: hashedPassword,
+      password: password,
       options: {
         data: { fullName },
         emailRedirectTo: `${process.env.NEXT_FRONTEND_URL}/auth`

@@ -1,20 +1,16 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Beef, Croissant, Cookie, MilkOff, WheatOff } from "lucide-react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import SearchBar from "./components/SearchBar";
-import { useFilterContext } from "./context/FilterContext";
-import Filters from "./components/filters/Filters";
 import SubscriptionBanner from "./components/SubscriptionBanner";
 import FoodCard from "./components/FoodCard";
 import dynamic from "next/dynamic";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import SubscriptionModal from "./components/subscription/subscriptionModal";
+import SubscriptionPlanModal from "./components/subscription/SubscriptionPlanModal";
+import { useAuth } from "./context/AuthContext";
 
 const SlickSlider = dynamic(() => import("react-slick"), { ssr: false });
 
@@ -166,6 +162,7 @@ function RestaurantBlogs({
 }
 
 export default function Home() {
+  const {user} = useAuth();
   const sliderSettings = (slidesToShow: number) => ({
     slidesToShow,
     slidesToScroll: 1,
@@ -228,7 +225,7 @@ export default function Home() {
         </section>
 
         {/* Subscription Section Banner */}
-        <SubscriptionBanner />
+        {!user?.hasSubscription && <SubscriptionBanner /> }
         <FoodCard />
         <section className="w-full max-w-screen-xl px-4 lg:px-16 xl:px-5 mx-auto">
           <div className="mt-8 relative">
@@ -239,7 +236,6 @@ export default function Home() {
             </SlickSlider>
           </div>
         </section>
-        <SubscriptionModal />
       </main>
       <Footer />
     </>

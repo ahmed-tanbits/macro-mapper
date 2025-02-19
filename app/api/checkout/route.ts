@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 
 export async function POST(req: NextRequest) {
     try {
-        const { priceId } = await req.json();
+        const { priceId, userId } = await req.json();
 
         if (!priceId) {
             return NextResponse.json({ error: 'Price ID is required' }, { status: 400 });
@@ -25,6 +25,9 @@ export async function POST(req: NextRequest) {
             ],
             success_url: `${process.env.NEXT_PUBLIC_STRIPE_SUCCESS_URL}?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: process.env.NEXT_PUBLIC_STRIPE_CANCEL_URL,
+            metadata: {
+                user_id: userId
+            }
         });
 
         return NextResponse.json({ sessionId: session.id }, { status: 200 });

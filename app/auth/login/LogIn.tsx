@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/supabaseClient";
 import Spinner from "@/app/components/Spinner";
 import { useAuth } from "@/app/context/AuthContext";
+import withAuthRedirect from "@/app/hoc/withAuthRedirect";
+import { useToast } from "@/app/hooks/useToast";
 
 // Define TypeScript interface for form values
 interface LoginFormValues {
@@ -23,6 +25,8 @@ const LogIn: React.FC = () => {
   const router = useRouter(); // ✅ Initialize Next.js router
   const [loading, setLoading] = useState(false);
   const { setSession } = useAuth();
+  const { toast } = useToast();
+
 
   // Validation Schema
   const validationSchema = Yup.object().shape({
@@ -43,14 +47,23 @@ const LogIn: React.FC = () => {
         email: values.email,
         password: values.password,
       });
+
       if (error) {
-        setMessage(error.message);
+        toast({
+          title: "Error!",
+          description: error.message,
+          variant: "destructive", // Red error toast
+        });
         return;
       }
       setSession(data.session); // ✅ Store session in context
       router.push("/"); // ✅ Navigate to home after login
     } catch (error) {
-      setMessage("Something went wrong. Please try again.");
+      toast({
+        title: "Error!",
+        description: "Something went wrong",
+        variant: "destructive", // Red error toast
+      });
     } finally {
       setLoading(false);
     }
@@ -140,7 +153,7 @@ const LogIn: React.FC = () => {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 text-gray-500"
                     >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                      {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                     </button>
                   </div>
                   {touched.password && errors.password ? (
@@ -150,12 +163,12 @@ const LogIn: React.FC = () => {
                   ) : null}
                 </fieldset>
                 <div className="flex items-center gap-2 justify-between">
-                  <div className=" flex items-center gap-2">
+                  <div className=" flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       id="terms"
                       name="terms"
-                      className="w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-500 bg-primary-600"
+                      className="w-4 h-4 text-green-500 border-gray-300 rounded focus:ring-green-500 bg-primary-600 cursor-pointer"
                       onChange={handleChange}
                       onBlur={handleBlur}
                     // checked={values?.terms}
@@ -164,7 +177,7 @@ const LogIn: React.FC = () => {
                       htmlFor=""
                       className="text-sm text-[#2E3139] font-normal"
                     >
-                      Remeber me
+                      Remember me
                     </label>
                   </div>
 
@@ -217,4 +230,4 @@ const LogIn: React.FC = () => {
   );
 };
 
-export default LogIn;
+export default withAuthRedirect(LogIn);

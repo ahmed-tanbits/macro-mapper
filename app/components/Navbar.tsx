@@ -12,6 +12,7 @@ import usericon from "./usericon.png";
 import { Crown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabaseClient";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
 
 type Props = { showFilters?: boolean };
 
@@ -129,23 +130,45 @@ export default function Navbar({ showFilters }: Props) {
                 >
                   <Menu size={24} />
                 </button>
-                {isAuthenticated ? (
-                  <div className="flex items-center gap-2">
-                    <button
 
-                      onClick={() => router.push("/auth/user-profile")}
-                      className="rounded-full"
-                    >
-                      <span>
-                        <Image
-                          src="/usericon.png"
-                          width={32}
-                          height={32}
-                          alt="macromapper logo"
-                        />
-                      </span>
-                    </button>
+                {isAuthenticated ? (
+                  // <div className="flex items-center gap-2">
+                  //   <button
+
+                  //     onClick={() => router.push("/auth/user-profile")}
+                  //     className="rounded-full"
+                  //   >
+                  //     <span>
+                  //       <Image
+                  //         src="/usericon.png"
+                  //         width={32}
+                  //         height={32}
+                  //         alt="macromapper logo"
+                  //       />
+                  //     </span>
+                  //   </button>
+                  // </div>
+
+                  <div className="flex items-center gap-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="rounded-full focus:outline-none">
+                          <Image src="/usericon.png" width={32} height={32} alt="User Profile" />
+                        </button>
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => router.push("/auth/user-profile")}>
+                          Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogOut} className="text-red-500">
+                          Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
+
+
                 ) : (
                   <div className="hidden md:flex gap-2">
                     <button

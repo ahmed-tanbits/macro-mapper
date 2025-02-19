@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     // Store subscription in your database here
 
     const email = session.customer_details?.email as string;
+    const user_id = session.metadata?.user_id;
     const stripe_user_id = session.customer as string;
     const subscriptionId = session.subscription as string;
     const amountTotal = session.amount_total || 0;
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
         status,
         stripe_user_id,
         created_at: new Date().toISOString(),
+        user_id
       }
     ]).select('id').single();
 

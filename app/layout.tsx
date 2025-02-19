@@ -6,7 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import LocationBadge from "./LocationBadge";
 import { FilterProvider } from "./context/FilterContext";
 import { AuthProvider } from "./context/AuthContext"; // Import AuthProvider
-import Toast from "./components/Toast";
+import { Toaster } from "./components/Toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -27,6 +27,7 @@ export default function RootLayout({
         <AuthProvider>
           <FilterProvider>
             {children}
+            <Toaster />
             <LocationBadge />
             <SpeedInsights />
           </FilterProvider>
