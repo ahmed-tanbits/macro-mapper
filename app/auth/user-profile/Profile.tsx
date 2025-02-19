@@ -24,7 +24,6 @@ interface ProfileValues {
   email: string;
 }
 
-
 const Profile: React.FC = () => {
   const [showPassword, setShowPassword] = useState({
     currentPassword: false,
@@ -34,13 +33,12 @@ const Profile: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const router = useRouter();
   const { session, user } = useAuth(); // ✅ Get latest token
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const handleProfileSubmit = async (
     values: ProfileValues,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ): Promise<void> => {
-
     if (!session) {
       toast({
         title: "Error!",
@@ -52,7 +50,8 @@ const Profile: React.FC = () => {
 
     try {
       // 🔄 Refresh session before updating user
-      const { data, error: refreshError } = await supabase.auth.refreshSession();
+      const { data, error: refreshError } =
+        await supabase.auth.refreshSession();
       if (refreshError) {
         toast({
           title: "Error!",
@@ -64,7 +63,7 @@ const Profile: React.FC = () => {
 
       const { error } = await supabase.auth.updateUser({
         email: values.email,
-        data: { fullName: values.fullName }
+        data: { fullName: values.fullName },
       });
 
       if (error) {
@@ -81,8 +80,7 @@ const Profile: React.FC = () => {
         });
         router.push("/");
       }
-    }
-    catch (error) {
+    } catch (error) {
       toast({
         title: "Error!",
         description: "Something went wrong. Please try again.",
@@ -106,9 +104,9 @@ const Profile: React.FC = () => {
     }
 
     try {
-
       // 🔄 Refresh session before updating user
-      const { data, error: refreshError } = await supabase.auth.refreshSession();
+      const { data, error: refreshError } =
+        await supabase.auth.refreshSession();
       if (refreshError) {
         toast({
           title: "Error!",
@@ -174,7 +172,14 @@ const Profile: React.FC = () => {
               })}
               onSubmit={handleProfileSubmit}
             >
-              {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                isSubmitting,
+              }) => (
                 <Form className="mt-4 flex flex-col gap-3 sm:gap-5">
                   <h4 className="text-sm font-bold">Edit Details</h4>
                   <fieldset className="border border-transparent rounded-lg transition-colors peer-focus-within:border-[#09BE06]">
@@ -250,11 +255,7 @@ const Profile: React.FC = () => {
                     className="w-full bg-[#08C600] text-[#FFFFFF] py-3 rounded-full font-medium text-sm hover:bg-green-600 disabled:bg-green-600 transition"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ?
-                      <Spinner />
-                      :
-                      "Update Details"
-                    }
+                    {isSubmitting ? <Spinner /> : "Update Details"}
                   </button>
                 </Form>
               )}
@@ -267,7 +268,9 @@ const Profile: React.FC = () => {
                 confirmPassword: "",
               }}
               validationSchema={Yup.object({
-                currentPassword: Yup.string().required("Current Password is required"),
+                currentPassword: Yup.string().required(
+                  "Current Password is required"
+                ),
                 password: Yup.string()
                   .min(6, "Password must be at least 6 characters")
                   .required("New Password is required"),
@@ -277,7 +280,14 @@ const Profile: React.FC = () => {
               })}
               onSubmit={handlePasswordSubmit}
             >
-              {({ values, errors, touched, handleChange, handleBlur, isSubmitting }) => (
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                isSubmitting,
+              }) => (
                 <Form className="mt-4 flex flex-col gap-3 sm:gap-5">
                   <h4 className="text-sm font-bold">Change Password</h4>
                   <fieldset className="border border-transparent rounded-lg transition-colors peer-focus-within:border-[#09BE06]">
@@ -299,7 +309,9 @@ const Profile: React.FC = () => {
                       <input
                         id="currentPassword"
                         name="currentPassword"
-                        type={showPassword.currentPassword ? "text" : "password"}
+                        type={
+                          showPassword.currentPassword ? "text" : "password"
+                        }
                         placeholder="Current Password"
                         className="border-0 shadow-none outline-none w-full text-sm font-normal text-[#899CC9]"
                         onChange={handleChange}
@@ -308,14 +320,22 @@ const Profile: React.FC = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword({...showPassword, currentPassword: !showPassword.currentPassword})}
+                        onClick={() =>
+                          setShowPassword({
+                            ...showPassword,
+                            currentPassword: !showPassword.currentPassword,
+                          })
+                        }
                         className="absolute right-4 text-gray-500"
                       >
-                        {showPassword.currentPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                        {showPassword.currentPassword ? (
+                          <Eye size={20} />
+                        ) : (
+                          <EyeOff size={20} />
+                        )}
                       </button>
                     </div>
-                    {touched.currentPassword &&
-                      errors.currentPassword ? (
+                    {touched.currentPassword && errors.currentPassword ? (
                       <div className="text-red-500 text-sm ml-2 mt-1">
                         {errors.currentPassword}
                       </div>
@@ -349,10 +369,19 @@ const Profile: React.FC = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword({...showPassword, newPassword: !showPassword.newPassword})}
+                        onClick={() =>
+                          setShowPassword({
+                            ...showPassword,
+                            newPassword: !showPassword.newPassword,
+                          })
+                        }
                         className="absolute right-4 text-gray-500"
                       >
-                        {showPassword.newPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                        {showPassword.newPassword ? (
+                          <Eye size={20} />
+                        ) : (
+                          <EyeOff size={20} />
+                        )}
                       </button>
                     </div>
                     {touched.password && errors.password ? (
@@ -381,7 +410,9 @@ const Profile: React.FC = () => {
                       <input
                         id="confirmPassword"
                         name="confirmPassword"
-                        type={showPassword.confirmNewPassword ? "text" : "password"}
+                        type={
+                          showPassword.confirmNewPassword ? "text" : "password"
+                        }
                         placeholder="Confirm your new password"
                         className="border-0 shadow-none outline-none w-full text-sm font-normal text-[#899CC9]"
                         onChange={handleChange}
@@ -390,7 +421,13 @@ const Profile: React.FC = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword({...showPassword, confirmNewPassword: !showPassword.confirmNewPassword})}
+                        onClick={() =>
+                          setShowPassword({
+                            ...showPassword,
+                            confirmNewPassword:
+                              !showPassword.confirmNewPassword,
+                          })
+                        }
                         className="absolute right-4 text-gray-500 ml-2 mt-1"
                       >
                         {showPassword.confirmNewPassword ? (
@@ -400,8 +437,7 @@ const Profile: React.FC = () => {
                         )}
                       </button>
                     </div>
-                    {touched.confirmPassword &&
-                      errors.confirmPassword ? (
+                    {touched.confirmPassword && errors.confirmPassword ? (
                       <div className="text-red-500 text-sm">
                         {errors.confirmPassword}
                       </div>
@@ -413,17 +449,11 @@ const Profile: React.FC = () => {
                     className="w-full bg-[#08C600] text-[#FFFFFF] py-3 rounded-full font-medium text-sm hover:bg-green-600 disabled:bg-green-600 transition"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ?
-                      <Spinner />
-                      :
-                      "Update Password"
-                    }
+                    {isSubmitting ? <Spinner /> : "Update Password"}
                   </button>
                 </Form>
               )}
             </Formik>
-
-
           </div>
 
           <div className="flex items-center my-6">
@@ -435,11 +465,18 @@ const Profile: React.FC = () => {
           </div>
           <button
             type="submit"
-            onClick={handleSubscriptionToggle}
-            className={`w-full py-3 rounded-full font-medium text-sm transition ${isSubscribed
-              ? "bg-[#940000] text-white"
-              : "bg-[#FFD200] text-[#FFFFFF]"
-              }`}
+            onClick={() => {
+              if (!isSubscribed) {
+                router.push("/auth/upgrade-to-premium");
+              } else {
+                handleSubscriptionToggle();
+              }
+            }}
+            className={`w-full py-3 rounded-full font-medium text-sm transition ${
+              isSubscribed
+                ? "bg-[#940000] text-white"
+                : "bg-[#FFD200] text-[#FFFFFF]"
+            }`}
           >
             {isSubscribed ? "Cancel Subscription" : "Upgrade to Premium"}
           </button>
