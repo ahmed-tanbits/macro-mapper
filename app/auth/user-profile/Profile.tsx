@@ -143,6 +143,7 @@ const Profile: React.FC = () => {
     setSubmitting(false);
   };
 
+
   const handleSubscriptionToggle = () => {
     setIsSubscribed((prev) => !prev);
   };

@@ -32,23 +32,41 @@ const Subscription: React.FC = () => {
   const { session, user } = useAuth();
   const { toast } = useToast();
 
-  const handleUpgradePlan = async (price_Id: string) => {
+  console.log("user =>", user);
+
+  const handleUpgradePlan = async (priceId: string) => {
     setLoading(true);
-    setSelectedPlan(price_Id);
+    setSelectedPlan(priceId);
 
     const stripe = await stripePromise;
     try {
-      const response = await fetch("/api/checkout", {
+      const response: any = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ price_Id }),
+        body: JSON.stringify({ priceId }),
       });
+      console.log(response, "responce");
 
       const { sessionId } = await response.json();
       if (sessionId) {
         const { error } = await stripe!.redirectToCheckout({ sessionId });
         if (error) console.error(error);
       }
+      if (response.message) {
+        toast({
+          title: "Success!",
+          description: response.message,
+          variant: "success",
+        });
+      } else if (response.error) {
+        toast({
+          title: "Error!",
+          description: response.error,
+          variant: "destructive",
+        });
+      }
+
+      //   router.push("/");
     } catch (error) {
       console.error("Subscription error:", error);
     }

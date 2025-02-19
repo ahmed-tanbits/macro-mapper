@@ -10,7 +10,6 @@ export async function POST(req: Request) {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    console.log("Received Token:", token); // ✅ Debugging
 
     // ✅ Fetch user from Supabase using token
     const { data: user, error: userError } = await supabase.auth.getUser(token);
@@ -20,7 +19,6 @@ export async function POST(req: Request) {
     }
 
     const userId = user.user.id;
-    console.log("Authenticated User ID:", userId);
 
     const { fullName, email, password } = await req.json();
 
