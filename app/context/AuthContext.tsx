@@ -12,6 +12,7 @@ type AuthContextType = {
   loading: boolean;
   authParams: any;
   setSession: (session: any) => void;
+  setUser: (user: any) => void;
   logout: () => void;
 };
 
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true, // ✅ Default to loading
   authParams: null,
   setSession: () => { },
+  setUser: () => {},
   logout: () => { },
 });
 
@@ -54,36 +56,79 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
   useEffect(() => {
-    const fetchSession = async () => {
-      setLoading(true); // Start loading
+    const fetchSessionAndSubscription = async () => {
+      setLoading(true);
       const { data, error } = await supabase.auth.getSession();
 
       if (error) {
         console.error("Session Error:", error);
       } else if (data.session) {
+        const user = data.session.user;
+
+        // 🔹 Fetch user's subscription (ONLY ONE)
+        const { data: subscription, error: subError } = await supabase
+          .from("subscriptions")
+          .select("*")
+          .eq("user_id", user.id)
+          .single(); // ✅ Fetch a single subscription object
+
+        if (subError && subError.code !== "PGRST116") {
+          console.error("Error fetching subscription:", subError.message);
+        }
+
+        // ✅ Check if user has an active or complete subscription
+        const hasSubscription = subscription
+          ? ["active", "complete"].includes(subscription.status)
+          : false;
+
+        // ✅ Store user with subscription info and flag
         setSession(data.session);
-        setUser(data.session.user); // ✅ Store user info
+        setUser({
+          ...user,
+          subscription: subscription || null,
+          hasSubscription
+        });
       }
 
-      setLoading(false); // Stop loading
+      setLoading(false);
     };
 
-    fetchSession();
+    fetchSessionAndSubscription();
 
-    // ✅ Listen for auth state changes (auto-refresh token)
+    // ✅ Listen for auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setLoading(true); // Start loading when auth state changes
 
         if (session) {
+          const user = session.user;
+
+          // 🔹 Fetch subscription again
+          const { data: subscription, error: subError } = await supabase
+            .from("subscriptions")
+            .select("*")
+            .eq("user_id", user.id)
+            .single();
+
+          if (subError && subError.code !== "PGRST116") {
+            console.error("Error fetching subscription:", subError.message);
+          }
+
+          // ✅ Check if user has an active or complete subscription
+          const hasSubscription = subscription
+            ? ["active", "complete"].includes(subscription.status)
+            : false;
+
+          // ✅ Store user with updated subscription info and flag
           setSession(session);
-          setUser(session.user); // ✅ Update user info
+          setUser({
+            ...user,
+            subscription: subscription || null,
+            hasSubscription
+          });
         } else {
           setSession(null);
           setUser(null);
         }
-
-        setLoading(false); // Stop loading
       }
     );
 
@@ -100,7 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, authParams, setSession, logout }}>
+    <AuthContext.Provider value={{ session, user, loading, authParams, setSession, setUser, logout }}>
       {loading ? <div className="min-h-screen flex justify-center items-center"><Spinner width={50} height={50} color="primary" /></div> : children}
     </AuthContext.Provider>
   );

@@ -148,3 +148,8 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+:root .\[\&_svg\]\:size-4 svg {
+  width: auto !important;
+  height: auto !important;
+}
