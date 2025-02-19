@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Crown } from "lucide-react";
 import Link from "next/link";
+import SubscriptionPlanModal from "./subscription/SubscriptionPlanModal";
 
 function SubscriptionBanner() {
+  const [open, setOpen] = useState(false);
   const cardContent = [
     "Unlock Macronutrient Results",
     "Unlock Advanced Search",
     "Unlock Allergy Results",
   ];
+
+  const handleOpenSubscriptionModal = (state: boolean) => {
+    setOpen(state)
+  }
 
   return (
     <section className="bg-[linear-gradient(to_top,#007A17,#00CF3A)] mt-16 w-full lg:mt-32">
@@ -59,15 +65,15 @@ function SubscriptionBanner() {
               </li>
             ))}
           </ul>
-          <Link
-            href="/"
+          <button
+            onClick={() => handleOpenSubscriptionModal(true)}
             className="w-full md:w-[270px] bg-[#FFD200] rounded-full py-3 mt-4 font-bold flex items-center justify-center gap-2"
           >
             <span>GO PREMIUM</span>
             <span>
               <Crown size={20} fill="#000" />
             </span>
-          </Link>
+          </button>
         </div>
         <div className="hidden md:block static 992:absolute right-0 992:-top-[47px] w-[470px] h-auto">
           <Image
@@ -79,6 +85,7 @@ function SubscriptionBanner() {
           />
         </div>
       </div>
+      <SubscriptionPlanModal open={open} setOpen={handleOpenSubscriptionModal} />
     </section>
   );
 }
