@@ -80,10 +80,11 @@ export default function Navbar({ showFilters }: Props) {
       <nav className="relative z-50 bg-white flex flex-col 1200:flex-row w-full justify-between items-center sm:items-start px-4 md:px-8 border-b pt-4 pb-3">
         <div className="grid items-center 1200:items-start grid-cols-12 gap-0 1200:gap-10 w-full">
           <div
-            className={`${showFilters
-              ? "col-span-9 md:col-span-4 1200:col-span-2 mb-2 1200:mb-0"
-              : "col-span-4"
-              } `}
+            className={`${
+              showFilters
+                ? "col-span-9 md:col-span-4 1200:col-span-2 mb-2 1200:mb-0"
+                : "col-span-4"
+            } `}
           >
             {/* logo */}
             <Link href="/">
@@ -109,10 +110,11 @@ export default function Navbar({ showFilters }: Props) {
 
           {/* authentication menu */}
           <div
-            className={`${showFilters
-              ? "col-span-3 md:col-span-8 1200:col-span-4 ms-auto mb-2 1200:mb-0"
-              : "col-span-8 ms-auto"
-              } `}
+            className={`${
+              showFilters
+                ? "col-span-3 md:col-span-8 1200:col-span-4 ms-auto mb-2 1200:mb-0"
+                : "col-span-8 ms-auto"
+            } `}
           >
             <div className="flex items-center gap-4">
               <div className="hidden md:flex gap-3 text-neutral-600 font-normal border-0 md:border-r pe-4">
@@ -153,33 +155,46 @@ export default function Navbar({ showFilters }: Props) {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button className="rounded-full focus:outline-none">
-                          <Image src="/usericon.png" width={32} height={32} alt="User Profile" />
+                          <Image
+                            src="/usericon.png"
+                            width={32}
+                            height={32}
+                            alt="User Profile"
+                          />
                         </button>
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem onClick={() => router.push("/auth/user-profile")}>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => router.push("/auth/user-profile")}
+                        >
                           Profile
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleLogOut} className="text-red-500">
+                        <DropdownMenuItem
+                          onClick={() => router.push("/subscription")}
+                          className="cursor-pointer"
+                        >
+                          Subscription
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={handleLogOut}
+                          className="text-red-500 cursor-pointer"
+                        >
                           Logout
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-
-
                 ) : (
                   <div className="hidden md:flex gap-2">
                     <button
-
                       onClick={() => router.push("/auth/login")}
                       className="text-sm font-medium text-black bg-white-600 py-2 px-3 border border-[#CBCBCB] rounded-md"
                     >
                       Log In
                     </button>
                     <button
-
                       onClick={() => router.push("/auth/signup")}
                       className="text-sm font-medium text-white bg-primary-600 py-2 px-3 border border-primary-600 rounded-md"
                     >
@@ -203,13 +218,15 @@ export default function Navbar({ showFilters }: Props) {
 
       {/* mobile sidebar */}
       <div
-        className={`fixed inset-0 z-50 bg-neutral-900 bg-opacity-30 transition-opacity ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+        className={`fixed inset-0 z-50 bg-neutral-900 bg-opacity-30 transition-opacity ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
         onClick={toggleSidebar}
       ></div>
       <div
-        className={`fixed inset-y-0 select-none flex flex-col justify-between left-0 z-50 w-80 h-full overflow-y-auto transform bg-white transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+        className={`fixed inset-y-0 select-none flex flex-col justify-between left-0 z-50 w-80 h-full overflow-y-auto transform bg-white transition-transform duration-300 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="">
           <div className="flex items-center gap-1 border-b p-2">
@@ -237,8 +254,8 @@ export default function Navbar({ showFilters }: Props) {
                 isAuthenticated
                   ? true
                   : !["Profile", "Subscription", "Log out"].includes(
-                    value.label
-                  )
+                      value.label
+                    )
               )
               .map((value, index) => (
                 <Link
@@ -251,9 +268,7 @@ export default function Navbar({ showFilters }: Props) {
                     fontSize: value.fs,
                     textDecoration: value.underline,
                   }}
-                  onClick={() =>
-                    value.label === "Log out" && handleLogOut()
-                  }
+                  onClick={() => value.label === "Log out" && handleLogOut()}
                 >
                   {value.label}
                 </Link>
@@ -267,7 +282,6 @@ export default function Navbar({ showFilters }: Props) {
               <>
                 <li>
                   <button
-
                     onClick={() => router.push("auth/login")}
                     className="block w-full text-black border border-[#CBCBCB] bg-[#f8f8f8] font-medium rounded-lg py-3 text-center"
                   >
@@ -276,7 +290,6 @@ export default function Navbar({ showFilters }: Props) {
                 </li>
                 <li>
                   <button
-
                     onClick={() => router.push("auth/signup")}
                     className="block w-full text-white border border-[#0AC600] bg-[#0AC600] font-medium rounded-lg py-3 text-center"
                   >
