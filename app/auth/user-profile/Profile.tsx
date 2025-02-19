@@ -30,9 +30,9 @@ const Profile: React.FC = () => {
     newPassword: false,
     confirmNewPassword: false,
   });
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { session, user } = useAuth(); // ✅ Get latest token
+  const { session, user, setUser } = useAuth(); // ✅ Get latest token
   const { toast } = useToast();
 
   const handleProfileSubmit = async (
@@ -144,9 +144,57 @@ const Profile: React.FC = () => {
   };
 
 
-  const handleSubscriptionToggle = () => {
-    setIsSubscribed((prev) => !prev);
+  const handleCancelSubscription = async () => {
+    if (!user) {
+      toast({
+        title: "Error!",
+        description: "You need to be logged in!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/cancel-subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }), // Pass user's ID
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success!",
+          description: "Subscription canceled successfully!",
+          variant: "success",
+        });
+        // 🔹 Update local state (if needed)
+        setUser((prevUser: any) => ({
+          ...prevUser,
+          subscription: { ...prevUser.subscription, status: "canceled" },
+          hasSubscription: false, // Update flag
+        }));
+      } else {
+        toast({
+          title: "Error!",
+          description: data.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Cancel Subscription Error:", error);
+      toast({
+        title: "Error!",
+        description: "Failed to cancel subscription.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <section className="grid grid-cols-12">
@@ -460,26 +508,26 @@ const Profile: React.FC = () => {
           <div className="flex items-center my-6">
             <div className="flex-1 h-px bg-gray-300"></div>
             <p className="px-4 text-[#425583] text-sm font-normal">
-              {isSubscribed ? "Your Subscription" : "Try Premium"}
+              {user?.hasSubscription ? "Your Subscription" : "Try Premium"}
             </p>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
           <button
             type="submit"
             onClick={() => {
-              if (!isSubscribed) {
+              if (!user?.hasSubscription) {
                 router.push("/auth/upgrade-to-premium");
               } else {
-                handleSubscriptionToggle();
+                handleCancelSubscription();
               }
             }}
-            className={`w-full py-3 rounded-full font-medium text-sm transition ${
-              isSubscribed
-                ? "bg-[#940000] text-white"
-                : "bg-[#FFD200] text-[#FFFFFF]"
-            }`}
+            className={`w-full py-3 rounded-full font-medium text-sm transition ${user?.hasSubscription
+              ? "bg-[#940000] text-white"
+              : "bg-[#FFD200] text-[#FFFFFF]"
+              }`}
           >
-            {isSubscribed ? "Cancel Subscription" : "Upgrade to Premium"}
+
+            {loading ? <Spinner /> : (user?.hasSubscription ? "Cancel Subscription" : "Upgrade to Premium")}
           </button>
         </div>
       </div>

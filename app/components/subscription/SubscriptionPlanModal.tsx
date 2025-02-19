@@ -11,8 +11,18 @@ import { useAuth } from "@/app/context/AuthContext";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const plans = [
-  { id: "price_1Qs0NAGT7SStcoR0t8M1TaSg", name: "Monthly", description: "Individuals and small teams", price: "$3.49" },
-  { id: "price_1Qs0O6GT7SStcoR0T3ZwHCtD", name: "Yearly", description: "Expanding teams", price: "$20.99" },
+  {
+    id: "plan1",
+    priceId: "price_1Qs0NAGT7SStcoR0t8M1TaSg",
+    name: "Monthly",
+    price: "$3.49",
+  },
+  {
+    id: "plan2",
+    priceId: "price_1Qs0O6GT7SStcoR0T3ZwHCtD",
+    name: "Yearly",
+    price: "$20.99",
+  },
 ];
 
 const cardContent = [
@@ -45,10 +55,12 @@ export default function SubscriptionPlanModal({ open, setOpen }: SubscriptionPla
 
     const stripe = await stripePromise;
 
+    const currentPlan = plans.find((plan) => plan.priceId === selectedPlan )
+
     const response = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ priceId: selectedPlan, userId: user?.id }),
+      body: JSON.stringify({ plan: currentPlan, userId: user?.id }),
     });
 
     const { sessionId } = await response.json();
@@ -97,11 +109,11 @@ export default function SubscriptionPlanModal({ open, setOpen }: SubscriptionPla
             <Label
               key={plan.id}
               htmlFor={plan.id}
-              className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer ${selectedPlan === plan.id ? "border-primary-600 bg-green-50" : "border-gray-300"
+              className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer ${selectedPlan === plan.priceId ? "border-primary-600 bg-green-50" : "border-gray-300"
                 }`}
             >
               <div className="flex items-center gap-3">
-                <RadioGroupItem id={plan.id} value={plan.id}
+                <RadioGroupItem id={plan.id} value={plan.priceId}
                   className="data-[state=checked]:border-primary-600 fill-primary-600"
 
                 />

@@ -12,6 +12,7 @@ type AuthContextType = {
   loading: boolean;
   authParams: any;
   setSession: (session: any) => void;
+  setUser: (user: any) => void;
   logout: () => void;
 };
 
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true, // ✅ Default to loading
   authParams: null,
   setSession: () => { },
+  setUser: () => {},
   logout: () => { },
 });
 
@@ -96,7 +98,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // ✅ Listen for auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setLoading(true);
 
         if (session) {
           const user = session.user;
@@ -128,8 +129,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(null);
           setUser(null);
         }
-
-        setLoading(false);
       }
     );
 
@@ -146,7 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, authParams, setSession, logout }}>
+    <AuthContext.Provider value={{ session, user, loading, authParams, setSession, setUser, logout }}>
       {loading ? <div className="min-h-screen flex justify-center items-center"><Spinner width={50} height={50} color="primary" /></div> : children}
     </AuthContext.Provider>
   );

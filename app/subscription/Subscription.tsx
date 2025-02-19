@@ -6,44 +6,45 @@ import { useToast } from "@/app/hooks/useToast";
 import { loadStripe } from "@stripe/stripe-js";
 import Banner from "../auth/Banner";
 import Image from "next/image";
+import Spinner from "../components/Spinner";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
 const plans = [
   {
-    id: "price_1Qs0NAGT7SStcoR0t8M1TaSg",
+    id: "plan1",
+    priceId: "price_1Qs0NAGT7SStcoR0t8M1TaSg",
     name: "Monthly",
-
     price: "$3.49",
   },
   {
-    id: "price_1Qs0O6GT7SStcoR0T3ZwHCtD",
+    id: "plan2",
+    priceId: "price_1Qs0O6GT7SStcoR0T3ZwHCtD",
     name: "Yearly",
-
     price: "$20.99",
   },
 ];
 
 const Subscription: React.FC = () => {
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { session, user } = useAuth();
+  const [loading, setLoading] = useState<any>({
+    plan1: false,
+    plan2: false,
+    subscription: false
+  });
+  const { user, setUser } = useAuth();
   const { toast } = useToast();
 
-  console.log("user =>", user);
-
-  const handleUpgradePlan = async (priceId: string) => {
-    setLoading(true);
-    setSelectedPlan(priceId);
+  const handleUpgradePlan = async (plan: any) => {
+    setLoading({ ...loading, [plan.id]: true });
 
     const stripe = await stripePromise;
+
     try {
       const response: any = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ plan, userId: user?.id }),
       });
       console.log(response, "responce");
 
@@ -70,7 +71,58 @@ const Subscription: React.FC = () => {
     } catch (error) {
       console.error("Subscription error:", error);
     }
-    setLoading(false);
+    setLoading({ ...loading, [plan.id]: false });
+  };
+
+  const handleCancelSubscription = async () => {
+    if (!user) {
+      toast({
+        title: "Error!",
+        description: "You need to be logged in!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading({ ...loading, subscription: true });
+    try {
+      const response = await fetch("/api/cancel-subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }), // Pass user's ID
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Success!",
+          description: "Subscription canceled successfully!",
+          variant: "success",
+        });
+        // 🔹 Update local state (if needed)
+        setUser((prevUser: any) => ({
+          ...prevUser,
+          subscription: { ...prevUser.subscription, status: "canceled" },
+          hasSubscription: false, // Update flag
+        }));
+      } else {
+        toast({
+          title: "Error!",
+          description: data.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Cancel Subscription Error:", error);
+      toast({
+        title: "Error!",
+        description: "Failed to cancel subscription.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading({ ...loading, subscription: false });
+    }
   };
 
   const cardContent = [
@@ -127,7 +179,7 @@ const Subscription: React.FC = () => {
           <div className="flex flex-col gap-4 mt-4">
             {plans.map((plan) => (
               <div
-                key={plan.id}
+                key={plan.price}
                 className="flex flex-col items-center w-full gap-2"
               >
                 <label className="text-[#2E3139] text-sm font-bold">
@@ -135,19 +187,22 @@ const Subscription: React.FC = () => {
                 </label>
                 <button
                   type="button"
-                  onClick={() => handleUpgradePlan(plan.id)}
-                  className="w-full py-3 rounded-full font-medium text-sm transition bg-[#08C600] text-white"
-                  disabled={loading}
+                  onClick={() => handleUpgradePlan(plan)}
+                  className="w-full py-3 cursor-pointer rounded-full font-medium text-sm transition bg-primary-600 hover:bg-primary-700 text-white"
+                  disabled={loading[plan.id] || (user?.hasSubscription && user?.subscription?.plan === plan.name)}
                 >
-                  {selectedPlan === plan.id
-                    ? "Current Plan"
-                    : `${plan.price} ${plan.name}`}
+                  {loading[plan.id] ?
+                    <Spinner />
+                    :
+                    (user?.hasSubscription && user?.subscription?.plan === plan.name)
+                      ? "Current Plan"
+                      : `${plan.price} ${plan.name}`}
                 </button>
               </div>
             ))}
           </div>
 
-          {selectedPlan && (
+          {user?.hasSubscription &&
             <div className="mt-6">
               <div className="flex items-center my-6">
                 <div className="flex-1 h-px bg-gray-300"></div>
@@ -156,15 +211,19 @@ const Subscription: React.FC = () => {
                 </p>
                 <div className="flex-1 h-px bg-gray-300"></div>
               </div>
+
               <button
                 type="button"
-                onClick={() => setSelectedPlan(null)}
-                className="w-full py-3 rounded-full font-medium text-sm transition bg-[#940000] text-white"
+                onClick={handleCancelSubscription}
+                className="w-full py-3 rounded-full font-medium text-sm transition bg-danger-500 hover:bg-red-700 text-white"
               >
-                Cancel Subscription
+                {loading.subscription ?
+                  <Spinner />
+                  : "Cancel Subscription"
+                }
               </button>
             </div>
-          )}
+          }
         </div>
       </div>
       <Banner />

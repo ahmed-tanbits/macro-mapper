@@ -1,9 +1,42 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Banner from "../Banner";
 import Image from "next/image";
 import Link from "next/link";
+import Spinner from "@/app/components/Spinner";
+import { loadStripe } from "@stripe/stripe-js";
+import { useAuth } from "@/app/context/AuthContext";
+import { useToast } from "@/app/hooks/useToast";
+
+
+const plans = [
+  {
+    id: "plan1",
+    priceId: "price_1Qs0NAGT7SStcoR0t8M1TaSg",
+    name: "Monthly",
+    price: "$3.49",
+  },
+  {
+    id: "plan2",
+    priceId: "price_1Qs0O6GT7SStcoR0T3ZwHCtD",
+    name: "Yearly",
+    price: "$20.99",
+  },
+];
 
 const UpgradeToPremium: React.FC = () => {
+
+  const [loading, setLoading] = useState<any>({
+    plan1: false,
+    plan2: false,
+  });
+
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+  );
+  const { user } = useAuth();
+  const { toast } = useToast();
+
   const pageContent = [
     {
       lable: "Filter by Macronutrients",
@@ -18,6 +51,45 @@ const UpgradeToPremium: React.FC = () => {
       para: "Macromapper is determined to be the leading food finding platform, showcasing thousands of restaurants and products. Join us on our journey and help us expand!",
     },
   ];
+
+  const handleUpgradePlan = async (plan: any) => {
+    setLoading({ ...loading, [plan.id]: true });
+
+    const stripe = await stripePromise;
+
+    try {
+      const response: any = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, userId: user?.id }),
+      });
+
+      const { sessionId } = await response.json();
+      if (sessionId) {
+        const { error } = await stripe!.redirectToCheckout({ sessionId });
+        if (error) console.error(error);
+      }
+      if (response.message) {
+        toast({
+          title: "Success!",
+          description: response.message,
+          variant: "success",
+        });
+
+      } else if (response.error) {
+        toast({
+          title: "Error!",
+          description: response.error,
+          variant: "destructive",
+        });
+      }
+
+      //   router.push("/");
+    } catch (error) {
+      console.error("Subscription error:", error);
+    }
+    setLoading({ ...loading, [plan.id]: false });
+  };
 
   return (
     <>
@@ -109,16 +181,26 @@ const UpgradeToPremium: React.FC = () => {
                 </li>
               ))}
 
-              <li className="mt-1">
-                <button className="block w-full text-white border border-[#0AC600] bg-[#0AC600] font-bold rounded-lg py-3 text-center">
-                  $ 29.99 Year
-                </button>
-              </li>
-              <li className="mt-1">
-                <button className="block w-full text-black border border-black bg-[#f8f8f8] font-bold rounded-lg py-3 text-center">
-                  $ 3.49 Month
-                </button>
-              </li>
+              {plans.map((plan) => (
+                <div
+                  key={plan.price}
+                  className="flex flex-col items-center w-full gap-2"
+                >
+                  <li className="mt-1 w-full">
+                    <button
+                      onClick={() => handleUpgradePlan(plan)}
+                      className={`block w-full text-${plan.name === "Monthly" ? "white" : "black"} border border-[${plan.name === "Monthly" ? "#0AC600" : "#f8f8f8"}] bg-[${plan.name === "Monthly" ? "#0AC600" : "#f8f8f8"}] font-bold rounded-lg py-3 text-center`}
+                      disabled={loading[plan.id]}
+                    >
+                      {loading[plan.id] ?
+                        <Spinner width={30} height={30} color={plan.name === "Monthly" ? "#fff" : "#000"} />
+                        :
+                        `${plan.price} ${plan.name === "Monthly" ? "Month" : "Year"}`}
+                    </button>
+                  </li>
+                </div>
+              ))}
+
               <li className="mt-1 mx-auto">
                 <Link href={"/"} className="text-[#6C6C6C]">
                   Skip
