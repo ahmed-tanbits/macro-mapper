@@ -32,7 +32,7 @@ const config: Config = {
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				yellow: {
-					main: "FFD200"
+					main: "#FFD200",
 				},
 				danger: {
 					'500': "#940000"
