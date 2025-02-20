@@ -72,24 +72,26 @@ const MapCanvas: React.FC<Props> = ({
   const [isTooltipLoading, setIsTooltipLoading] = useState(false);
 
   const fetchLocationsWithinBounds = useCallback(
-    async (bounds: mapboxgl.LngLatBounds) => {
-      const { _ne: northEast, _sw: southWest } = bounds;
-      try {
-        const { data: locations, error } = await supabase
-          .from("locations")
-          .select("location_id, lat, long, restaurant_id")
-          .gte("lat", southWest.lat)
-          .lte("lat", northEast.lat)
-          .gte("long", southWest.lng)
-          .lte("long", northEast.lng);
+    async (bounds: mapboxgl.LngLatBounds | null) => {
+      if (bounds) {
+        const { _ne: northEast, _sw: southWest } = bounds;
+        try {
+          const { data: locations, error } = await supabase
+            .from("locations")
+            .select("location_id, lat, long, restaurant_id")
+            .gte("lat", southWest.lat)
+            .lte("lat", northEast.lat)
+            .gte("long", southWest.lng)
+            .lte("long", northEast.lng);
 
-        if (error) {
-          throw new Error(error.message);
+          if (error) {
+            throw new Error(error.message);
+          }
+
+          setLocations(locations);
+        } catch (error) {
+          console.error("Error fetching locations:", error);
         }
-
-        setLocations(locations);
-      } catch (error) {
-        console.error("Error fetching locations:", error);
       }
     },
     []
@@ -274,12 +276,11 @@ const MapCanvas: React.FC<Props> = ({
             onClick={() => handleMarkerClick(location)}
           >
             <div
-              className={`w-5 aspect-square m-3 transition-all z-10 rounded-full text-white p-0.5 ${
-                highlightedRestaurantId &&
-                location.restaurant_id === highlightedRestaurantId
+              className={`w-5 aspect-square m-3 transition-all z-10 rounded-full text-white p-0.5 ${highlightedRestaurantId &&
+                  location.restaurant_id === highlightedRestaurantId
                   ? "bg-orange-500 "
                   : "bg-primary-500 shadow-primary-500"
-              } border-2 border-white select-none cursor-pointer`}
+                } border-2 border-white select-none cursor-pointer`}
             ></div>
           </Marker>
         ))}

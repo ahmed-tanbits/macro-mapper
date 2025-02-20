@@ -1,9 +1,10 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/supabaseClient";
 import Spinner from "../components/Spinner";
 import { useRouter } from "next/navigation";
+import { debounce } from "lodash";
 
 // 🔹 Define Auth Context Type
 type AuthContextType = {
@@ -23,7 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true, // ✅ Default to loading
   authParams: null,
   setSession: () => { },
-  setUser: () => {},
+  setUser: () => { },
   logout: () => { },
 });
 
@@ -54,77 +55,76 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { type, accessToken, refreshToken, error, errorCode, errorDescription };
   }, [router]);
 
-
-  useEffect(() => {
-    const fetchSessionAndSubscription = async () => {
+  const fetchSessionAndSubscription = useCallback(
+    debounce(async () => {
       setLoading(true);
       const { data, error } = await supabase.auth.getSession();
-
       if (error) {
         console.error("Session Error:", error);
-      } else if (data.session) {
+        setLoading(false);
+        return;
+      }
+
+      if (data.session) {
         const user = data.session.user;
 
-        // 🔹 Fetch user's subscription (ONLY ONE)
+        // Fetch subscription only if user exists
         const { data: subscription, error: subError } = await supabase
           .from("subscriptions")
           .select("*")
           .eq("user_id", user.id)
-          .single(); // ✅ Fetch a single subscription object
+          .single();
 
         if (subError && subError.code !== "PGRST116") {
           console.error("Error fetching subscription:", subError.message);
         }
 
-        // ✅ Check if user has an active or complete subscription
         const hasSubscription = subscription
           ? ["active", "complete"].includes(subscription.status)
           : false;
 
-        // ✅ Store user with subscription info and flag
-        setSession(data.session);
-        setUser({
-          ...user,
-          subscription: subscription || null,
-          hasSubscription
+        // Prevent redundant state updates
+        setSession((prevSession: any) =>
+          JSON.stringify(prevSession) !== JSON.stringify(data.session)
+            ? data.session
+            : prevSession
+        );
+
+        setUser((prevUser: any) => {
+          if (
+            !prevUser ||
+            prevUser.id !== user.id ||
+            JSON.stringify(prevUser.subscription) !== JSON.stringify(subscription)
+          ) {
+            return { ...user, subscription: subscription || null, hasSubscription };
+          }
+          return prevUser;
         });
       }
 
       setLoading(false);
-    };
+    }, 500), // Debounce API call by 500ms
+    []
+  );
 
+  useEffect(() => {
     fetchSessionAndSubscription();
 
-    // ✅ Listen for auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-
-        if (session) {
-          const user = session.user;
-
-          // 🔹 Fetch subscription again
-          const { data: subscription, error: subError } = await supabase
+        if (session && session.user.id !== user?.id) {
+          const { data: subscription } = await supabase
             .from("subscriptions")
             .select("*")
-            .eq("user_id", user.id)
+            .eq("user_id", session.user.id)
             .single();
 
-          if (subError && subError.code !== "PGRST116") {
-            console.error("Error fetching subscription:", subError.message);
-          }
-
-          // ✅ Check if user has an active or complete subscription
-          const hasSubscription = subscription
-            ? ["active", "complete"].includes(subscription.status)
-            : false;
-
-          // ✅ Store user with updated subscription info and flag
           setSession(session);
-          setUser({
-            ...user,
-            subscription: subscription || null,
-            hasSubscription
-          });
+          setUser((prevUser: any) => ({
+            ...session.user,
+            subscription,
+            hasSubscription: subscription ? ["active", "complete"].includes(subscription.status) : false,
+          }));
         } else {
           setSession(null);
           setUser(null);
@@ -135,7 +135,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchSessionAndSubscription]);
 
   // ✅ Logout function
   const logout = async () => {

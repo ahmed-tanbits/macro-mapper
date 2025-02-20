@@ -35,6 +35,14 @@ const Profile: React.FC = () => {
   const { session, user, setUser } = useAuth(); // ✅ Get latest token
   const { toast } = useToast();
 
+  const validationSchema = Yup.object({
+    fullName: Yup.string().required("Full Name is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+  })
+
+
   const handleProfileSubmit = async (
     values: ProfileValues,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
@@ -208,17 +216,12 @@ const Profile: React.FC = () => {
           </p>
 
           <div className="mt-4 flex flex-col gap-3 sm:gap-5">
-            <Formik
+            <Formik<{ fullName: string; email: string }>
               initialValues={{
                 fullName: user?.user_metadata?.fullName || "",
                 email: user?.email || "",
               }}
-              validationSchema={Yup.object({
-                fullName: Yup.string().required("Full Name is required"),
-                email: Yup.string()
-                  .email("Invalid email address")
-                  .required("Email is required"),
-              })}
+              validationSchema={validationSchema}
               onSubmit={handleProfileSubmit}
             >
               {({

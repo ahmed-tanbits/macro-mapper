@@ -8,12 +8,15 @@ import {
   Utensils,
   MapPin,
   Store,
+  Crown,
 } from "lucide-react";
 import Image from "next/image";
 import BadgeList from "../restaurants/BadgeList";
 import RestaurantsSvg from "@/app/components/svgs/RestaurantsSvg";
 import FoodForkKnifeSvg from "@/app/components/svgs/FoodForkKnifeSvg";
 import FoodServingSvg from "@/app/components/svgs/FoodServingSvg";
+import { useAuth } from "@/app/context/AuthContext";
+import Link from "next/link";
 
 export interface MenuItem {
   prod_id: string;
@@ -65,6 +68,7 @@ const FoodItem: React.FC<Props> = ({
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isScrolledToEnd, setIsScrolledToEnd] = useState(false);
   const [isScrolledToStart, setIsScrolledToStart] = useState(true);
+  const { user } = useAuth();
   const [imageUrl, setImageUrl] = useState<string>(
     `https://wsuteglijvwrmcsjhhom.supabase.co/storage/v1/object/public/${item.rest_id}/${item.image_id}.jpg`
   );
@@ -192,9 +196,8 @@ const FoodItem: React.FC<Props> = ({
               )}
               {proximity !== undefined && (
                 <span
-                  className={`text-sm flex justify-start items-center gap-1 ${
-                    proximity < 1 ? "text-primary-500" : ""
-                  }`}
+                  className={`text-sm flex justify-start items-center gap-1 ${proximity < 1 ? "text-primary-500" : ""
+                    }`}
                 >
                   <MapPin className="text-neutral-500" size={16} />
                   <span className="text-neutral-500">Proximity:</span>
@@ -220,20 +223,34 @@ const FoodItem: React.FC<Props> = ({
             <div className="absolute inset-0 border border-black/10 rounded-xl pointer-events-none"></div>
           </div>
         </div>
-        <div className="w-full overflow-hidden px-3 mt-1">
-          <ul className="flex gap-1 items-center w-full overflow-x-auto whitespace-nowrap">
-            {cardCusinies.map((value, index) => (
-              <li
-                className={`text-[12px] px-2 rounded-full py-1 font-semibold ${
-                  index === 2 ? "bg-[#f2e4bd]" : "bg-[#bdf2cc]"
-                }`}
-                key={index}
-              >
-                {value}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {user?.hasSubscription ? (
+          <div className="w-full overflow-hidden px-3 mt-1">
+            <ul className="flex gap-1 items-center w-full overflow-x-auto whitespace-nowrap">
+              {cardCusinies.map((value, index) => (
+                <li
+                  className={`text-[12px] px-2 rounded-full py-1 font-semibold ${index === 2 ? "bg-[#f2e4bd]" : "bg-[#bdf2cc]"
+                    }`}
+                  key={index}
+                >
+                  {value}
+                </li>
+              ))}
+            </ul>
+          </div>)
+          :
+          <div className="w-2/3 mx-3">
+          <Link
+            href="/auth/upgrade-to-premium"
+            className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+          >
+            <span>Unlock More With Premium</span>
+            <span>
+              <Crown size={20} fill="#000" />
+            </span>
+          </Link>
+          </div>
+          }
+
         {/* <div className="w-full overflow-hidden px-3">
           <ul className="flex gap-1 items-center w-full overflow-x-auto whitespace-nowrap">
             {[
@@ -280,7 +297,7 @@ const FoodItem: React.FC<Props> = ({
       <div className="relative bg-neutral-50 px-3 pb-3 pt-3 lg:border-t border-neutral-100 overflow-hidden rounded-b-xl">
         <div
           ref={scrollContainerRef}
-          className="flex gap-2 overflow-x-auto hide-scrollbar"
+          className="flex gap-3 overflow-x-auto hide-scrollbar"
         >
           {item.price && (
             <div className="py-1.5 px-4 border bg-neutral-900 text-white border-neutral-900 transition-all select-none rounded-full whitespace-nowrap">
@@ -288,13 +305,27 @@ const FoodItem: React.FC<Props> = ({
             </div>
           )}
           {renderNutritionalFact("Cal.", item.calories)}
-          {renderNutritionalFact("protein", item.protein, "g")}
-          {renderNutritionalFact("fat", item.total_fat, "g")}
-          {renderNutritionalFact("saturated fat", item.saturated_fat, "g")}
-          {renderNutritionalFact("carbs", item.total_carbs, "g")}
-          {renderNutritionalFact("sugars", item.sugars, "g")}
-          {renderNutritionalFact("fibre", item.fibre, "g")}
-          {renderNutritionalFact("sodium", item.sodium, "mg")}
+          {user?.hasSubscription ? (
+            <>
+              {renderNutritionalFact("protein", item.protein, "g")}
+              {renderNutritionalFact("fat", item.total_fat, "g")}
+              {renderNutritionalFact("saturated fat", item.saturated_fat, "g")}
+              {renderNutritionalFact("carbs", item.total_carbs, "g")}
+              {renderNutritionalFact("sugars", item.sugars, "g")}
+              {renderNutritionalFact("fibre", item.fibre, "g")}
+              {renderNutritionalFact("sodium", item.sodium, "mg")}
+            </>
+          ) :
+            <Link
+              href="/auth/upgrade-to-premium"
+              className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+            >
+              <span>Unlock More With Premium</span>
+              <span>
+                <Crown size={20} fill="#000" />
+              </span>
+            </Link>
+          }
         </div>
 
         {isOverflowing && !isScrolledToEnd && (

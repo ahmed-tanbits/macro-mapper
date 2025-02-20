@@ -12,6 +12,7 @@ import { ChevronRight, ChevronLeft } from "lucide-react";
 import SubscriptionPlanModal from "./components/subscription/SubscriptionPlanModal";
 import { useAuth } from "./context/AuthContext";
 
+// @ts-ignore
 const SlickSlider = dynamic(() => import("react-slick"), { ssr: false });
 
 const restaurants = [
