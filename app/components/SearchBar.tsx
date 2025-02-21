@@ -124,7 +124,7 @@ const SearchBar: React.FC<Props> = () => {
                   onChange={handleSearchTermChange}
                   onKeyPress={handleKeyPress}
                   className="w-full h-full bg-transparent outline-none text-sm py-2 1200:py-0"
-                  placeholder="Search by location or food..."
+                  placeholder="Search foods or restaurants..."
                   autoCorrect="off"
                   spellCheck="false"
                 />
@@ -190,7 +190,7 @@ const SearchBar: React.FC<Props> = () => {
                     value={location}
                     onChange={handleLocationChange}
                     className="w-full h-full bg-transparent outline-none text-sm py-2 1200:py-0"
-                    placeholder="Search by location or food..."
+                    placeholder="Enter your location"
                     autoCorrect="off"
                     spellCheck="false"
                   />
