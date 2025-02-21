@@ -7,6 +7,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import Banner from "../auth/Banner";
 import Image from "next/image";
 import Spinner from "../components/Spinner";
+import CancelSubscriptionModal from "./components/CancelSubscriptionModal";
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
@@ -33,6 +34,9 @@ const Subscription: React.FC = () => {
     plan2: false,
     subscription: false,
   });
+
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+
   const { user, setUser } = useAuth();
 
   const { toast } = useToast();
@@ -152,7 +156,6 @@ const Subscription: React.FC = () => {
           <p className="text-[#425583] text-sm font-normal">
             Subscribe to MacroMapper Premium
           </p>
-
           <ul className="w-full flex flex-col bg-white rounded-xl gap-4 mt-2">
             {cardContent.map((value, index) => (
               <li key={index} className="flex items-start flex-col gap-1">
@@ -177,7 +180,6 @@ const Subscription: React.FC = () => {
               </li>
             ))}
           </ul>
-
           <div className="flex flex-col gap-4 mt-4">
             {plans.map((plan) => (
               <div
@@ -209,7 +211,6 @@ const Subscription: React.FC = () => {
               </div>
             ))}
           </div>
-
           {user?.hasSubscription && (
             <div className="mt-6">
               <div className="flex items-center my-6">
@@ -222,13 +223,18 @@ const Subscription: React.FC = () => {
 
               <button
                 type="button"
-                onClick={handleCancelSubscription}
+                onClick={() => setIsCancelModalOpen(true)}
                 className="w-full py-3 rounded-full font-medium text-sm transition bg-danger-500 hover:bg-red-700 text-white"
               >
                 {loading.subscription ? <Spinner /> : "Cancel Subscription"}
               </button>
             </div>
           )}
+          <CancelSubscriptionModal
+            open={isCancelModalOpen}
+            setOpen={setIsCancelModalOpen}
+            handleCancelSubscription={handleCancelSubscription}
+          />
         </div>
       </div>
       <Banner />
