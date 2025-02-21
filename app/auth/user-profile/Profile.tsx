@@ -12,6 +12,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { supabase } from "@/supabaseClient";
 import Spinner from "@/app/components/Spinner";
 import { useToast } from "@/app/hooks/useToast";
+import CancelSubscriptionModal from "@/app/subscription/components/CancelSubscriptionModal";
 
 interface PasswordValues {
   currentPassword: string;
@@ -31,6 +32,7 @@ const Profile: React.FC = () => {
     confirmNewPassword: false,
   });
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const { session, user, setUser } = useAuth(); // ✅ Get latest token
   const { toast } = useToast();
@@ -40,8 +42,7 @@ const Profile: React.FC = () => {
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
-  })
-
+  });
 
   const handleProfileSubmit = async (
     values: ProfileValues,
@@ -151,7 +152,6 @@ const Profile: React.FC = () => {
     setSubmitting(false);
   };
 
-
   const handleCancelSubscription = async () => {
     if (!user) {
       toast({
@@ -203,6 +203,9 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleOpenCancelSubscriptionModal = (state: boolean) => {
+    setOpen(state);
+  };
 
   return (
     <section className="grid grid-cols-12">
@@ -521,20 +524,30 @@ const Profile: React.FC = () => {
               if (!user?.hasSubscription) {
                 router.push("/auth/upgrade-to-premium");
               } else {
-                handleCancelSubscription();
+                handleOpenCancelSubscriptionModal(true);
               }
             }}
-            className={`w-full py-3 rounded-full font-medium text-sm transition ${user?.hasSubscription
-              ? "bg-[#940000] text-white"
-              : "bg-[#FFD200] text-[#FFFFFF]"
-              }`}
+            className={`w-full py-3 rounded-full font-medium text-sm transition ${
+              user?.hasSubscription
+                ? "bg-[#940000] text-white"
+                : "bg-[#FFD200] text-[#FFFFFF]"
+            }`}
           >
-
-            {loading ? <Spinner /> : (user?.hasSubscription ? "Cancel Subscription" : "Upgrade to Premium")}
+            {loading ? (
+              <Spinner />
+            ) : user?.hasSubscription ? (
+              "Cancel Subscription"
+            ) : (
+              "Upgrade to Premium"
+            )}
           </button>
         </div>
       </div>
-
+      <CancelSubscriptionModal
+        open={open}
+        setOpen={handleOpenCancelSubscriptionModal}
+        handleCancelSubscription={handleCancelSubscription}
+      />
       <Banner />
     </section>
   );

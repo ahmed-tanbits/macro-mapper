@@ -57,6 +57,11 @@ const LogIn: React.FC = () => {
         return;
       }
       setSession(data.session); // ✅ Store session in context
+       toast({
+         title: "Success!",
+         description: "Logged in successfully",
+         variant: "success", // Green success toast
+       });
       router.push("/"); // ✅ Navigate to home after login
     } catch (error) {
       toast({

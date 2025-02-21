@@ -1,8 +1,10 @@
+"use client";
 import React from "react";
-import WelcomeToPremium from "./WelcomeToPremium";
 import Navbar from "@/app/components/Navbar";
+import withAuth from "@/app/hoc/withAuth";
+import WelcomeToPremium from "./WelcomeToPremium";
 
-const signup = () => {
+const page = () => {
   return (
     <>
       <Navbar showFilters={false} />
@@ -13,4 +15,4 @@ const signup = () => {
   );
 };
 
-export default signup;
+export default withAuth(page);
