@@ -85,13 +85,13 @@ export default function List({ restFilters }: Props) {
     // const lat = Cookies.get("latitude");
     // const lon = Cookies.get("longitude");
 
-    const lat = selectedLocation?.coordinates?.[0] || Cookies.get("latitude");
-    const lon = selectedLocation?.coordinates?.[1] || Cookies.get("longitude");
-    // -32.11992602468056, 151.12389090291
+    const lat = selectedLocation?.coordinates?.[1] || Cookies.get("latitude");
+    const lon = selectedLocation?.coordinates?.[0] || Cookies.get("longitude");
+
     if (lat && lon) {
       userLocation.current = {
-        latitude: -33.8915695,
-        longitude: 151.2505012,
+        latitude: lat,
+        longitude: lon,
       };
     }
   }, [selectedLocation]);

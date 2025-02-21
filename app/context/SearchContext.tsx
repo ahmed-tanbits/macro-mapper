@@ -197,7 +197,13 @@ export const SearchProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                         `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_TOKEN}`
                     );
                     const place = res.data.features[0]?.place_name || "Unknown Location";
-                    setSelectedLocation(place);
+                    // console.log("res.data.features[0] =>", res.data.features[0])
+                    const currentLocation = {
+                        label: place,
+                        value: place,
+                        coordinates: res.data.features[0]?.geometry?.coordinates
+                    }
+                    setSelectedLocation(currentLocation);
                 } catch (error) {
                     console.error("Error fetching current location:", error);
                 }

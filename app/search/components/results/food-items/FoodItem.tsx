@@ -48,7 +48,7 @@ export interface MenuItem {
   is_vegan: boolean;
   is_shell_fish_free: boolean;
   distance: number;
-  company_name: string;
+  company_name?: string;
 }
 
 type Props = {
@@ -176,9 +176,9 @@ const FoodItem: React.FC<Props> = ({
             <div className="flex items-start justify-start flex-col text-neutral-500 font-normal gap-1.5">
               <span className="text-sm text-[#0AC600] flex justify-start items-center gap-1">
                 <RestaurantsSvg color="#0AC600" width={14} height={14} />
-                {item.company_name
+                {item.company_name ?  item.company_name
                   .toLowerCase()
-                  .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase())}
+                  .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase()) : ""}
               </span>
               <span className="text-sm flex justify-start items-center gap-3">
                 <FoodForkKnifeSvg height={14} width={14} />
@@ -278,9 +278,9 @@ const FoodItem: React.FC<Props> = ({
           </ul>
         </div> */}
 
-        <div className="p-4 pt-2 pb-2 relative z-10">
+        {user?.hasSubscription && <div className="p-4 pt-2 pb-2 relative z-10">
           <BadgeList products={[item]} />
-        </div>
+        </div>}
         <button onClick={() => onHighlightLocations(item.rest_id)}>
           <div className="absolute inset-0 bg-neutral-50 rounded-t-xl bg-opacity-20 backdrop-blur-sm hidden lg:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
             <div className="relative flex items-center bg-white border border-neutral-100 text-neutral-900 px-4 py-2 rounded-full shadow-lg transition-all cursor-pointer select-none whitespace-nowrap group-hover:pr-8">
