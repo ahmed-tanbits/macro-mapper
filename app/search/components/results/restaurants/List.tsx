@@ -161,8 +161,6 @@ export default function List({ restFilters }: Props) {
             .sort((a, b) => a.distance - b.distance);
         }
 
-        console.log("filteredLocations =>", filteredLocations)
-
         const newLocations = filteredLocations.filter(
           (location) => !cachedIds.current.has(location.location_id)
         );

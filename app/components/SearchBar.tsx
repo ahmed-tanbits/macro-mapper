@@ -43,7 +43,6 @@ const SearchBar: React.FC<Props> = () => {
   const router = useRouter();
   const [location, setLocation] = useState<string>("");
 
-  console.log("selectedLocation =>", selectedLocation)
   useEffect(() => {
     if (selectedLocation) {
       setLocation(selectedLocation?.value || selectedLocation)

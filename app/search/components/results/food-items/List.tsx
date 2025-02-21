@@ -132,7 +132,7 @@ export default function FoodList({
         // Fetch restaurant locations with their lat/long
         const { data: locations, error: locError } = await supabase
           .from("locations")
-          .select("restaurant_id, company_name, lat, long");
+          .select("restaurant_id, company_name,location_id, lat, long");
 
         if (locError) throw new Error(locError.message);
 
@@ -196,6 +196,7 @@ export default function FoodList({
             ...product,
             distance: location?.distance || 0, // Add distance to product
             company_name: location?.company_name || "", // Add restaurant name
+            location_id: location?.location_id || ""
           };
         });
 

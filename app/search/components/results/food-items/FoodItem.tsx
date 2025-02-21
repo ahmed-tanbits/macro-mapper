@@ -49,6 +49,7 @@ export interface MenuItem {
   is_shell_fish_free: boolean;
   distance: number;
   company_name?: string;
+  location_id?: string;
 }
 
 type Props = {
@@ -243,22 +244,47 @@ const FoodItem: React.FC<Props> = ({
             </Link>
           </div>
         }
-        <button onClick={() => onHighlightLocations(item.rest_id)}>
-          <div className="absolute inset-0 bg-neutral-50 rounded-t-xl bg-opacity-20 backdrop-blur-sm hidden lg:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-            <div className="relative flex items-center bg-white border border-neutral-100 text-neutral-900 px-4 py-2 rounded-full shadow-lg transition-all cursor-pointer select-none whitespace-nowrap group-hover:pr-8">
-              <span className="transition-all">Closest locations</span>
-              <ChevronRight className="absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 duration-300" />
+        <div className="absolute cursor-pointer top-0 right-0 left-0 flex justify-center items-center gap-6 w-full h-full z-10 inset-0 bg-neutral-50 rounded-t-xl bg-opacity-20 backdrop-blur-sm hidden lg:flex opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+
+          {/* Closest Locations Button */}
+          <button onClick={() => onHighlightLocations(item.rest_id)} className="relative group/button">
+            <div className="group/button hover:pr-8 relative flex items-center bg-white border border-neutral-100 text-neutral-900 px-4 py-2 rounded-full shadow-lg transition-all cursor-pointer select-none whitespace-nowrap">
+              <span className="transition-all">Closest Locations</span>
+              <ChevronRight
+                strokeWidth={1.8}
+                size={20}
+                className="absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover/button:translate-x-0 group-hover/button:opacity-100 duration-300"
+              />
             </div>
-          </div>
-        </button>
+          </button>
+
+          {/* View Menu Button */}
+          <Link
+            href={`/search/${item.location_id}`}
+            className="relative flex items-center py-2 px-4 bg-primary-500 transition-all cursor-pointer select-none text-white rounded-full group/button hover:pr-8"
+          >
+            <span className="transition-all">View Menu</span>
+            <ChevronRight
+              strokeWidth={1.8}
+              size={20}
+              className="absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover/button:translate-x-0 group-hover/button:opacity-100 duration-300"
+            />
+          </Link>
+
+        </div>
+
       </div>
-      <button
-        onClick={handleButtonClick}
-        className="flex items-center justify-items-center gap-1 lg:hidden bg-neutral-50 border-t border-neutral-100 text-neutral-900 px-3 py-2 text-sm w-full -mt-4 pt-4"
-      >
-        View closest locations
-        <ChevronsRight strokeWidth={2} size={16} />
-      </button>
+
+      <div className="flex">
+        <button
+          onClick={handleButtonClick}
+          className="flex items-center justify-items-center gap-1 lg:hidden bg-neutral-50 border-t border-neutral-100 text-neutral-900 px-3 py-2 text-sm w-full -mt-4 pt-4"
+        >
+          View closest locations
+          <ChevronsRight strokeWidth={2} size={16} />
+        </button>
+
+      </div>
       <div className="relative bg-neutral-50 px-3 pb-3 pt-3 lg:border-t border-neutral-100 overflow-hidden rounded-b-xl">
         <div
           ref={scrollContainerRef}

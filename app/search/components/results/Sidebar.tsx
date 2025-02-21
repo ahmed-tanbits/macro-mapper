@@ -38,7 +38,6 @@ function SidebarContent({
   const tab = searchParams.get("tab") || "foods";
   const activeTab = tab.includes("foods") ? "Foods" : "Restaurants";
 
-  console.log("filters =>", filters);
   return (
     <>
       <Tabs />

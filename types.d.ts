@@ -49,6 +49,7 @@ type MenuItem = {
   is_vegetarian: boolean;
   is_vegan: boolean;
   distance: number;
+  location_id: string;
 };
 type RestaurantProps = {
   location_id: string;
