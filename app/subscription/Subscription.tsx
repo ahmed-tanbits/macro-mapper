@@ -27,12 +27,14 @@ const plans = [
 ];
 
 const Subscription: React.FC = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState<any>({
     plan1: false,
     plan2: false,
-    subscription: false
+    subscription: false,
   });
   const { user, setUser } = useAuth();
+
   const { toast } = useToast();
 
   const handleUpgradePlan = async (plan: any) => {
@@ -67,7 +69,7 @@ const Subscription: React.FC = () => {
         });
       }
 
-      //   router.push("/");
+      router.push("/auth/welcome-to-premium");
     } catch (error) {
       console.error("Subscription error:", error);
     }
@@ -189,20 +191,26 @@ const Subscription: React.FC = () => {
                   type="button"
                   onClick={() => handleUpgradePlan(plan)}
                   className="w-full py-3 cursor-pointer rounded-full font-medium text-sm transition bg-primary-600 hover:bg-primary-700 text-white"
-                  disabled={loading[plan.id] || (user?.hasSubscription && user?.subscription?.plan === plan.name)}
+                  disabled={
+                    loading[plan.id] ||
+                    (user?.hasSubscription &&
+                      user?.subscription?.plan === plan.name)
+                  }
                 >
-                  {loading[plan.id] ?
+                  {loading[plan.id] ? (
                     <Spinner />
-                    :
-                    (user?.hasSubscription && user?.subscription?.plan === plan.name)
-                      ? "Current Plan"
-                      : `${plan.price} ${plan.name}`}
+                  ) : user?.hasSubscription &&
+                    user?.subscription?.plan === plan.name ? (
+                    "Current Plan"
+                  ) : (
+                    `${plan.price} ${plan.name}`
+                  )}
                 </button>
               </div>
             ))}
           </div>
 
-          {user?.hasSubscription &&
+          {user?.hasSubscription && (
             <div className="mt-6">
               <div className="flex items-center my-6">
                 <div className="flex-1 h-px bg-gray-300"></div>
@@ -217,13 +225,10 @@ const Subscription: React.FC = () => {
                 onClick={handleCancelSubscription}
                 className="w-full py-3 rounded-full font-medium text-sm transition bg-danger-500 hover:bg-red-700 text-white"
               >
-                {loading.subscription ?
-                  <Spinner />
-                  : "Cancel Subscription"
-                }
+                {loading.subscription ? <Spinner /> : "Cancel Subscription"}
               </button>
             </div>
-          }
+          )}
         </div>
       </div>
       <Banner />

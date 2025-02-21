@@ -22,7 +22,7 @@ export default function SuccessPage() {
       setRedirectCountdown((prev) => prev - 1);
     }, 1000);
 
-    const timeout = setTimeout(() => router.push("/"), 3000);
+    const timeout = setTimeout(() => router.push("/auth/welcome-to-premium"), 3000);
 
     return () => {
       clearInterval(countdownInterval);
