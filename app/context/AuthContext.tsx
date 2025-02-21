@@ -142,6 +142,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
+
+    // Ensure Supabase session storage is cleared
+    const { error } = await supabase.auth.refreshSession();
+    if (error) {
+      localStorage.removeItem("sb-wsuteglijvwrmcsjhhom-auth-token");
+      sessionStorage.removeItem("sb-wsuteglijvwrmcsjhhom-auth-token");
+    }
+    router.replace("/")
   };
 
   return (

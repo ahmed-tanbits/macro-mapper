@@ -8,7 +8,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { XCircle } from "lucide-react";
+import { Loader2, XCircle } from "lucide-react";
 
 interface CancelSubscriptionModalProps {
   open: boolean;
@@ -53,7 +53,12 @@ const CancelSubscriptionModal: React.FC<CancelSubscriptionModalProps> = ({
             onClick={handleCancel}
             disabled={loading}
           >
-            {loading ? "Cancelling..." : "Yes, Cancel"}
+            {loading ?
+              <>
+                <Loader2 className="animate-spin w-4 h-4" />
+                Cancelling...
+              </>
+              : "Yes, Cancel"}
           </Button>
         </div>
       </DialogContent>
