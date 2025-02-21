@@ -47,6 +47,7 @@ export interface MenuItem {
   is_vegetarian: boolean;
   is_vegan: boolean;
   is_shell_fish_free: boolean;
+  distance: number;
 }
 
 type Props = {
@@ -155,6 +156,7 @@ const FoodItem: React.FC<Props> = ({
     }
     return `${distance.toFixed(1)} km`;
   };
+  
 
   const cardCusinies = [
     "🥗 Vegetarian",
