@@ -125,10 +125,10 @@ export default function FoodList({
           throw new Error("User location not available");
         }
   
-        // Fetch restaurant locations with their lat/long
+        // Fetch restaurant locations with their lat/long and company name
         const { data: locations, error: locError } = await supabase
           .from("locations")
-          .select("restaurant_id, lat, long");
+          .select("restaurant_id, lat, long, company_name");
   
         if (locError) throw new Error(locError.message);
   
@@ -179,7 +179,7 @@ export default function FoodList({
         const { data, error } = await query;
         if (error) throw new Error(error.message);
   
-        // Step 3: Map products to their locations and calculate the distance
+        // Step 3: Map products to their locations, calculate distance, and add company name
         const sortedData = data.map((product: any) => {
           // Find the location for the product's restaurant
           const location = nearbyLocations.find(
@@ -194,13 +194,16 @@ export default function FoodList({
             location?.long || 0 // Default to 0 if no location found
           );
   
-          return { ...product, location, distance }; // Add location and distance to product
-        })
-        .sort((a: any, b: any) => a.distance - b.distance); // Sort products by restaurant's distance from user
+          // Add company name and distance to product
+          return { ...product, location, company_name: location?.company_name, distance };
+        });
+  
+        // Sort the products by distance before updating the state
+        const finalSortedData = sortedData.sort((a: any, b: any) => a.distance - b.distance);
   
         // Step 4: Set the food items and handle pagination
         setFoodItems((prev) => {
-          const newItems = isNewSearch ? sortedData : [...prev, ...sortedData];
+          const newItems = isNewSearch ? finalSortedData : [...prev, ...finalSortedData];
           return Array.from(
             new Map(newItems.map((item: any) => [item.prod_id, item])).values()
           );
@@ -214,9 +217,7 @@ export default function FoodList({
       }
     },
     [filters, sortOption, searchTerm, userLocation]
-  );
-  
-
+  );  
 
   function getDistanceFromLatLonInKm(
     lat1: number,

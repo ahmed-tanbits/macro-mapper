@@ -48,6 +48,7 @@ export interface MenuItem {
   is_vegan: boolean;
   is_shell_fish_free: boolean;
   distance: number;
+  company_name: string;
 }
 
 type Props = {
@@ -156,7 +157,7 @@ const FoodItem: React.FC<Props> = ({
     }
     return `${distance.toFixed(1)} km`;
   };
-  
+
 
   const cardCusinies = [
     "🥗 Vegetarian",
@@ -175,7 +176,7 @@ const FoodItem: React.FC<Props> = ({
             <div className="flex items-start justify-start flex-col text-neutral-500 font-normal gap-1.5">
               <span className="text-sm text-[#0AC600] flex justify-start items-center gap-1">
                 <RestaurantsSvg color="#0AC600" width={14} height={14} />
-                {item.drink_or_food
+                {item.company_name
                   .toLowerCase()
                   .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase())}
               </span>
@@ -241,17 +242,17 @@ const FoodItem: React.FC<Props> = ({
           </div>)
           :
           <div className="w-2/3 mx-3">
-          <Link
-            href="/auth/upgrade-to-premium"
-            className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
-          >
-            <span>Unlock More With Premium</span>
-            <span>
-              <Crown size={20} fill="#000" />
-            </span>
-          </Link>
+            <Link
+              href="/auth/upgrade-to-premium"
+              className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+            >
+              <span>Unlock More With Premium</span>
+              <span>
+                <Crown size={20} fill="#000" />
+              </span>
+            </Link>
           </div>
-          }
+        }
 
         {/* <div className="w-full overflow-hidden px-3">
           <ul className="flex gap-1 items-center w-full overflow-x-auto whitespace-nowrap">
