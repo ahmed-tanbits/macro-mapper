@@ -12,12 +12,19 @@ import usericon from "./usericon.png";
 import { Crown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/supabaseClient";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
+import LogoutModal from "./LogoutModal";
 
 type Props = { showFilters?: boolean };
 
 export default function Navbar({ showFilters }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const router = useRouter(); // ✅ Use Next.js router for navigation
   const { session, logout, user } = useAuth(); // ✅ Get token from context
@@ -35,13 +42,13 @@ export default function Navbar({ showFilters }: Props) {
     },
     {
       label: "Help",
-      link: "https://get.macromapper.co/contact",
+      link: "/",
       borderb: "1px solid #EDEDED",
       p: "0 0 1.3rem",
     },
 
-    { label: "Profile", link: "/", p: ".4rem 0 0" },
-    { label: "Subscription", link: "/" },
+    { label: "Profile", link: "/auth/user-profile", p: ".4rem 0 0" },
+    { label: "Subscription", link: "/subscription" },
     {
       label: "Log out",
       link: "/",
@@ -50,13 +57,13 @@ export default function Navbar({ showFilters }: Props) {
     },
     {
       label: "Disclaimers",
-      link: "/",
+      link: "/disclaimers",
       fs: "12px",
       underline: "underline",
     },
     {
       label: "Policies",
-      link: "/",
+      link: "/terms-and-conditions",
       fs: "12px",
       underline: "underline",
       p: "0 0 2rem",
@@ -73,7 +80,11 @@ export default function Navbar({ showFilters }: Props) {
   const handleLogOut = () => {
     logout();
     router.push("/auth/login"); // Redirect to login page
-  }
+  };
+
+  const handleOpenLogoutModal = (state: boolean) => {
+    setOpen(state);
+  };
 
   return (
     <>
@@ -178,7 +189,7 @@ export default function Navbar({ showFilters }: Props) {
                           Subscription
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={handleLogOut}
+                          onClick={() => handleOpenLogoutModal(true)}
                           className="text-red-500 cursor-pointer"
                         >
                           Logout
@@ -268,21 +279,27 @@ export default function Navbar({ showFilters }: Props) {
                     fontSize: value.fs,
                     textDecoration: value.underline,
                   }}
-                  onClick={() => value.label === "Log out" && handleLogOut()}
+                  onClick={() => {
+                    if (value.label === "Log out") {
+                      handleOpenLogoutModal(true);
+                    } else {
+                      router.push(value.link);
+                    }
+                  }}
                 >
                   {value.label}
                 </Link>
               ))}
           </div>
         </div>
-
+        <LogoutModal open={open} setOpen={handleOpenLogoutModal} />
         <div className="px-4">
           <ul className="flex flex-col gap-3">
             {!isAuthenticated && (
               <>
                 <li>
                   <button
-                    onClick={() => router.push("auth/login")}
+                    onClick={() => router.push("/auth/login")}
                     className="block w-full text-black border border-[#CBCBCB] bg-[#f8f8f8] font-medium rounded-lg py-3 text-center"
                   >
                     Log In
@@ -290,7 +307,7 @@ export default function Navbar({ showFilters }: Props) {
                 </li>
                 <li>
                   <button
-                    onClick={() => router.push("auth/signup")}
+                    onClick={() => router.push("/auth/signup")}
                     className="block w-full text-white border border-[#0AC600] bg-[#0AC600] font-medium rounded-lg py-3 text-center"
                   >
                     Sign Up
