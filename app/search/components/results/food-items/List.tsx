@@ -8,6 +8,7 @@ import SearchBarResponsive from "@/app/search/components/filters/filters-respons
 import ResetFiltersButton from "./ResetFiltersButton";
 import { useSearch } from "@/app/context/SearchContext";
 import Cookies from "js-cookie";
+import { capitalize } from "lodash";
 
 type FiltersType = {
   allergies: { key: string; checked: boolean }[];
@@ -106,7 +107,12 @@ export default function FoodList({
 
     filters.allergies.forEach((allergy) => {
       if (allergy.checked) {
-        query = query.eq(allergy.key, true);
+        if (allergy.key === "food" || allergy.key === "drink") {
+          query = query.eq("drink_or_food", capitalize(allergy.key));
+        }
+        else {
+          query = query.eq(allergy.key, true);
+        }
       }
     });
 
@@ -117,19 +123,19 @@ export default function FoodList({
     async (page: number, isNewSearch = false) => {
       setIsLoading(true);
       setError(null);
-  
+
       try {
         if (!userLocation?.current) {
           throw new Error("User location not available");
         }
-  
+
         // Fetch restaurant locations with their lat/long
         const { data: locations, error: locError } = await supabase
           .from("locations")
           .select("restaurant_id, company_name, lat, long");
-  
+
         if (locError) throw new Error(locError.message);
-  
+
         // Sort restaurants by distance from the user
         const sortedLocations = locations
           .map((location) => ({
@@ -142,30 +148,48 @@ export default function FoodList({
             ),
           }))
           .sort((a, b) => a.distance - b.distance); // Sort by distance
-  
+
         // Filter restaurants within the 10km radius
         const nearbyRestaurants = sortedLocations.filter(
           (location) => location.distance <= 10
         );
-  
+
         if (nearbyRestaurants.length === 0) {
           setFoodItems([]);
           setHasMore(false);
           setIsLoading(false);
           return;
         }
-  
-        // Fetch all products for the nearby restaurants (all, not paginated)
-        const { data: products, error: prodError } = await supabase
+
+        // Start building the query
+        let query = supabase
           .from("products")
           .select("*")
           .in("rest_id", nearbyRestaurants.map((loc) => loc.restaurant_id));
-  
+
+        // Apply filters, including food_or_drink
+        query = applyFilters(query);
+
+        // Apply sorting
+        if (sortOption !== "Default") {
+          const sortKey = sortKeyMap[sortOption];
+          if (sortKey) {
+            query = query.order(sortKey, {
+              ascending: sortOption.startsWith("Lowest"),
+              nullsFirst: false,
+            });
+            query = query.not(sortKey, "is", null); // Exclude items with null sortKey
+          }
+        }
+
+        // Execute the query
+        const { data: products, error: prodError } = await query;
+
         if (prodError) throw new Error(prodError.message);
-  
+
         // Map distance and restaurant name to products
         const productsWithDistance = products.map((product: any) => {
-          const location:any = sortedLocations.find(
+          const location: any = sortedLocations.find(
             (loc) => loc.restaurant_id === product.rest_id
           );
           return {
@@ -174,7 +198,7 @@ export default function FoodList({
             company_name: location?.company_name || "", // Add restaurant name
           };
         });
-  
+
         // Sort products by the same order as the sorted restaurant distances
         const sortedProducts = productsWithDistance.sort((a: any, b: any) => {
           const indexA = nearbyRestaurants.findIndex(
@@ -185,20 +209,20 @@ export default function FoodList({
           );
           return indexA - indexB; // Sort based on the restaurant's order
         });
-  
+
         // Paginate through sorted products
         const paginatedProducts = sortedProducts.slice(
           (page - 1) * 20,
           page * 20
         );
-  
+
         setFoodItems((prev) => {
           const newItems = isNewSearch ? paginatedProducts : [...prev, ...paginatedProducts];
           return Array.from(
             new Map(newItems.map((item: any) => [item.prod_id, item])).values()
           );
         });
-  
+
         setHasMore(sortedProducts.length > page * 20);
       } catch (error: any) {
         setError(error.message);
@@ -206,9 +230,10 @@ export default function FoodList({
         setIsLoading(false);
       }
     },
-    [filters, sortOption, searchTerm, userLocation]
+    [filters, sortOption, searchTerm, userLocation, selectedLocation]
   );
-  
+
+
   function getDistanceFromLatLonInKm(
     lat1: number,
     lon1: number,
