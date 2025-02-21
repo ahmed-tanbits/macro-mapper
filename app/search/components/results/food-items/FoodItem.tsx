@@ -176,7 +176,7 @@ const FoodItem: React.FC<Props> = ({
             <div className="flex items-start justify-start flex-col text-neutral-500 font-normal gap-1.5">
               <span className="text-sm text-[#0AC600] flex justify-start items-center gap-1">
                 <RestaurantsSvg color="#0AC600" width={14} height={14} />
-                {item.company_name ?  item.company_name
+                {item.company_name ? item.company_name
                   .toLowerCase()
                   .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase()) : ""}
               </span>
@@ -226,20 +226,10 @@ const FoodItem: React.FC<Props> = ({
             <div className="absolute inset-0 border border-black/10 rounded-xl pointer-events-none"></div>
           </div>
         </div>
-        {user?.hasSubscription ? (
-          <div className="w-full overflow-hidden px-3 mt-1">
-            <ul className="flex gap-1 items-center w-full overflow-x-auto whitespace-nowrap">
-              {cardCusinies.map((value, index) => (
-                <li
-                  className={`text-[12px] px-2 rounded-full py-1 font-semibold ${index === 2 ? "bg-[#f2e4bd]" : "bg-[#bdf2cc]"
-                    }`}
-                  key={index}
-                >
-                  {value}
-                </li>
-              ))}
-            </ul>
-          </div>)
+
+        {user?.hasSubscription ? <div className="p-4 pt-2 pb-2 relative z-10">
+          <BadgeList products={[item]} />
+        </div>
           :
           <div className="w-2/3 mx-3">
             <Link
@@ -253,34 +243,6 @@ const FoodItem: React.FC<Props> = ({
             </Link>
           </div>
         }
-
-        {/* <div className="w-full overflow-hidden px-3">
-          <ul className="flex gap-1 items-center w-full overflow-x-auto whitespace-nowrap">
-            {[
-              "is_dairy_free",
-              "is_egg_free",
-              "is_gluten_free",
-              "is_nut_free",
-              "is_sesame_free",
-              "is_shell_fish_free",
-              "is_soy_free",
-              "is_sulfite_free",
-              "is_vegan",
-              "is_vegetarian",
-            ].map((key) => (
-              <li
-                key={key}
-                className="text-[12px] px-2 rounded-full py-1 font-semibold"
-              >
-                {item[key]}
-              </li>
-            ))}
-          </ul>
-        </div> */}
-
-        {user?.hasSubscription && <div className="p-4 pt-2 pb-2 relative z-10">
-          <BadgeList products={[item]} />
-        </div>}
         <button onClick={() => onHighlightLocations(item.rest_id)}>
           <div className="absolute inset-0 bg-neutral-50 rounded-t-xl bg-opacity-20 backdrop-blur-sm hidden lg:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
             <div className="relative flex items-center bg-white border border-neutral-100 text-neutral-900 px-4 py-2 rounded-full shadow-lg transition-all cursor-pointer select-none whitespace-nowrap group-hover:pr-8">
