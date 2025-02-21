@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/app/context/AuthContext";
-import { LogOut } from "lucide-react";
+import { LogOut, Loader2 } from "lucide-react";
 
 interface LogoutModalProps {
   open: boolean;
@@ -10,10 +11,18 @@ interface LogoutModalProps {
 
 export default function LogoutModal({ open, setOpen }: LogoutModalProps) {
   const { logout } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const handleLogOut = () => {
-    logout();
-    setOpen(false);
+  const handleLogOut = async () => {
+    setLoading(true);
+    try {
+      await logout();
+      setOpen(false);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,14 +34,22 @@ export default function LogoutModal({ open, setOpen }: LogoutModalProps) {
           Are you sure you want to log out?
         </p>
         <div className="flex justify-end gap-3 mt-4 w-full">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
             Cancel
           </Button>
           <Button
-            className="bg-red-400 hover:bg-red-600"
+            className="bg-red-400 hover:bg-red-600 flex items-center gap-2"
             onClick={handleLogOut}
+            disabled={loading}
           >
-            Logout
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin w-4 h-4" />
+                Logging out...
+              </>
+            ) : (
+              "Logout"
+            )}
           </Button>
         </div>
       </DialogContent>

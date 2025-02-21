@@ -48,6 +48,8 @@ type MenuItem = {
   is_sulfite_free: boolean;
   is_vegetarian: boolean;
   is_vegan: boolean;
+  distance: number;
+  location_id: string;
 };
 type RestaurantProps = {
   location_id: string;

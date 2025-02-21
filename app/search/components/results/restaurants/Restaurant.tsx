@@ -3,6 +3,7 @@ import {
   ChevronRight,
   Clock9,
   Crosshair,
+  Crown,
   MapPin,
   Tag,
 } from "lucide-react";
@@ -10,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import BadgeList from "./BadgeList";
+import { useAuth } from "@/app/context/AuthContext";
 
 export interface RestaurantProps {
   location_id: string;
@@ -74,6 +76,7 @@ export default function Restaurant({
     saturday: open_sat,
     sunday: open_sun,
   };
+  const { user } = useAuth();
 
   const proximity =
     distance < 1
@@ -99,9 +102,8 @@ export default function Restaurant({
               detail={openingHours[today]}
             />
             <span
-              className={`text-sm flex justify-start items-center gap-1 ${
-                distance < 1 ? "text-primary-600" : "text-neutral-500"
-              }`}
+              className={`text-sm flex justify-start items-center gap-1 ${distance < 1 ? "text-primary-600" : "text-neutral-500"
+                }`}
             >
               <Crosshair size={14} />
               <div className="w-full max-w-40 xl:max-w-60 truncate">
@@ -110,9 +112,21 @@ export default function Restaurant({
             </span>
           </div>
           <div className="w-full">
-            <div className="flex gap-2 justify-start items-center">
-              <BadgeList products={products} />
-            </div>
+            {user?.hasSubscription ?
+              <div className="flex gap-2 justify-start items-center">
+                <BadgeList products={products} />
+              </div>
+              :
+              <Link
+                href="/auth/upgrade-to-premium"
+                className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+              >
+                <span>Unlock More With Premium</span>
+                <span>
+                  <Crown size={20} fill="#000" />
+                </span>
+              </Link>
+            }
           </div>
         </div>
         <div className="relative w-20 h-20 flex-shrink-0 flex items-center justify-center">

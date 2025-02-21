@@ -5,6 +5,7 @@ import LoadingCard from "./LoadingCard";
 import { supabase } from "@/supabaseClient";
 import SearchBar from "./SearchBar";
 import Cookies from "js-cookie";
+import { useSearch } from "@/app/context/SearchContext";
 
 type RestFiltersType = {
   cuisines: string[];
@@ -65,7 +66,7 @@ export default function List({ restFilters }: Props) {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  // const [searchTerm, setSearchTerm] = useState<string>("");
   const loader = useRef<HTMLDivElement | null>(null);
   const cachedIds = useRef<Set<string>>(new Set());
   const cachedProductRestIds = useRef<Set<string>>(new Set());
@@ -73,20 +74,27 @@ export default function List({ restFilters }: Props) {
   const userLocation = useRef<{ latitude: number; longitude: number } | null>(
     null
   );
+  const {
+    searchTerm,
+    selectedLocation
+  } = useSearch();
 
   const MAX_RADIUS_KM = 5; // Set your desired maximum radius in kilometers
 
   useEffect(() => {
-    const lat = Cookies.get("latitude");
-    const lon = Cookies.get("longitude");
+    // const lat = Cookies.get("latitude");
+    // const lon = Cookies.get("longitude");
+
+    const lat = selectedLocation?.coordinates?.[1] || Cookies.get("latitude");
+    const lon = selectedLocation?.coordinates?.[0] || Cookies.get("longitude");
 
     if (lat && lon) {
       userLocation.current = {
-        latitude: parseFloat(lat),
-        longitude: parseFloat(lon),
+        latitude: lat,
+        longitude: lon,
       };
     }
-  }, []);
+  }, [selectedLocation]);
 
   const haversineDistance = (
     lat1: number,
@@ -101,9 +109,9 @@ export default function List({ restFilters }: Props) {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in km
   };
@@ -256,10 +264,12 @@ export default function List({ restFilters }: Props) {
     };
   }, [isLoading, hasMore]);
 
+  console.log("locations =>", locations)
+
   return (
     <div className="flex flex-col pb-20 justify-start items-start hide-scrollbar h-full w-full gap-4 p-3 md:p-4 overflow-y-scroll">
       <div className="w-full">
-        <SearchBar onSearch={setSearchTerm} />
+        {/* <SearchBar onSearch={setSearchTerm} /> */}
       </div>
       <div className="w-full flex justify-end items-end">
         {isLoading && page === 1 && <LoadingCard />}
@@ -292,14 +302,14 @@ export default function List({ restFilters }: Props) {
           const shouldShowLine =
             index !== 0 &&
             Math.floor(distance) >
-              Math.floor(
-                haversineDistance(
-                  userLocation.current!.latitude,
-                  userLocation.current!.longitude,
-                  locations[index - 1].lat,
-                  locations[index - 1].long
-                )
-              );
+            Math.floor(
+              haversineDistance(
+                userLocation.current!.latitude,
+                userLocation.current!.longitude,
+                locations[index - 1].lat,
+                locations[index - 1].long
+              )
+            );
 
           return (
             <React.Fragment key={location.location_id}>
