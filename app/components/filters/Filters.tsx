@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { debounce } from "@/utils/debounce";
 import DropdownCheckbox from "./DropdownCheckbox";
 import RangeSlider from "./RangeSlider";
 import { useAuth } from "@/app/context/AuthContext";
+import SubscriptionPlanModal from "../subscription/SubscriptionPlanModal";
 
 type Props = {
   filters: any;
@@ -46,6 +47,7 @@ export default function Filters({
     },
     500
   ); // 500ms debounce time
+  const [open, setOpen] = useState(false);
 const { user, setUser } = useAuth();
   const getAllergyOptions = () => {
     return allergyOptions.map((option) => ({
@@ -64,6 +66,13 @@ const { user, setUser } = useAuth();
           ?.checked || false,
     }));
   };
+
+  const handleOpenSubscriptionModal = () => {
+    if (!user?.hasSubscription) {
+      setOpen(true);
+    }
+  };
+
 
   return (
     <div className="flex flex-wrap gap-0 md:gap-3 items-center justify-center w-full overflow-x-visible">
@@ -92,6 +101,7 @@ const { user, setUser } = useAuth();
         min={0}
         max={100}
         step={1}
+        onClick={handleOpenSubscriptionModal}
         onRangeChange={(range) => handleDebouncedRangeChange("protein", range)}
         initialValues={filters.protein}
         isAuthenticated={user?.hasSubscription}
@@ -102,6 +112,7 @@ const { user, setUser } = useAuth();
         min={0}
         max={1000}
         step={1}
+        onClick={handleOpenSubscriptionModal}
         onRangeChange={(range) => handleDebouncedRangeChange("carbs", range)}
         initialValues={filters.carbs}
         isAuthenticated={user?.hasSubscription}
@@ -112,6 +123,7 @@ const { user, setUser } = useAuth();
         min={0}
         max={200}
         step={1}
+        onClick={handleOpenSubscriptionModal}
         onRangeChange={(range) => handleDebouncedRangeChange("fat", range)}
         initialValues={filters.fat}
         isAuthenticated={user?.hasSubscription}
@@ -119,12 +131,14 @@ const { user, setUser } = useAuth();
       <DropdownCheckbox
         options={getAllergyOptions()}
         label="Allergies"
+        onClick={handleOpenSubscriptionModal}
         onSelectionChange={(selectedOptions) =>
           onSelectionChange("allergies", selectedOptions)
         }
         initialOptions={getAllergyOptions()}
         isAuthenticated={user?.hasSubscription}
       />
+      <SubscriptionPlanModal open={open} setOpen={setOpen} />
     </div>
   );
 }
