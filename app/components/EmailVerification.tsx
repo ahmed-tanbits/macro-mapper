@@ -38,7 +38,7 @@ export default function EmailVerificationHandler() {
         }
 
         setMessage("Email confirmed successfully! Redirecting...");
-        setTimeout(() => router.push("/login"), 2000);
+        setTimeout(() => router.push("/auth/upgrade-to-premium"), 2000);
       });
     }
   }, [router]);

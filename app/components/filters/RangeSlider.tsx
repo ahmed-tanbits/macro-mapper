@@ -13,6 +13,7 @@ type RangeSliderProps = {
   onRangeChange: (range: [number, number]) => void;
   initialValues?: [number, number];
   isAuthenticated?: boolean;
+  onClick?: () => void;
 };
 
 const RangeSlider: React.FC<RangeSliderProps> = ({
@@ -24,6 +25,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
   onRangeChange,
   initialValues,
   isAuthenticated,
+  onClick,
 }) => {
   const [values, setValues] = useState<[number, number]>(
     initialValues || [min, max]
@@ -48,7 +50,13 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
     }
   }, [initialValues]);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => {
+    if (!isAuthenticated && onClick) {
+      onClick();
+    } else {
+      setIsOpen(!isOpen);
+    }
+  };
 
   const handleRangeChange = (values: number[]) => {
     const rangeValues: [number, number] = [values[0], values[1]];

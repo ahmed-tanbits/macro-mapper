@@ -17,6 +17,7 @@ type DropdownCheckboxProps = {
   onSelectionChange: (selectedOptions: CheckboxOption[]) => void;
   initialOptions?: CheckboxOption[];
   isAuthenticated?: boolean;
+  onClick?: () => void;
 };
 
 const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
@@ -24,6 +25,7 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
   label,
   onSelectionChange,
   isAuthenticated,
+  onClick,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -50,7 +52,9 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
   }, [initialOptions]);
 
   const toggleDropdown = () => {
-    if (isAuthenticated) {
+    if (!isAuthenticated && onClick) {
+      onClick(); // Open subscription modal
+    } else {
       setIsOpen(!isOpen);
     }
   };

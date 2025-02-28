@@ -52,16 +52,14 @@ export default function SubscriptionPlanModal({ open, setOpen }: SubscriptionPla
   const { user } = useAuth();
 
   const handleUpgradePlan = async () => {
-
     if (!user) {
       toast({
         title: "Error!",
-        description: "Please login first to continue",
-        variant: "destructive",
+        description: "You must be logged in to access premium features.",
+        variant: "destructive", // Red error toast
       });
       return;
     }
-
     setLoading(true);
 
     const stripe = await stripePromise;
@@ -86,7 +84,7 @@ export default function SubscriptionPlanModal({ open, setOpen }: SubscriptionPla
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-md p-6 rounded-lg shadow-lg">
+      <DialogContent className="w-[90%] max-w-md p-6 rounded-lg shadow-lg sm:w-full">
         <div className="flex justify-between items-center">
           <DialogTitle className="text-lg font-semibold">Go Premium</DialogTitle>
         </div>

@@ -17,6 +17,7 @@ import FoodForkKnifeSvg from "@/app/components/svgs/FoodForkKnifeSvg";
 import FoodServingSvg from "@/app/components/svgs/FoodServingSvg";
 import { useAuth } from "@/app/context/AuthContext";
 import Link from "next/link";
+import SubscriptionPlanModal from "@/app/components/subscription/SubscriptionPlanModal";
 
 export interface MenuItem {
   prod_id: string;
@@ -71,6 +72,7 @@ const FoodItem: React.FC<Props> = ({
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isScrolledToEnd, setIsScrolledToEnd] = useState(false);
   const [isScrolledToStart, setIsScrolledToStart] = useState(true);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { user } = useAuth();
   const [imageUrl, setImageUrl] = useState<string>(
     `https://wsuteglijvwrmcsjhhom.supabase.co/storage/v1/object/public/${item.rest_id}/${item.image_id}.jpg`
@@ -154,7 +156,7 @@ const FoodItem: React.FC<Props> = ({
 
   const formatDistance = (distance: number) => {
     if (distance < 1) {
-      return `${Math.round(distance * 1000)} meters`;
+      return `${Math.round(distance * 1000)} metres`;
     }
     return `${distance.toFixed(1)} km`;
   };
@@ -232,12 +234,12 @@ const FoodItem: React.FC<Props> = ({
           <BadgeList products={[item]} />
         </div>
           :
-          <div className="w-2/3 mx-3">
+          <div className=" max-w-[220px] mx-4">
             <Link
               href="/auth/upgrade-to-premium"
-              className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+              className="flex items-center font-bold rounded-full justify-center gap-1      text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
             >
-              <span>Unlock More With Premium</span>
+              <span>Upgrade for Allergies</span>
               <span>
                 <Crown size={20} fill="#000" />
               </span>
@@ -275,20 +277,27 @@ const FoodItem: React.FC<Props> = ({
 
       </div>
 
-      <div className="flex">
+      <div className="flex w-full bg-neutral-50">
         <button
           onClick={handleButtonClick}
-          className="flex items-center justify-items-center gap-1 lg:hidden bg-neutral-50 border-t border-neutral-100 text-neutral-900 px-3 py-2 text-sm w-full -mt-4 pt-4"
+          className="flex items-center justify-items-center gap-1 lg:hidden  border-t border-neutral-100 text-neutral-900 px-3 py-2 text-sm  max-sm:text-xs max-sm:mt-2  mt-4"
         >
           View closest locations
           <ChevronsRight strokeWidth={2} size={16} />
         </button>
+        <Link
+          href={`/search/${item.location_id}`}
+          className="flex items-center justify-items-center gap-1 md:hidden  text-primary-500 border-t border-neutral-100 px-3 py-2 text-sm max-sm:text-xs max-sm:mt-2  mt-4"
+        >
+          <span className="transition-all">View Menu</span>
+          <ChevronsRight strokeWidth={2} size={16} />
+        </Link>
 
       </div>
       <div className="relative bg-neutral-50 px-3 pb-3 pt-3 lg:border-t border-neutral-100 overflow-hidden rounded-b-xl">
         <div
           ref={scrollContainerRef}
-          className="flex gap-3 overflow-x-auto hide-scrollbar"
+          className="flex gap-3 overflow-x-auto hide-scrollbar items-center"
         >
           {item.price && (
             <div className="py-1.5 px-4 border bg-neutral-900 text-white border-neutral-900 transition-all select-none rounded-full whitespace-nowrap">
@@ -307,15 +316,15 @@ const FoodItem: React.FC<Props> = ({
               {renderNutritionalFact("sodium", item.sodium, "mg")}
             </>
           ) :
-            <Link
-              href="/auth/upgrade-to-premium"
-              className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+            <button
+              onClick={() => setIsSubscriptionModalOpen(true)}
+              className="flex items-center font-bold rounded-full justify-center gap-1 px-6 max-sm:px-6 text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center flex-shrink-0"
             >
-              <span>Unlock More With Premium</span>
+               Upgrade for Macros 
               <span>
                 <Crown size={20} fill="#000" />
               </span>
-            </Link>
+            </button>
           }
         </div>
 
@@ -336,6 +345,10 @@ const FoodItem: React.FC<Props> = ({
           </div>
         )}
       </div>
+      <SubscriptionPlanModal
+        open={isSubscriptionModalOpen}
+        setOpen={setIsSubscriptionModalOpen}
+      />
     </div>
   );
 };

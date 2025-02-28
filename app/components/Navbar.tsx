@@ -38,11 +38,11 @@ export default function Navbar({ showFilters }: Props) {
     { label: "Home", link: "/" },
     {
       label: "List your menu",
-      link: "/",
+      link: "https://get.macromapper.co/get-started",
     },
     {
       label: "Help",
-      link: "/",
+      link: "https://get.macromapper.co/platform",
       borderb: "1px solid #EDEDED",
       p: "0 0 1.3rem",
     },
@@ -129,10 +129,10 @@ export default function Navbar({ showFilters }: Props) {
           >
             <div className="flex items-center gap-4">
               <div className="hidden md:flex gap-3 text-neutral-600 font-normal border-0 md:border-r pe-4">
-                <Link href="#" className="text-sm font-medium text-black">
+                <Link href="https://get.macromapper.co/get-started" className="text-sm font-medium text-black">
                   List Your Menu
                 </Link>
-                <Link href="#" className="text-sm font-medium text-black ">
+                <Link href="https://get.macromapper.co/platform" className="text-sm font-medium text-black ">
                   Help
                 </Link>
               </div>

@@ -151,13 +151,11 @@ const FoodItem: React.FC<{ item: MenuItem }> = ({ item }) => {
           className="flex gap-2 overflow-x-auto hide-scrollbar"
         >
           {item.price && (
-            <>
-              <div className="py-1.5 px-4 border bg-neutral-900 text-white border-neutral-900 transition-all select-none rounded-full whitespace-nowrap">
-                ${item.price}
-              </div>
-              {renderNutritionalFact("Cal.", item.calories)}
-            </>
+            <div className="py-1.5 px-4 border bg-neutral-900 text-white border-neutral-900 transition-all select-none rounded-full whitespace-nowrap">
+              ${item.price}
+            </div>
           )}
+          {renderNutritionalFact("Cal.", item.calories)}
           {user?.hasSubscription ?
             <>
               {renderNutritionalFact("protein", item.protein, "g")}

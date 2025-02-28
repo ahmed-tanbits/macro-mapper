@@ -167,6 +167,15 @@ export default function FoodList({
           .select("*")
           .in("rest_id", nearbyRestaurants.map((loc) => loc.restaurant_id));
 
+        if (searchTerm) {
+          const searchTerms = searchTerm.split(" ");
+          const searchQuery = searchTerms
+            .map((term) => `product_name.ilike.%${term}%`)
+            .join(",");
+
+          query = query.or(searchQuery);
+        }
+
         // Apply filters, including food_or_drink
         query = applyFilters(query);
 
