@@ -33,7 +33,7 @@ export default function Authentication() {
 
         // Wait a moment before redirecting
         setTimeout(() => {
-          router.push("/auth/login"); // Redirect to login
+          router.push("/auth/upgrade-to-premium"); // Redirect to login
         }, 3000); // 3-second delay for the user to read the message
         break;
 
