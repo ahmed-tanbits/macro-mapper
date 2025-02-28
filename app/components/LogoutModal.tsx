@@ -34,7 +34,7 @@ export default function LogoutModal({ open, setOpen }: LogoutModalProps) {
           Are you sure you want to log out?
         </p>
         <div className="flex justify-end gap-3 mt-4 w-full">
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+          <Button variant="outline" className="outline-none" onClick={() => setOpen(false)} disabled={loading}>
             Cancel
           </Button>
           <Button
