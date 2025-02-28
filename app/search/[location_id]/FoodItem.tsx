@@ -3,17 +3,21 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   ChevronsLeft,
   ChevronsRight,
+  Crown,
   HandPlatter,
   Utensils,
 } from "lucide-react";
 import Image from "next/image";
 import BadgeList from "../components/results/restaurants/BadgeList";
+import { useAuth } from "@/app/context/AuthContext";
+import Link from "next/link";
 
 const FoodItem: React.FC<{ item: MenuItem }> = ({ item }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isScrolledToEnd, setIsScrolledToEnd] = useState(false);
   const [isScrolledToStart, setIsScrolledToStart] = useState(true);
+  const { user } = useAuth();
   const [imageUrl, setImageUrl] = useState<string>(
     `https://wsuteglijvwrmcsjhhom.supabase.co/storage/v1/object/public/${item.rest_id}/${item.image_id}.jpg`
   );
@@ -121,9 +125,24 @@ const FoodItem: React.FC<{ item: MenuItem }> = ({ item }) => {
             <div className="absolute inset-0 border border-black/10 rounded-xl pointer-events-none"></div>
           </div>
         </div>
-        <div className="p-4 pt-0 relative z-10">
-          <BadgeList products={[item]} />
-        </div>
+
+        {user?.hasSubscription ?
+          <div className="p-4 pt-0 relative z-10">
+            <BadgeList products={[item]} />
+          </div>
+          :
+          <div className="w-2/3 mx-3">
+            <Link
+              href="/auth/upgrade-to-premium"
+              className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+            >
+              <span>Unlock More With Premium</span>
+              <span>
+                <Crown size={20} fill="#000" />
+              </span>
+            </Link>
+          </div>
+        }
       </div>
 
       <div className="relative bg-neutral-100 px-3 pb-3 pt-3 border-t border-neutral-100 overflow-hidden">
@@ -132,18 +151,34 @@ const FoodItem: React.FC<{ item: MenuItem }> = ({ item }) => {
           className="flex gap-2 overflow-x-auto hide-scrollbar"
         >
           {item.price && (
-            <div className="py-1.5 px-4 border bg-neutral-900 text-white border-neutral-900 transition-all select-none rounded-full whitespace-nowrap">
-              ${item.price}
-            </div>
+            <>
+              <div className="py-1.5 px-4 border bg-neutral-900 text-white border-neutral-900 transition-all select-none rounded-full whitespace-nowrap">
+                ${item.price}
+              </div>
+              {renderNutritionalFact("Cal.", item.calories)}
+            </>
           )}
-          {renderNutritionalFact("Cal.", item.calories)}
-          {renderNutritionalFact("protein", item.protein, "g")}
-          {renderNutritionalFact("fat", item.total_fat, "g")}
-          {renderNutritionalFact("saturated fat", item.saturated_fat, "g")}
-          {renderNutritionalFact("carbs", item.total_carbs, "g")}
-          {renderNutritionalFact("sugars", item.sugars, "g")}
-          {renderNutritionalFact("fibre", item.fibre, "g")}
-          {renderNutritionalFact("sodium", item.sodium, "mg")}
+          {user?.hasSubscription ?
+            <>
+              {renderNutritionalFact("protein", item.protein, "g")}
+              {renderNutritionalFact("fat", item.total_fat, "g")}
+              {renderNutritionalFact("saturated fat", item.saturated_fat, "g")}
+              {renderNutritionalFact("carbs", item.total_carbs, "g")}
+              {renderNutritionalFact("sugars", item.sugars, "g")}
+              {renderNutritionalFact("fibre", item.fibre, "g")}
+              {renderNutritionalFact("sodium", item.sodium, "mg")}
+            </>
+            :
+            <Link
+              href="/auth/upgrade-to-premium"
+              className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+            >
+              <span>Unlock More With Premium</span>
+              <span>
+                <Crown size={20} fill="#000" />
+              </span>
+            </Link>}
+
         </div>
 
         {isOverflowing && !isScrolledToEnd && (

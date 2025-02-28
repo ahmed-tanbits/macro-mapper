@@ -2,6 +2,7 @@ import React from "react";
 import { debounce } from "@/utils/debounce";
 import DropdownCheckbox from "./DropdownCheckbox";
 import RangeSlider from "./RangeSlider";
+import { useAuth } from "@/app/context/AuthContext";
 
 type Props = {
   filters: any;
@@ -45,7 +46,7 @@ export default function Filters({
     },
     500
   ); // 500ms debounce time
-
+const { user, setUser } = useAuth();
   const getAllergyOptions = () => {
     return allergyOptions.map((option) => ({
       ...option,
@@ -93,7 +94,7 @@ export default function Filters({
         step={1}
         onRangeChange={(range) => handleDebouncedRangeChange("protein", range)}
         initialValues={filters.protein}
-        isAuthenticated={isAuthenticated}
+        isAuthenticated={user?.hasSubscription}
       />
       <RangeSlider
         label="Carbs"
@@ -103,7 +104,7 @@ export default function Filters({
         step={1}
         onRangeChange={(range) => handleDebouncedRangeChange("carbs", range)}
         initialValues={filters.carbs}
-        isAuthenticated={isAuthenticated}
+        isAuthenticated={user?.hasSubscription}
       />
       <RangeSlider
         label="Fat"
@@ -113,7 +114,7 @@ export default function Filters({
         step={1}
         onRangeChange={(range) => handleDebouncedRangeChange("fat", range)}
         initialValues={filters.fat}
-        isAuthenticated={isAuthenticated}
+        isAuthenticated={user?.hasSubscription}
       />
       <DropdownCheckbox
         options={getAllergyOptions()}
@@ -122,7 +123,7 @@ export default function Filters({
           onSelectionChange("allergies", selectedOptions)
         }
         initialOptions={getAllergyOptions()}
-        isAuthenticated={isAuthenticated}
+        isAuthenticated={user?.hasSubscription}
       />
     </div>
   );

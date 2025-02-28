@@ -10,7 +10,9 @@ export default function SuccessPage() {
   const [redirectCountdown, setRedirectCountdown] = useState(3);
 
   useEffect(() => {
-    const sessionId = new URLSearchParams(window.location.search).get("session_id");
+    const sessionId = new URLSearchParams(window.location.search).get(
+      "session_id"
+    );
 
     if (sessionId) {
       setMessage("🎉 Subscription successful! Redirecting...");
@@ -19,10 +21,19 @@ export default function SuccessPage() {
     }
 
     const countdownInterval = setInterval(() => {
-      setRedirectCountdown((prev) => prev - 1);
+      setRedirectCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
-    const timeout = setTimeout(() => router.push("/"), 3000);
+    const timeout = setTimeout(
+      () => router.push("/auth/welcome-to-premium"),
+      3000
+    );
 
     return () => {
       clearInterval(countdownInterval);
@@ -35,7 +46,9 @@ export default function SuccessPage() {
       <div className="bg-white shadow-md rounded-2xl p-6 w-full max-w-md text-center">
         <Spinner /> {/* Custom Spinner */}
         <h1 className="text-xl font-semibold text-gray-800">{message}</h1>
-        <p className="text-gray-600 mt-2">Redirecting in {redirectCountdown}...</p>
+        <p className="text-gray-600 mt-2">
+          Redirecting in {redirectCountdown}...
+        </p>
       </div>
     </div>
   );
