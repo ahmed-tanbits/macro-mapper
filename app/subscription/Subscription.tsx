@@ -15,15 +15,15 @@ const stripePromise = loadStripe(
 const plans = [
   {
     id: "plan1",
-    priceId: "price_1Qs0NAGT7SStcoR0t8M1TaSg",
+    priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || "",
     name: "Monthly",
     price: "$3.49",
   },
   {
     id: "plan2",
-    priceId: "price_1Qs0O6GT7SStcoR0T3ZwHCtD",
+    priceId: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID || "",
     name: "Yearly",
-    price: "$20.99",
+    price: "$29.99",
   },
 ];
 

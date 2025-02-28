@@ -7,20 +7,21 @@ import Spinner from "@/app/components/Spinner";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAuth } from "@/app/context/AuthContext";
 import { useToast } from "@/app/hooks/useToast";
+import withAuth from "@/app/hoc/withAuth";
 
 
 const plans = [
   {
     id: "plan1",
-    priceId: "price_1Qs0NAGT7SStcoR0t8M1TaSg",
+    priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || "",
     name: "Monthly",
     price: "$3.49",
   },
   {
     id: "plan2",
-    priceId: "price_1Qs0O6GT7SStcoR0T3ZwHCtD",
+    priceId: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID || "",
     name: "Yearly",
-    price: "$20.99",
+    price: "$29.99",
   },
 ];
 
@@ -215,4 +216,4 @@ const UpgradeToPremium: React.FC = () => {
   );
 };
 
-export default UpgradeToPremium;
+export default withAuth(UpgradeToPremium);
