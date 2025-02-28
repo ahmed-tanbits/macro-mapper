@@ -136,7 +136,7 @@ const FoodItem: React.FC<{ item: MenuItem }> = ({ item }) => {
               href="/auth/upgrade-to-premium"
               className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
             >
-              <span>Unlock More With Premium</span>
+              <span>Upgrade for Allergies</span>
               <span>
                 <Crown size={20} fill="#000" />
               </span>
@@ -171,7 +171,7 @@ const FoodItem: React.FC<{ item: MenuItem }> = ({ item }) => {
               href="/auth/upgrade-to-premium"
               className="flex items-center font-bold rounded-full justify-center gap-1 w-full text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
             >
-              <span>Unlock More With Premium</span>
+              <span> Upgrade for Macros</span>
               <span>
                 <Crown size={20} fill="#000" />
               </span>
