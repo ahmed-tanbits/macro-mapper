@@ -7,21 +7,22 @@ import Spinner from "../Spinner";
 import { RadioGroup, RadioGroupItem } from "../RadioGroup";
 import Image from "next/image";
 import { useAuth } from "@/app/context/AuthContext";
+import { toast } from "@/app/hooks/useToast";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const plans = [
   {
     id: "plan1",
-    priceId: "price_1Qs0NAGT7SStcoR0t8M1TaSg",
+    priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || "",
     name: "Monthly",
     price: "$3.49",
   },
   {
     id: "plan2",
-    priceId: "price_1Qs0O6GT7SStcoR0T3ZwHCtD",
+    priceId: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID || "",
     name: "Yearly",
-    price: "$20.99",
+    price: "$29.99",
   },
 ];
 
@@ -46,16 +47,26 @@ interface SubscriptionPlanModalProps {
 }
 
 export default function SubscriptionPlanModal({ open, setOpen }: SubscriptionPlanModalProps) {
-  const [selectedPlan, setSelectedPlan] = useState("price_1Qs0NAGT7SStcoR0t8M1TaSg");
+  const [selectedPlan, setSelectedPlan] = useState(plans[0]?.priceId);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
   const handleUpgradePlan = async () => {
+
+    if (!user) {
+      toast({
+        title: "Error!",
+        description: "Please login first to continue",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     const stripe = await stripePromise;
 
-    const currentPlan = plans.find((plan) => plan.priceId === selectedPlan )
+    const currentPlan = plans.find((plan) => plan.priceId === selectedPlan)
 
     const response = await fetch('/api/checkout', {
       method: 'POST',
