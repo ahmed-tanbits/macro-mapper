@@ -62,12 +62,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) {
         console.error("Session Error:", error);
+        setLoading(false)
         return;
       }
 
       if (!data.session) {
+        console.log("session ended")
         setSession(null);
         setUser(null);
+        setLoading(false);
         return;
       }
 
