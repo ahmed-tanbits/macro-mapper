@@ -55,57 +55,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { type, accessToken, refreshToken, error, errorCode, errorDescription };
   }, [router]);
 
-  const fetchSessionAndSubscription = useCallback(
-    debounce(async () => {
-      setLoading(true);
-      const { data, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error("Session Error:", error);
-        setLoading(false);
-        return;
-      }
+  const fetchSessionAndSubscription = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase.auth.getSession();
 
-      if (data.session) {
-        const user = data.session.user;
-
-        // Fetch subscription only if user exists
-        const { data: subscription, error: subError } = await supabase
-          .from("subscriptions")
-          .select("*")
-          .eq("user_id", user.id)
-          .single();
-
-        if (subError && subError.code !== "PGRST116") {
-          console.error("Error fetching subscription:", subError.message);
-        }
-
-        const hasSubscription = subscription
-          ? ["active", "complete"].includes(subscription.status)
-          : false;
-
-        // Prevent redundant state updates
-        setSession((prevSession: any) =>
-          JSON.stringify(prevSession) !== JSON.stringify(data.session)
-            ? data.session
-            : prevSession
-        );
-
-        setUser((prevUser: any) => {
-          if (
-            !prevUser ||
-            prevUser.id !== user.id ||
-            JSON.stringify(prevUser.subscription) !== JSON.stringify(subscription)
-          ) {
-            return { ...user, subscription: subscription || null, hasSubscription };
-          }
-          return prevUser;
-        });
-      }
-
+    if (error) {
+      console.error("Session Error:", error);
       setLoading(false);
-    }, 500), // Debounce API call by 500ms
-    []
-  );
+      return;
+    }
+
+    if (data.session) {
+      const user = data.session.user;
+
+      const { data: subscription, error: subError } = await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+      if (subError && subError.code !== "PGRST116") {
+        console.error("Error fetching subscription:", subError.message);
+      }
+
+      const hasSubscription = subscription
+        ? ["active", "complete"].includes(subscription.status)
+        : false;
+
+      setSession(data.session);
+      setUser({ ...user, subscription: subscription || null, hasSubscription });
+    } else {
+      setSession(null);
+      setUser(null);
+    }
+
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
     fetchSessionAndSubscription();
