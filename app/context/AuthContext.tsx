@@ -56,40 +56,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [router]);
 
   const fetchSessionAndSubscription = useCallback(async () => {
-    setLoading(true);
-    const { data, error } = await supabase.auth.getSession();
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.getSession();
 
-    if (error) {
-      console.error("Session Error:", error);
-      setLoading(false);
-      return;
-    }
-
-    if (data.session) {
-      const user = data.session.user;
-
-      const { data: subscription, error: subError } = await supabase
-        .from("subscriptions")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
-
-      if (subError && subError.code !== "PGRST116") {
-        console.error("Error fetching subscription:", subError.message);
+      if (error) {
+        console.error("Session Error:", error);
+        return;
       }
 
-      const hasSubscription = subscription
-        ? ["active", "complete"].includes(subscription.status)
-        : false;
+      if (!data.session) {
+        setSession(null);
+        setUser(null);
+        return;
+      }
+
+      const user = data.session.user;
+      let subscription = null;
+      let hasSubscription = false;
+
+      try {
+        const { data: subData, error: subError } = await supabase
+          .from("subscriptions")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+
+        if (subError && subError.code !== "PGRST116") {
+          console.error("Error fetching subscription:", subError.message);
+        } else {
+          subscription = subData;
+          hasSubscription = subscription ? ["active", "complete"].includes(subscription.status) : false;
+        }
+      } catch (subFetchError) {
+        console.error("Subscription fetch failed:", subFetchError);
+      }
 
       setSession(data.session);
-      setUser({ ...user, subscription: subscription || null, hasSubscription });
-    } else {
-      setSession(null);
-      setUser(null);
+      setUser((prevUser: any) => ({
+        ...user,
+        subscription: subscription || null,
+        hasSubscription,
+      }));
+    } catch (mainError) {
+      console.error("Error in fetchSessionAndSubscription:", mainError);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -97,28 +110,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (session && session.user.id !== user?.id) {
-          const { data: subscription } = await supabase
-            .from("subscriptions")
-            .select("*")
-            .eq("user_id", session.user.id)
-            .single();
+        try {
+          if (session && session.user.id !== user?.id) {
+            const { data: subscription } = await supabase
+              .from("subscriptions")
+              .select("*")
+              .eq("user_id", session.user.id)
+              .single();
 
-          setSession(session);
-          setUser((prevUser: any) => ({
-            ...session.user,
-            subscription,
-            hasSubscription: subscription ? ["active", "complete"].includes(subscription.status) : false,
-          }));
-        } else {
-          setSession(null);
-          setUser(null);
+            setSession(session);
+            setUser((prevUser: any) => ({
+              ...session.user,
+              subscription,
+              hasSubscription: subscription ? ["active", "complete"].includes(subscription.status) : false,
+            }));
+          } else {
+            setSession(null);
+            setUser(null);
+          }
+        } catch (authChangeError) {
+          console.error("Error in auth state change handler:", authChangeError);
         }
       }
     );
 
     return () => {
-      authListener.subscription.unsubscribe();
+      authListener?.subscription?.unsubscribe();
     };
   }, [fetchSessionAndSubscription]);
 
