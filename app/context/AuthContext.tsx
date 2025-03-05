@@ -32,7 +32,7 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true); // ✅ Track loading state
+  const [loading, setLoading] = useState<boolean>(false); // ✅ Track loading state
   const router = useRouter();
 
   const authParams = useMemo(() => {
