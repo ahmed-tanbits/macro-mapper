@@ -56,9 +56,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // ✅ Fetch session and subscription
   const fetchSessionAndSubscription = async () => {
     setLoading(true);
-
+    console.log("set loading to true", loading);
     try {
       const { data, error } = await supabase.auth.getSession();
+
+      console.log("Get session called => ", "Data =>", data, "Error =>", error);
 
       if (error) throw error;
 
