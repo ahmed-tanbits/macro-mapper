@@ -59,6 +59,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data, error } = await supabase.auth.getSession();
 
+      console.log(data, "dataa")
+
       if (error) throw error;
 
       if (!data.session) {
@@ -99,7 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []); // ✅ Removed `[session]` to avoid infinite re-renders
 
   // ✅ Logout function
-  const logout = async () => {
+  const logout = async (shouldRedirect: boolean = true) => {
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
@@ -110,7 +112,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.removeItem("sb-wsuteglijvwrmcsjhhom-auth-token");
       sessionStorage.removeItem("sb-wsuteglijvwrmcsjhhom-auth-token");
     }
-    router.replace("/");
+    if (shouldRedirect) {
+      router.replace("/");
+    }
   };
 
   return (

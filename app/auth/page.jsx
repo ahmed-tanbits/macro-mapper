@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Authentication() {
   const router = useRouter();
-  const [message, setMessage] = useState("Processing authentication...");
+  const [message, setMessage] = useState("Loading...");
   const { authParams, user, logout } = useAuth();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function Authentication() {
         setMessage("🎉 Email verified! You can now log in.");
 
         // Log out the user if they are logged in
-        logout();
+        logout(false);
 
         // Wait a moment before redirecting
         setTimeout(() => {
@@ -59,11 +59,16 @@ export default function Authentication() {
   }, [authParams]);
 
   return (
-    authParams &&
     <div className="flex flex-col items-center justify-start mt-12 min-h-screen">
-      <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-xl font-semibold text-center mb-4">{message}</h1>
-      </div>
+  {authParams ? (
+    <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-xl font-semibold text-center mb-4">{message}</h1>
     </div>
+  ) : (
+    <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-xl font-semibold text-center mb-4">Loading...</h1>
+    </div>
+  )}
+</div>
   );
 }
