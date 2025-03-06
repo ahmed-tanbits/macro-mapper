@@ -53,30 +53,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { type, accessToken, refreshToken, error, errorCode, errorDescription };
   }, [router]);
 
-  // ✅ Fetch session and subscription
-  const fetchSessionAndSubscription = async () => {
+  const fetchSessionAndSubscription = useCallback(async () => {
     setLoading(true);
-    console.log("set loading to true", loading);
+    console.log("Fetching session...");
+
     try {
       const { data, error } = await supabase.auth.getSession();
-
-      console.log("Get session called => ", "Data =>", data, "Error =>", error);
+      console.log("Session response:", data, "Error:", error);
 
       if (error) throw error;
 
       if (!data.session) {
+        console.log("No active session found.");
         setSession(null);
         setUser(null);
-        setLoading(false);
         return;
       }
 
       const user = data.session.user;
+      console.log("User found:", user);
 
-      // ✅ Fetch subscription (avoid unnecessary calls if already exists)
-      let subscription = null;
-      let hasSubscription = false;
-
+      // ✅ Fetch Subscription
       const { data: subData, error: subError } = await supabase
         .from("subscriptions")
         .select("*")
@@ -84,42 +81,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (subError && subError.code !== "PGRST116") {
-        console.error("Error fetching subscription:", subError.message);
-      } else {
-        subscription = subData;
-        hasSubscription = subscription ? ["active", "complete"].includes(subscription.status) : false;
+        console.error("Subscription fetch error:", subError.message);
       }
 
       setSession(data.session);
       setUser({
         ...user,
-        subscription: subscription || null,
-        hasSubscription,
+        subscription: subData || null,
+        hasSubscription: subData ? ["active", "complete"].includes(subData.status) : false,
       });
-      setLoading(false);
     } catch (err) {
       console.error("Error in fetchSessionAndSubscription:", err);
     } finally {
-      setLoading(false)
+      setLoading(false); // ✅ Always ensure loading is false
+      console.log("Loading set to false");
     }
-  };
+  }, []);
 
   useEffect(() => {
-    console.log("session =>", session)
-    
-    if (!session) {
-      fetchSessionAndSubscription();
-    }
+    fetchSessionAndSubscription(); // ✅ Fetch session ONCE on mount
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth state changed:", event, session);
+
         if (!session) {
           setSession(null);
           setUser(null);
           return;
         }
 
-        // ✅ Only update user if it's different
+        // ✅ Only update user if different
         if (session.user.id !== user?.id) {
           try {
             const { data: subscription } = await supabase
@@ -144,7 +136,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       authListener?.subscription?.unsubscribe();
     };
-  }, [session]);
+  }, []); // ✅ Removed `[session]` to avoid infinite re-renders
 
   // ✅ Logout function
   const logout = async () => {
