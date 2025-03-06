@@ -22,9 +22,9 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   authParams: null,
-  setSession: () => {},
-  setUser: () => {},
-  logout: () => {},
+  setSession: () => { },
+  setUser: () => { },
+  logout: () => { },
 });
 
 // ✅ Auth Provider Component
@@ -54,8 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [router]);
 
   // ✅ Fetch session and subscription
-  const fetchSessionAndSubscription = useCallback(async () => {
-    let isMounted = true; // ✅ Prevent state updates on unmounted component
+  const fetchSessionAndSubscription = async () => {
     setLoading(true);
 
     try {
@@ -66,12 +65,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
 
       if (!data.session) {
-        
-        if (isMounted) {
-          setSession(null);
-          setUser(null);
-          setLoading(false);
-        }
+        setSession(null);
+        setUser(null);
+        setLoading(false);
         return;
       }
  
@@ -94,30 +90,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         hasSubscription = subscription ? ["active", "complete"].includes(subscription.status) : false;
       }
 
-      if (isMounted) {
-        setSession(data.session);
-        setUser({
-          ...user,
-          subscription: subscription || null,
-          hasSubscription,
-        });
-        setLoading(false);
-      }
+      setSession(data.session);
+      setUser({
+        ...user,
+        subscription: subscription || null,
+        hasSubscription,
+      });
+      setLoading(false);
     } catch (err) {
       console.error("Error in fetchSessionAndSubscription:", err);
-      if (isMounted) setLoading(false);
+    } finally {
+      setLoading(false)
     }
-    finally{
-      setLoading(false);
-    }
-
-    return () => {
-      isMounted = false; // ✅ Prevent state updates
-    };
-  }, []);
+  };
 
   useEffect(() => {
-    fetchSessionAndSubscription();
+    console.log("session =>", session)
+    
+    if (!session) {
+      fetchSessionAndSubscription();
+    }
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -152,7 +144,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       authListener?.subscription?.unsubscribe();
     };
-  }, [fetchSessionAndSubscription, user?.id]); // ✅ Add `user?.id` to dependencies
+  }, [session]);
 
   // ✅ Logout function
   const logout = async () => {
