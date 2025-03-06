@@ -100,42 +100,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     fetchSessionAndSubscription(); // ✅ Fetch session ONCE on mount
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("Auth state changed:", event, session);
-
-        if (!session) {
-          setSession(null);
-          setUser(null);
-          return;
-        }
-
-        // ✅ Only update user if different
-        if (session.user.id !== user?.id) {
-          try {
-            const { data: subscription } = await supabase
-              .from("subscriptions")
-              .select("*")
-              .eq("user_id", session.user.id)
-              .single();
-
-            setSession(session);
-            setUser({
-              ...session.user,
-              subscription,
-              hasSubscription: subscription ? ["active", "complete"].includes(subscription.status) : false,
-            });
-          } catch (authChangeError) {
-            console.error("Error in auth state change handler:", authChangeError);
-          }
-        }
-      }
-    );
-
-    return () => {
-      authListener?.subscription?.unsubscribe();
-    };
   }, []); // ✅ Removed `[session]` to avoid infinite re-renders
 
   // ✅ Logout function
