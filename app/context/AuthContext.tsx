@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false); // ✅ Default to `true` since we fetch session initially
+  const [loading, setLoading] = useState<boolean>(true); // ✅ Default to `true` since we fetch session initially
   const router = useRouter();
 
   // ✅ Extract auth params from URL hash
@@ -55,11 +55,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchSessionAndSubscription = useCallback(async () => {
     setLoading(true);
-    console.log("Fetching session...");
 
     try {
       const { data, error } = await supabase.auth.getSession();
-      console.log("Session response:", data, "Error:", error);
 
       if (error) throw error;
 
@@ -71,7 +69,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       const user = data.session.user;
-      console.log("User found:", user);
 
       // ✅ Fetch Subscription
       const { data: subData, error: subError } = await supabase
@@ -94,7 +91,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Error in fetchSessionAndSubscription:", err);
     } finally {
       setLoading(false); // ✅ Always ensure loading is false
-      console.log("Loading set to false");
     }
   }, []);
 
