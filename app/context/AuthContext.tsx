@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true); // ✅ Default to `true` since we fetch session initially
+  const [loading, setLoading] = useState<boolean>(false); // ✅ Default to `true` since we fetch session initially
   const router = useRouter();
 
   // ✅ Extract auth params from URL hash
@@ -61,9 +61,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data, error } = await supabase.auth.getSession();
 
+      console.log(data,"dataa")
+
       if (error) throw error;
 
       if (!data.session) {
+        
         if (isMounted) {
           setSession(null);
           setUser(null);
@@ -71,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         return;
       }
-
+ 
       const user = data.session.user;
 
       // ✅ Fetch subscription (avoid unnecessary calls if already exists)
@@ -103,6 +106,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (err) {
       console.error("Error in fetchSessionAndSubscription:", err);
       if (isMounted) setLoading(false);
+    }
+    finally{
+      setLoading(false);
     }
 
     return () => {
