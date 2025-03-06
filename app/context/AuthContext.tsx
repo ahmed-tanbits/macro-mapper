@@ -60,8 +60,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data, error } = await supabase.auth.getSession();
 
-      console.log(data,"dataa")
-
       if (error) throw error;
 
       if (!data.session) {
@@ -70,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setLoading(false);
         return;
       }
- 
+
       const user = data.session.user;
 
       // ✅ Fetch subscription (avoid unnecessary calls if already exists)
