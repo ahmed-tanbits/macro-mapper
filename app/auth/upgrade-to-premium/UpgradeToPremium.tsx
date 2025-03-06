@@ -54,6 +54,14 @@ const UpgradeToPremium: React.FC = () => {
   ];
 
   const handleUpgradePlan = async (plan: any) => {
+    if (!user) {
+      toast({
+        title: "Error!",
+        description: "You must be logged in to access premium features.",
+        variant: "destructive", // Red error toast
+      });
+      return;
+    }
     setLoading({ ...loading, [plan.id]: true });
 
     const stripe = await stripePromise;
@@ -216,4 +224,4 @@ const UpgradeToPremium: React.FC = () => {
   );
 };
 
-export default withAuth(UpgradeToPremium);
+export default UpgradeToPremium;
