@@ -24,7 +24,7 @@ const LogIn: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const router = useRouter(); // ✅ Initialize Next.js router
   const [loading, setLoading] = useState(false);
-  const { setSession } = useAuth();
+  const { fetchSessionAndSubscription } = useAuth();
   const { toast } = useToast();
 
 
@@ -56,12 +56,13 @@ const LogIn: React.FC = () => {
         });
         return;
       }
-      setSession(data.session); // ✅ Store session in context
+      
        toast({
          title: "Success!",
          description: "Logged in successfully",
          variant: "success", // Green success toast
        });
+       fetchSessionAndSubscription();
       router.push("/"); // ✅ Navigate to home after login
     } catch (error) {
       toast({

@@ -18,9 +18,9 @@ const SlickSlider = dynamic(() => import("react-slick"), { ssr: false });
 const restaurants = [
   {
     imageSrc: "/restaurant_1.png",
-    name: "Smoothie Kingdom",
-    category: "Smoothie Bar",
-    productCount: 12,
+    name: "Betty's Burgers",
+    category: "Burgers",
+    productCount: 54,
   },
   {
     imageSrc: "/restaurant_2.png",
@@ -50,7 +50,7 @@ const restaurants = [
 
 const restaurantBlogsCards = [
   {
-    active: "Active",
+    active: "Article",
     imageSrc: "/bottom-sec-img1.png",
     para: "The Optimistic Future of Fast Food Outlets",
   },
@@ -103,7 +103,7 @@ function RestaurantCard({
 }) {
   return (
     <Link
-      href={"https://get.macromapper.co/get-started"}
+      href={"https://www.macromapper.co/search/map?tab=restaurants&suggested="}
       className="flex flex-col items-start w-full px-2"
     >
       <div className="min-w-[100px] w-full aspect-square rounded-md overflow-hidden">

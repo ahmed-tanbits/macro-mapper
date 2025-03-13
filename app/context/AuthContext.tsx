@@ -14,6 +14,7 @@ type AuthContextType = {
   setSession: (session: any) => void;
   setUser: (user: any) => void;
   logout: () => void;
+  fetchSessionAndSubscription: any;
 };
 
 // ✅ Create Auth Context
@@ -25,6 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   setSession: () => { },
   setUser: () => { },
   logout: () => { },
+  fetchSessionAndSubscription: () => {}
 });
 
 // ✅ Auth Provider Component
@@ -58,8 +60,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const { data, error } = await supabase.auth.getSession();
-
-      console.log(data, "dataa")
 
       if (error) throw error;
 
@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, authParams, setSession, setUser, logout }}>
+    <AuthContext.Provider value={{ session, user, loading, authParams, setSession, setUser, logout, fetchSessionAndSubscription }}>
       {loading ? (
         <div className="min-h-screen flex justify-center items-center">
           <Spinner width={50} height={50} color="primary" />
