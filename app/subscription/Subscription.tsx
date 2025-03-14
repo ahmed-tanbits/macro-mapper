@@ -37,7 +37,7 @@ const Subscription: React.FC = () => {
 
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
-  const { user, setUser } = useAuth();
+  const { user, setUser, fetchSessionAndSubscription } = useAuth();
 
   const { toast } = useToast();
 
@@ -72,7 +72,7 @@ const Subscription: React.FC = () => {
           variant: "destructive",
         });
       }
-
+      fetchSessionAndSubscription();
       router.push("/auth/welcome-to-premium");
     } catch (error) {
       console.error("Subscription error:", error);
@@ -107,11 +107,13 @@ const Subscription: React.FC = () => {
           variant: "success",
         });
         // 🔹 Update local state (if needed)
-        setUser((prevUser: any) => ({
-          ...prevUser,
-          subscription: { ...prevUser.subscription, status: "canceled" },
-          hasSubscription: false, // Update flag
-        }));
+        // setUser((prevUser: any) => ({
+        //   ...prevUser,
+        //   subscription: { ...prevUser.subscription, status: "canceled" },
+        //   hasSubscription: false, // Update flag
+        // }));
+        fetchSessionAndSubscription()
+        
       } else {
         toast({
           title: "Error!",
@@ -211,7 +213,7 @@ const Subscription: React.FC = () => {
               </div>
             ))}
           </div>
-          {user?.hasSubscription && (
+          {!user?.hasCanceledSubscription && (
             <div className="mt-6">
               <div className="flex items-center my-6">
                 <div className="flex-1 h-px bg-gray-300"></div>

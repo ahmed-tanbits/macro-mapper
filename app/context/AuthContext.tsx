@@ -88,7 +88,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const isGracePeriod = subData && subData.status === "cancel_at_period_end" && subData.cancel_at * 1000 > Date.now();
       const hasCanceledSubscription = subData?.status === "cancel_at_period_end"; // ✅ New key to track cancellation
 
-      console.log("is grace period =>", isGracePeriod)
+      console.log("Status:", subData?.status);
+      console.log("Cancel At (Seconds from DB):", subData?.cancel_at);
+      console.log("Cancel At (Milliseconds):", subData?.cancel_at * 1000);
+      console.log("Current Time (Milliseconds):", Date.now());
+      console.log("Condition Result:", subData?.cancel_at * 1000 > Date.now());
+
+      console.log("Grace Period =>", isGracePeriod);
+
+      console.log("hasCanceledSubscription =>", hasCanceledSubscription)
 
       setSession(data.session);
       setUser({

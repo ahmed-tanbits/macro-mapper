@@ -199,12 +199,12 @@ const UpgradeToPremium: React.FC = () => {
                     <button
                       onClick={() => handleUpgradePlan(plan)}
                       className={`block w-full text-${plan.name === "Monthly" ? "white" : "black"} border border-[${plan.name === "Monthly" ? "#0AC600" : "#f8f8f8"}] bg-[${plan.name === "Monthly" ? "#0AC600" : "#f8f8f8"}] font-bold rounded-lg py-3 text-center`}
-                      disabled={loading[plan.id]}
+                      disabled={user?.subscription?.plan === plan.name || loading[plan.id]}
                     >
                       {loading[plan.id] ?
                         <Spinner width={30} height={30} color={plan.name === "Monthly" ? "#fff" : "#000"} />
                         :
-                        `${plan.price} ${plan.name === "Monthly" ? "Month" : "Year"}`}
+                        `${user?.subscription?.plan === plan.name ? 'Current Plan' : plan.price + " " + (plan.name === "Monthly" ? "Month" : "Year")}`}
                     </button>
                   </li>
                 </div>

@@ -34,7 +34,7 @@ const Profile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { session, user, setUser } = useAuth(); // ✅ Get latest token
+  const { session, user, setUser,fetchSessionAndSubscription } = useAuth(); // ✅ Get latest token
   const { toast } = useToast();
 
   const validationSchema = Yup.object({
@@ -179,11 +179,12 @@ const Profile: React.FC = () => {
           variant: "success",
         });
         // 🔹 Update local state (if needed)
-        setUser((prevUser: any) => ({
-          ...prevUser,
-          subscription: { ...prevUser.subscription, status: "canceled" },
-          hasSubscription: false, // Update flag
-        }));
+        fetchSessionAndSubscription();
+        // setUser((prevUser: any) => ({
+        //   ...prevUser,
+        //   subscription: { ...prevUser.subscription, status: "canceled" },
+        //   hasSubscription: false, // Update flag
+        // }));
       } else {
         toast({
           title: "Error!",
