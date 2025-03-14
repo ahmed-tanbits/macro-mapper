@@ -22,10 +22,10 @@ function SubscriptionBanner() {
         <div className="w-full 992:max-w-[500px]">
           <div className="flex items-end justify-between md:hidden text-white">
             <h1 className="">
-              <span className="text-4xl">$3.49</span>
-              <span className="text-lg">/month</span>
+              <span className="text-4xl">3.49</span>
+              <span className="text-MD">AUD/month</span>
             </h1>
-            <p>$35/year</p>
+            <p className="text-MD">35 AUD/year</p>
           </div>
           <div className="flex items-center md:hidden gap-1 pt-2">
             <Image
@@ -44,7 +44,7 @@ function SubscriptionBanner() {
           </h1>
           <p className="text-xs text-white pt-4 pb-3">
             Enjoy unrestricted access to macromapper premium features for
-            $3.49/month
+            3.49 AUD /month
           </p>
           <ul className="w-full md:w-[350px] bg-white p-4 rounded-xl">
             {cardContent.map((value, index) => (

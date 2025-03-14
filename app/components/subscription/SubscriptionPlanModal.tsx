@@ -16,13 +16,13 @@ const plans = [
     id: "plan1",
     priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || "",
     name: "Monthly",
-    price: "$3.49",
+    price: "3.49 AUD",
   },
   {
     id: "plan2",
     priceId: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID || "",
     name: "Yearly",
-    price: "$29.99",
+    price: "29.99 AUD",
   },
 ];
 
