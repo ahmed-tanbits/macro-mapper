@@ -301,7 +301,7 @@ const FoodItem: React.FC<Props> = ({
         >
           {item.price && (
             <div className="py-1.5 px-4 border bg-neutral-900 text-white border-neutral-900 transition-all select-none rounded-full whitespace-nowrap">
-              ${item.price}
+              {item.price} AUD
             </div>
           )}
           {renderNutritionalFact("Cal.", item.calories)}
