@@ -65,13 +65,15 @@ const ResetFiltersButton: React.FC = () => {
   }
 
   return (
-    <button
+    <>
+      {/* <button
       onClick={resetFilters}
       className="px-4 py-2 text-neutral-500 border border-neutral-100 bg-white rounded-xl flex items-center justify-center space-x-2 hover:text-yellow-600 hover:border-yellow-600 transition-colors duration-200 hover:bg-yellow-500 hover:bg-opacity-15"
     >
       <RotateCcw size={16} />
       <span>Reset Filters</span>
-    </button>
+    </button> */}
+    </>
   );
 };
 

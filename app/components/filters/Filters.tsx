@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { debounce } from "@/utils/debounce";
 import DropdownCheckbox from "./DropdownCheckbox";
 import RangeSlider from "./RangeSlider";
+import { useAuth } from "@/app/context/AuthContext";
+import SubscriptionPlanModal from "../subscription/SubscriptionPlanModal";
 
 type Props = {
   filters: any;
   onSelectionChange: (type: string, selectedOptions: any) => void;
   onRangeChange: (type: string, range: [number, number]) => void;
+  isAuthenticated?: boolean;
 };
 
 const allergyOptions = [
@@ -27,10 +30,16 @@ const allergyOptions = [
   },
 ];
 
+const allTypeOptions = [
+  { id: 1, label: "Food", key: "food", checked: false },
+  { id: 2, label: "Drink", key: "drink", checked: false },
+];
+
 export default function Filters({
   filters,
   onSelectionChange,
   onRangeChange,
+  isAuthenticated,
 }: Props) {
   const handleDebouncedRangeChange = debounce(
     (type: string, range: [number, number]) => {
@@ -38,7 +47,8 @@ export default function Filters({
     },
     500
   ); // 500ms debounce time
-
+  const [open, setOpen] = useState(false);
+const { user, setUser } = useAuth();
   const getAllergyOptions = () => {
     return allergyOptions.map((option) => ({
       ...option,
@@ -48,15 +58,32 @@ export default function Filters({
     }));
   };
 
+  const getTypeOptions = () => {
+    return allTypeOptions.map((option) => ({
+      ...option,
+      checked:
+        filters.allergies.find((allergy: any) => allergy.key === option.key)
+          ?.checked || false,
+    }));
+  };
+
+  const handleOpenSubscriptionModal = () => {
+    if (!user?.hasSubscription) {
+      setOpen(true);
+    }
+  };
+
+
   return (
-    <div className="flex gap-3 items-center justify-start lg:justify-center w-full overflow-x-scroll lg:overflow-x-visible">
+    <div className="flex flex-wrap gap-0 md:gap-3 items-center justify-center w-full overflow-x-visible">
       <DropdownCheckbox
-        options={getAllergyOptions()}
-        label="Allergies"
+        options={getTypeOptions()}
+        label="Type"
         onSelectionChange={(selectedOptions) =>
           onSelectionChange("allergies", selectedOptions)
         }
-        initialOptions={getAllergyOptions()}
+        initialOptions={getTypeOptions()}
+        isAuthenticated={true}
       />
       <RangeSlider
         label="Calories"
@@ -66,6 +93,7 @@ export default function Filters({
         step={10}
         onRangeChange={(range) => handleDebouncedRangeChange("calories", range)}
         initialValues={filters.calories}
+        isAuthenticated={true}
       />
       <RangeSlider
         label="Protein"
@@ -73,8 +101,10 @@ export default function Filters({
         min={0}
         max={100}
         step={1}
+        onClick={handleOpenSubscriptionModal}
         onRangeChange={(range) => handleDebouncedRangeChange("protein", range)}
         initialValues={filters.protein}
+        isAuthenticated={user?.hasSubscription}
       />
       <RangeSlider
         label="Carbs"
@@ -82,8 +112,10 @@ export default function Filters({
         min={0}
         max={1000}
         step={1}
+        onClick={handleOpenSubscriptionModal}
         onRangeChange={(range) => handleDebouncedRangeChange("carbs", range)}
         initialValues={filters.carbs}
+        isAuthenticated={user?.hasSubscription}
       />
       <RangeSlider
         label="Fat"
@@ -91,9 +123,22 @@ export default function Filters({
         min={0}
         max={200}
         step={1}
+        onClick={handleOpenSubscriptionModal}
         onRangeChange={(range) => handleDebouncedRangeChange("fat", range)}
         initialValues={filters.fat}
+        isAuthenticated={user?.hasSubscription}
       />
+      <DropdownCheckbox
+        options={getAllergyOptions()}
+        label="Allergies"
+        onClick={handleOpenSubscriptionModal}
+        onSelectionChange={(selectedOptions) =>
+          onSelectionChange("allergies", selectedOptions)
+        }
+        initialOptions={getAllergyOptions()}
+        isAuthenticated={user?.hasSubscription}
+      />
+      <SubscriptionPlanModal open={open} setOpen={setOpen} />
     </div>
   );
 }

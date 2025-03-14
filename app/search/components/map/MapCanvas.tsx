@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import { supabase } from "@/supabaseClient";
 import Tooltip from "./Tooltip";
 import CustomPopup from "./CustomPopup";
+import { useSearch } from "@/app/context/SearchContext";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -70,26 +71,29 @@ const MapCanvas: React.FC<Props> = ({
     google_places_id: string;
   } | null>(null);
   const [isTooltipLoading, setIsTooltipLoading] = useState(false);
+  const currentLocation = useSearch();
 
   const fetchLocationsWithinBounds = useCallback(
-    async (bounds: mapboxgl.LngLatBounds) => {
-      const { _ne: northEast, _sw: southWest } = bounds;
-      try {
-        const { data: locations, error } = await supabase
-          .from("locations")
-          .select("location_id, lat, long, restaurant_id")
-          .gte("lat", southWest.lat)
-          .lte("lat", northEast.lat)
-          .gte("long", southWest.lng)
-          .lte("long", northEast.lng);
+    async (bounds: mapboxgl.LngLatBounds | null) => {
+      if (bounds) {
+        const { _ne: northEast, _sw: southWest } = bounds;
+        try {
+          const { data: locations, error } = await supabase
+            .from("locations")
+            .select("location_id, lat, long, restaurant_id")
+            .gte("lat", southWest.lat)
+            .lte("lat", northEast.lat)
+            .gte("long", southWest.lng)
+            .lte("long", northEast.lng);
 
-        if (error) {
-          throw new Error(error.message);
+          if (error) {
+            throw new Error(error.message);
+          }
+
+          setLocations(locations);
+        } catch (error) {
+          console.error("Error fetching locations:", error);
         }
-
-        setLocations(locations);
-      } catch (error) {
-        console.error("Error fetching locations:", error);
       }
     },
     []
@@ -122,25 +126,31 @@ const MapCanvas: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    const lat = Cookies.get("latitude");
-    const lon = Cookies.get("longitude");
-    const city = Cookies.get("city");
-
-    if (lat && lon) {
-      const location = {
-        latitude: parseFloat(lat),
-        longitude: parseFloat(lon),
-        city: city || "Unknown location",
-      };
-      setUserLocation(location);
-      setViewport({
-        latitude: location.latitude,
-        longitude: location.longitude,
-        zoom: 13,
-      });
+    if (currentLocation?.selectedLocation) {
+      const lat = currentLocation.selectedLocation.coordinates?.[1] || Cookies.get("latitude");
+      const lon = currentLocation.selectedLocation.coordinates?.[0] || Cookies.get("longitude");
+      const city = Cookies.get("city");
+  
+      if (lat && lon) {
+        const newLocation = {
+          latitude: parseFloat(lat),
+          longitude: parseFloat(lon),
+          city: city || "Unknown location",
+        };
+  
+        setUserLocation(newLocation);
+  
+        // Use mapRef to smoothly fly to the new location
+        mapRef.current?.flyTo({
+          center: [newLocation.longitude, newLocation.latitude],
+          zoom: 18,
+          essential: true, // Ensures smooth movement
+        });
+      }
+      setLoading(false);
     }
-    setLoading(false);
-  }, []);
+  }, [currentLocation]);
+  
 
   useEffect(() => {
     if (highlightedRestaurantId) {
@@ -274,12 +284,11 @@ const MapCanvas: React.FC<Props> = ({
             onClick={() => handleMarkerClick(location)}
           >
             <div
-              className={`w-5 aspect-square m-3 transition-all z-10 rounded-full text-white p-0.5 ${
-                highlightedRestaurantId &&
+              className={`w-5 aspect-square m-3 transition-all z-10 rounded-full text-white p-0.5 ${highlightedRestaurantId &&
                 location.restaurant_id === highlightedRestaurantId
-                  ? "bg-orange-500 "
-                  : "bg-primary-500 shadow-primary-500"
-              } border-2 border-white select-none cursor-pointer`}
+                ? "bg-orange-500 "
+                : "bg-primary-500 shadow-primary-500"
+                } border-2 border-white select-none cursor-pointer`}
             ></div>
           </Marker>
         ))}

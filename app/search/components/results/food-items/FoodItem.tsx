@@ -8,9 +8,16 @@ import {
   Utensils,
   MapPin,
   Store,
+  Crown,
 } from "lucide-react";
 import Image from "next/image";
 import BadgeList from "../restaurants/BadgeList";
+import RestaurantsSvg from "@/app/components/svgs/RestaurantsSvg";
+import FoodForkKnifeSvg from "@/app/components/svgs/FoodForkKnifeSvg";
+import FoodServingSvg from "@/app/components/svgs/FoodServingSvg";
+import { useAuth } from "@/app/context/AuthContext";
+import Link from "next/link";
+import SubscriptionPlanModal from "@/app/components/subscription/SubscriptionPlanModal";
 
 export interface MenuItem {
   prod_id: string;
@@ -41,6 +48,9 @@ export interface MenuItem {
   is_vegetarian: boolean;
   is_vegan: boolean;
   is_shell_fish_free: boolean;
+  distance: number;
+  company_name?: string;
+  location_id?: string;
 }
 
 type Props = {
@@ -62,6 +72,8 @@ const FoodItem: React.FC<Props> = ({
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [isScrolledToEnd, setIsScrolledToEnd] = useState(false);
   const [isScrolledToStart, setIsScrolledToStart] = useState(true);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const { user } = useAuth();
   const [imageUrl, setImageUrl] = useState<string>(
     `https://wsuteglijvwrmcsjhhom.supabase.co/storage/v1/object/public/${item.rest_id}/${item.image_id}.jpg`
   );
@@ -144,10 +156,19 @@ const FoodItem: React.FC<Props> = ({
 
   const formatDistance = (distance: number) => {
     if (distance < 1) {
-      return `${Math.round(distance * 1000)} meters`;
+      return `${Math.round(distance * 1000)} metres`;
     }
     return `${distance.toFixed(1)} km`;
   };
+
+
+  const cardCusinies = [
+    "🥗 Vegetarian",
+    "🍞 Gluten Free",
+    "🥜 Nut Traces",
+    "🥚 Egg Free",
+    "🥛 Dairy Free",
+  ];
 
   return (
     <div className="w-full rounded-xl shadow-md bg-white border-neutral-100 transition-all">
@@ -156,14 +177,20 @@ const FoodItem: React.FC<Props> = ({
           <div className="flex items-start justify-start flex-col gap-4 flex-1">
             <h2 className="text-lg font-semibold">{item.product_name}</h2>
             <div className="flex items-start justify-start flex-col text-neutral-500 font-normal gap-1.5">
-              <span className="text-sm flex justify-start items-center gap-1">
-                <Utensils size={16} />
+              <span className="text-sm text-[#0AC600] flex justify-start items-center gap-1">
+                <RestaurantsSvg color="#0AC600" width={14} height={14} />
+                {item.company_name ? item.company_name
+                  .toLowerCase()
+                  .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase()) : ""}
+              </span>
+              <span className="text-sm flex justify-start items-center gap-3">
+                <FoodForkKnifeSvg height={14} width={14} />
                 {item.category
                   .toLowerCase()
                   .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase())}
               </span>
-              <span className="text-sm flex justify-start items-center gap-1">
-                <HandPlatter size={16} />
+              <span className="text-sm flex justify-start items-center gap-3">
+                <FoodServingSvg height={14} width={14} />
                 {item.serving_size}
               </span>
 
@@ -175,13 +202,14 @@ const FoodItem: React.FC<Props> = ({
               )}
               {proximity !== undefined && (
                 <span
-                  className={`text-sm flex justify-start items-center gap-1 ${proximity < 1 ? 'text-primary-500' : ''}`}
+                  className={`text-sm flex justify-start items-center gap-1 ${proximity < 1 ? "text-primary-500" : ""
+                    }`}
                 >
                   <MapPin className="text-neutral-500" size={16} />
-                  <span className="text-neutral-500">
-                    Proximity:
+                  <span className="text-neutral-500">Proximity:</span>
+                  <span className="font-medium">
+                    {formatDistance(proximity)}
                   </span>
-                  <span className="font-medium">{formatDistance(proximity)}</span>
                 </span>
               )}
             </div>
@@ -201,44 +229,103 @@ const FoodItem: React.FC<Props> = ({
             <div className="absolute inset-0 border border-black/10 rounded-xl pointer-events-none"></div>
           </div>
         </div>
-        <div className="p-4 pt-2 pb-2 relative z-10">
+
+        {user?.hasSubscription ? <div className="p-4 pt-2 pb-2 relative z-10">
           <BadgeList products={[item]} />
         </div>
-
-        <button onClick={() => onHighlightLocations(item.rest_id)}>
-          <div className="absolute inset-0 bg-neutral-50 rounded-t-xl bg-opacity-20 backdrop-blur-sm hidden lg:flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-            <div className="relative flex items-center bg-white border border-neutral-100 text-neutral-900 px-4 py-2 rounded-full shadow-lg transition-all cursor-pointer select-none whitespace-nowrap group-hover:pr-8">
-              <span className="transition-all">Closest locations</span>
-              <ChevronRight className="absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 duration-300" />
-            </div>
+          :
+          <div className=" max-w-[220px] mx-4">
+            <Link
+              href="/auth/upgrade-to-premium"
+              className="flex items-center font-bold rounded-full justify-center gap-1      text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center"
+            >
+              <span>Upgrade for Allergies</span>
+              <span>
+                <Crown size={20} fill="#000" />
+              </span>
+            </Link>
           </div>
-        </button>
+        }
+        <div className="absolute cursor-pointer top-0 right-0 left-0 flex justify-center items-center gap-6 w-full h-full z-10 inset-0 bg-neutral-50 rounded-t-xl bg-opacity-20 backdrop-blur-sm hidden lg:flex opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+
+          {/* Closest Locations Button */}
+          <button onClick={() => onHighlightLocations(item.rest_id)} className="relative group/button">
+            <div className="group/button hover:pr-8 relative flex items-center bg-white border border-neutral-100 text-neutral-900 px-4 py-2 rounded-full shadow-lg transition-all cursor-pointer select-none whitespace-nowrap">
+              <span className="transition-all">Closest Locations</span>
+              <ChevronRight
+                strokeWidth={1.8}
+                size={20}
+                className="absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover/button:translate-x-0 group-hover/button:opacity-100 duration-300"
+              />
+            </div>
+          </button>
+
+          {/* View Menu Button */}
+          <Link
+            href={`/search/${item.location_id}`}
+            className="relative flex items-center py-2 px-4 bg-primary-500 transition-all cursor-pointer select-none text-white rounded-full group/button hover:pr-8"
+          >
+            <span className="transition-all">View Menu</span>
+            <ChevronRight
+              strokeWidth={1.8}
+              size={20}
+              className="absolute right-2 transition-transform transform translate-x-full opacity-0 group-hover/button:translate-x-0 group-hover/button:opacity-100 duration-300"
+            />
+          </Link>
+
+        </div>
+
       </div>
-      <button
-        onClick={handleButtonClick}
-        className="flex items-center justify-items-center gap-1 lg:hidden bg-neutral-50 border-t border-neutral-100 text-neutral-900 px-3 py-2 text-sm w-full -mt-4 pt-4"
-      >
-        View closest locations
-        <ChevronsRight strokeWidth={2} size={16} />
-      </button>
+
+      <div className="flex w-full bg-neutral-50">
+        <button
+          onClick={handleButtonClick}
+          className="flex items-center justify-items-center gap-1 lg:hidden  border-t border-neutral-100 text-neutral-900 px-3 py-2 text-sm  max-sm:text-xs max-sm:mt-2  mt-4"
+        >
+          View closest locations
+          <ChevronsRight strokeWidth={2} size={16} />
+        </button>
+        <Link
+          href={`/search/${item.location_id}`}
+          className="flex items-center justify-items-center gap-1 md:hidden  text-primary-500 border-t border-neutral-100 px-3 py-2 text-sm max-sm:text-xs max-sm:mt-2  mt-4"
+        >
+          <span className="transition-all">View Menu</span>
+          <ChevronsRight strokeWidth={2} size={16} />
+        </Link>
+
+      </div>
       <div className="relative bg-neutral-50 px-3 pb-3 pt-3 lg:border-t border-neutral-100 overflow-hidden rounded-b-xl">
         <div
           ref={scrollContainerRef}
-          className="flex gap-2 overflow-x-auto hide-scrollbar"
+          className="flex gap-3 overflow-x-auto hide-scrollbar items-center"
         >
           {item.price && (
             <div className="py-1.5 px-4 border bg-neutral-900 text-white border-neutral-900 transition-all select-none rounded-full whitespace-nowrap">
-              ${item.price}
+              {item.price} AUD
             </div>
           )}
           {renderNutritionalFact("Cal.", item.calories)}
-          {renderNutritionalFact("protein", item.protein, "g")}
-          {renderNutritionalFact("fat", item.total_fat, "g")}
-          {renderNutritionalFact("saturated fat", item.saturated_fat, "g")}
-          {renderNutritionalFact("carbs", item.total_carbs, "g")}
-          {renderNutritionalFact("sugars", item.sugars, "g")}
-          {renderNutritionalFact("fibre", item.fibre, "g")}
-          {renderNutritionalFact("sodium", item.sodium, "mg")}
+          {user?.hasSubscription ? (
+            <>
+              {renderNutritionalFact("protein", item.protein, "g")}
+              {renderNutritionalFact("fat", item.total_fat, "g")}
+              {renderNutritionalFact("saturated fat", item.saturated_fat, "g")}
+              {renderNutritionalFact("carbs", item.total_carbs, "g")}
+              {renderNutritionalFact("sugars", item.sugars, "g")}
+              {renderNutritionalFact("fibre", item.fibre, "g")}
+              {renderNutritionalFact("sodium", item.sodium, "mg")}
+            </>
+          ) :
+            <button
+              onClick={() => setIsSubscriptionModalOpen(true)}
+              className="flex items-center font-bold rounded-full justify-center gap-1 px-6 max-sm:px-6 text-black border border-yellow-main bg-yellow-main hover:bg-yellow-400 transition text-sm py-3 text-center flex-shrink-0"
+            >
+               Upgrade for Macros 
+              <span>
+                <Crown size={20} fill="#000" />
+              </span>
+            </button>
+          }
         </div>
 
         {isOverflowing && !isScrolledToEnd && (
@@ -258,6 +345,10 @@ const FoodItem: React.FC<Props> = ({
           </div>
         )}
       </div>
+      <SubscriptionPlanModal
+        open={isSubscriptionModalOpen}
+        setOpen={setIsSubscriptionModalOpen}
+      />
     </div>
   );
 };

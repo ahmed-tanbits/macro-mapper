@@ -110,7 +110,7 @@ export default async function Page({
 
   return (
     <>
-      <Navbar />
+      <Navbar showFilters={true} />
       <div className=" ">
         <Restaurant location={location} products={products} />
         <Info

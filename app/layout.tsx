@@ -5,6 +5,9 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import LocationBadge from "./LocationBadge";
 import { FilterProvider } from "./context/FilterContext";
+import { AuthProvider } from "./context/AuthContext"; // Import AuthProvider
+import { Toaster } from "./components/Toaster";
+import { SearchProvider } from "./context/SearchContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,11 +25,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <FilterProvider>
-          {children}
-          <LocationBadge />
-          <SpeedInsights />
-        </FilterProvider>
+        <AuthProvider>
+          <SearchProvider>
+            <FilterProvider>
+              {children}
+              <Toaster />
+              <LocationBadge />
+              <SpeedInsights />
+            </FilterProvider>
+          </SearchProvider>
+        </AuthProvider>
       </body>
     </html>
   );

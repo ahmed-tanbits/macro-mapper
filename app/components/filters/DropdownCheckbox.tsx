@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import CustomCheckbox from "@/app/components/filters/CustomCheckbox";
 import { ChevronDown, ChevronRight, RotateCcw, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 type CheckboxOption = {
   id: number;
@@ -15,12 +16,16 @@ type DropdownCheckboxProps = {
   label: string;
   onSelectionChange: (selectedOptions: CheckboxOption[]) => void;
   initialOptions?: CheckboxOption[];
+  isAuthenticated?: boolean;
+  onClick?: () => void;
 };
 
 const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
   options: initialOptions = [], // Default to an empty array if not provided
   label,
   onSelectionChange,
+  isAuthenticated,
+  onClick,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -46,7 +51,13 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
     setOptions(initialOptions);
   }, [initialOptions]);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => {
+    if (!isAuthenticated && onClick) {
+      onClick(); // Open subscription modal
+    } else {
+      setIsOpen(!isOpen);
+    }
+  };
 
   const handleCheckboxChange = (id: number) => {
     const newOptions = options.map((option) =>
@@ -68,10 +79,10 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
   const closeDropdown = () => setIsOpen(false);
 
   return (
-    <div className="whitespace-nowrap lg:relative" ref={dropdownRef}>
+    <div className="whitespace-nowrap relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className={`px-4 py-2 bg-neutral-100 rounded-full text-neutral-500 border ${
+        className={`px-1 sm:px-2 py-2 bg-transparent text-gray-900 text-xs sm:text-sm ${
           isOpen || options.some((opt) => opt.checked)
             ? "border-primary-500 border-opacity-60 bg-primary-500 bg-opacity-10"
             : "border-neutral-100 bg-neutral-100 lg:bg-white"
@@ -87,21 +98,25 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
           {label}
         </span>
 
-        <ChevronDown
-          className={`h-4 w-4 transition-transform duration-300 ${
-            isOpen ? "rotate-180" : "rotate-0"
-          } ${
-            isOpen || options.some((opt) => opt.checked)
-              ? "text-primary-500"
-              : ""
-          }`}
-        />
+        {isAuthenticated ? (
+          <ChevronDown
+            className={`h-4 w-4 transition-transform duration-300 ${
+              isOpen ? "rotate-180" : "rotate-0"
+            } ${
+              isOpen || options.some((opt) => opt.checked)
+                ? "text-primary-500"
+                : ""
+            }`}
+          />
+        ) : (
+          <Image src="/lock-icon.png" alt="lock-icon" height={12} width={12} />
+        )}
       </button>
-      {isOpen && (
-        <div className="absolute mt-2 z-50 bg-white border overflow-clip border-neutral-100 shadow-xl rounded-xl w-96 left-1/2 transform -translate-x-1/2 lg:mt-2">
-          <div className="overflow-auto max-h-40 p-2">
+      {isAuthenticated && isOpen && (
+        <div className="absolute left-1/2 lg:left-0 -translate-x-1/3 lg:-translate-x-0 mt-3 z-50 bg-white border overflow-clip border-neutral-100 shadow-md shadow-gray-300 rounded-xl rounded-tl-none w-60 lg:w-80 before:absolute before:content-[''] before:top-0 before:left-0 before:h-[3px] before:w-[140px] before:bg-[#00CF3A]">
+          <div className="overflow-auto max-h-40 px-2 py-4">
             {options.map((option) => (
-              <div key={option.id} className="px-3 py-2">
+              <div key={option.id} className="px-3 py-[5px] text-sm">
                 <CustomCheckbox
                   checked={option.checked}
                   onChange={() => handleCheckboxChange(option.id)}
@@ -110,20 +125,20 @@ const DropdownCheckbox: React.FC<DropdownCheckboxProps> = ({
               </div>
             ))}
           </div>
-          <div className="bg-neutral-50 border-t border-neutral-100 p-4 flex justify-between items-center text-sm">
+          <div className="bg-neutral-50 border-t border-neutral-100 px-3 py-2 flex justify-end text-sm">
             <button
               onClick={clearSelections}
-              className="p-2 text-yellow-600 bg-yellow-500 bg-opacity-25 rounded-lg flex items-center justify-center h-min gap-1"
+              className="p-2 text-[#737373] flex gap-1 items-center h-min"
             >
               <RotateCcw size={16} />
               Reset this filter
             </button>
-            <button
+            {/* <button
               onClick={closeDropdown}
               className="p-2 text-neutral-500 bg-neutral-200 rounded-lg block lg:hidden"
             >
               <X size={16} />
-            </button>
+            </button> */}
           </div>
         </div>
       )}
