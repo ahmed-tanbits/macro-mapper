@@ -26,7 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   setSession: () => { },
   setUser: () => { },
   logout: () => { },
-  fetchSessionAndSubscription: () => {}
+  fetchSessionAndSubscription: () => { }
 });
 
 // ✅ Auth Provider Component
@@ -83,11 +83,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.error("Subscription fetch error:", subError.message);
       }
 
+      // ✅ Ensure hasSubscription is TRUE until the grace period expires
+      const isActive = subData && ["active", "complete"].includes(subData.status);
+      const isGracePeriod = subData && subData.status === "cancel_at_period_end" && subData.cancel_at * 1000 > Date.now();
+      const hasCanceledSubscription = subData?.status === "cancel_at_period_end"; // ✅ New key to track cancellation
+
       setSession(data.session);
       setUser({
         ...user,
         subscription: subData || null,
-        hasSubscription: subData ? ["active", "complete"].includes(subData.status) : false,
+        hasSubscription: isActive || isGracePeriod, // ✅ Keeps subscription valid during grace period
+        hasCanceledSubscription
       });
     } catch (err) {
       console.error("Error in fetchSessionAndSubscription:", err);

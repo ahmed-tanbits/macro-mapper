@@ -521,24 +521,23 @@ const Profile: React.FC = () => {
           <button
             type="submit"
             onClick={() => {
-              if (!user?.hasSubscription) {
+              if (user?.hasCanceledSubscription) {
                 router.push("/auth/upgrade-to-premium");
               } else {
                 handleOpenCancelSubscriptionModal(true);
               }
             }}
-            className={`w-full py-3 rounded-full font-medium text-sm transition ${
-              user?.hasSubscription
-                ? "bg-[#940000] text-white"
-                : "bg-[#FFD200] text-[#FFFFFF]"
-            }`}
+            className={`w-full py-3 rounded-full font-medium text-sm transition ${user?.hasCanceledSubscription
+              ? "bg-[#FFD200] text-[#FFFFFF]"
+              : "bg-[#940000] text-white"
+              }`}
           >
             {loading ? (
               <Spinner />
-            ) : user?.hasSubscription ? (
-              "Cancel Subscription"
-            ) : (
+            ) : user?.hasCanceledSubscription ? (
               "Upgrade to Premium"
+            ) : (
+              "Cancel Subscription"
             )}
           </button>
         </div>
