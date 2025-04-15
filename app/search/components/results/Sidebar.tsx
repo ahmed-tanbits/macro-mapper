@@ -5,6 +5,7 @@ import List from "./restaurants/List";
 import FoodList from "./food-items/List";
 import { useSearchParams } from "next/navigation";
 import LoadingCard from "./restaurants/LoadingCard";
+import Link from "next/link";
 
 type FiltersType = {
   allergies: { key: string; checked: boolean }[];
@@ -72,6 +73,18 @@ export default function Sidebar({
           toggleView={toggleView} // Add this line
         />
       </Suspense>
+      <p className="relative z-50 text-black text-base ps-8 py-4 bg-white">
+        Got search feedback?{" "}
+        <span>
+          <Link
+            target="_blank"
+            href="https://get.macromapper.co/"
+            className="text-[#03C428]"
+          >
+            Help us improve.
+          </Link>
+        </span>
+      </p>
     </div>
   );
 }
