@@ -78,6 +78,8 @@ const FoodItem: React.FC<Props> = ({
     `https://wsuteglijvwrmcsjhhom.supabase.co/storage/v1/object/public/${item.rest_id}/${item.image_id}.jpg`
   );
 
+  console.log(item,"itemsss");
+
   useEffect(() => {
     const checkOverflow = () => {
       if (scrollContainerRef.current) {
